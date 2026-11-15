@@ -306,4 +306,26 @@ daarom gebruiken we `/meta.json` voor detectie.
 - Geen CORS op de data-endpoints (bedoeld voor server-naar-server; de key hoort niet in een browser).
 - Cursor is offset-gebaseerd: bij veel nieuwe data tussen twee pagina's kan een item verschuiven.
 
-## Volgende: Prompt 12 — remote MCP-server
+## Prompt 12: remote MCP-server — klaar (2026-11-15), nog niet als connector in Claude getest
+
+- `apps/mcp`: Streamable HTTP op `/mcp` (stateless), 12 tools met zod-schema's, beschrijvingen en
+  `readOnlyHint`, server-instructies (schattingen benoemen, eerst `list_filters` bij een categorie)
+- OAuth 2.1 volgens de MCP-authorization-spec met de web-app als autorisatieserver (eigen laag:
+  dynamic client registration, PKCE S256, refresh-rotatie, toestemmingsscherm), plus API-keys
+- Migratie `20261115070000_oauth.sql` (clients, codes, tokens; alleen hashes)
+- Schema's/serializers verhuisd naar `@trendtrack/db/public-api` (REST API en MCP delen ze)
+- Ads-filter op niche(s) toegevoegd (`listAds`)
+- `/app/mcp`: server-URL, instructies voor Claude, ChatGPT en Cursor, voorbeeldvragen, verbonden
+  apps intrekken. `apps/mcp/Dockerfile` + service in docker-compose.
+- Getest: 13 integratietests (elke tool, quotum, gratis plan, HTTP met API-key, OAuth incl. PKCE-fout,
+  eenmalige code, refresh-rotatie, onveilige redirect), MCP Inspector CLI (tools/list: 12 tools;
+  de voorbeeldvraag via `search_ads` met `group_by: shop`), en de volledige OAuth-flow in de
+  browser: 401 → metadata → registratie → login → toestemming → token → `get_shop`.
+
+### Open
+
+- Toevoegen als custom connector in Claude kan pas als de server op een publieke https-URL staat.
+- Shops hebben `niche` = meest voorkomende producttype ("Kettingen"), geen brede categorie
+  ("sieraden"). De AI vertaalt dat via `list_filters`.
+
+## Volgende: Prompt 13 — gratis tools en landingspagina

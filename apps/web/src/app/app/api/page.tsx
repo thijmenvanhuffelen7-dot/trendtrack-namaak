@@ -123,6 +123,12 @@ export default async function ApiPage() {
       <Card className="p-4">
         <h2 className="font-medium">{t("mcpTitle")}</h2>
         <p className="mt-1 text-sm text-muted-foreground">{t("mcpBody")}</p>
+        <Link
+          href="/app/mcp"
+          className={`${buttonVariants({ variant: "outline", size: "sm" })} mt-3`}
+        >
+          {t("mcpTitle")} →
+        </Link>
       </Card>
     </>
   );

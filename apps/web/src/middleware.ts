@@ -33,10 +33,9 @@ export async function middleware(request: NextRequest) {
     return NextResponse.redirect(url);
   }
   if (user && pathname === "/login") {
-    const url = request.nextUrl.clone();
-    url.pathname = "/app";
-    url.search = "";
-    return NextResponse.redirect(url);
+    const next = request.nextUrl.searchParams.get("next");
+    const target = next && /^\/(?!\/)/.test(next) ? next : "/app";
+    return NextResponse.redirect(new URL(target, request.url));
   }
   return response;
 }

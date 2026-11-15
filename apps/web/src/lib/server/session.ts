@@ -45,7 +45,7 @@ export function siteUrl(headers: Headers): string {
 
 /** Alleen interne paden als redirect-doel (geen open redirect). */
 export function safeNext(next: string | null | undefined, fallback = "/app"): string {
-  return next && /^\/(?!\/)[\w\-./?=&%[\]]*$/.test(next) ? next : fallback;
+  return next && /^\/(?!\/)[\w\-./?=&%[\]+~:,]*$/.test(next) ? next : fallback;
 }
 
 /** Het plan dat nu geldt voor de workspace van de ingelogde gebruiker (één keer per request). */

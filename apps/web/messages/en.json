@@ -402,7 +402,7 @@
     "docs": "API documentation",
     "example": "Example",
     "mcpTitle": "MCP server",
-    "mcpBody": "Use TrendTrack directly in Claude, ChatGPT or Cursor. Instructions follow once the MCP server is live.",
+    "mcpBody": "Use TrendTrack directly in Claude, ChatGPT or Cursor through the MCP server.",
     "error": "That did not work: {message}"
   }
 }

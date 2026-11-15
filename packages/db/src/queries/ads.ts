@@ -3,9 +3,24 @@ import type { Db } from "../client";
 
 const AD_COLUMNS =
   "id, platform, external_id, body, title, landing_url, landing_domain, media_type, snapshot_url, started_at, ended_at, is_active, run_days_final, eu_total_reach, est_spend_low, est_spend_high, countries, languages, shop_id, advertiser_id, advertisers(page_name, page_id), shops(domain, name)";
+const AD_COLUMNS_SHOP_INNER =
+  "id, platform, external_id, body, title, landing_url, landing_domain, media_type, snapshot_url, started_at, ended_at, is_active, run_days_final, eu_total_reach, est_spend_low, est_spend_high, countries, languages, shop_id, advertiser_id, advertisers(page_name, page_id), shops!inner(domain, name)";
 
 export async function listAds(db: Db, f: AdFilters, now = new Date()) {
+  const niches =
+    f.niche
+      ?.split(",")
+      .map((n) => n.trim())
+      .filter(Boolean) ?? [];
+  // Met een niche-filter: inner join op shops, zodat ads zonder (passende) shop wegvallen.
   let q = db.from("ads").select(AD_COLUMNS, { count: "exact" });
+  if (niches.length) {
+    // Zelfde kolommen, alleen de join is inner; het resultaattype is identiek.
+    q = db
+      .from("ads")
+      .select(AD_COLUMNS_SHOP_INNER, { count: "exact" })
+      .in("shops.niche", niches) as unknown as typeof q;
+  }
   if (f.q) q = q.textSearch("fts", f.q, { type: "websearch", config: "simple" });
   if (f.country) q = q.contains("countries", [f.country]);
   if (f.language) q = q.contains("languages", [f.language]);

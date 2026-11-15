@@ -1,25 +1,19 @@
-import express from "express";
-import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
-import { buildServer } from "./server";
+import { createServiceClient } from "@trendtrack/db";
+import { z } from "zod";
+import { createApp } from "./app";
 
-const app = express();
-app.use(express.json());
+const env = z
+  .object({
+    MCP_PORT: z.coerce.number().int().default(3333),
+    MCP_PUBLIC_URL: z.url().default("http://localhost:3333"),
+    WEB_PUBLIC_URL: z.url().default("http://localhost:3000"),
+  })
+  .parse(process.env);
 
-app.get("/health", (_req, res) => {
-  res.json({ ok: true });
+const app = createApp({
+  db: createServiceClient(),
+  publicUrl: env.MCP_PUBLIC_URL.replace(/\/$/, ""),
+  webOrigin: env.WEB_PUBLIC_URL.replace(/\/$/, ""),
+  log: (entry) => console.log(JSON.stringify({ at: new Date().toISOString(), ...entry })),
 });
-
-// Stateless Streamable HTTP: per request een nieuwe server + transport.
-app.post("/mcp", async (req, res) => {
-  const server = buildServer();
-  const transport = new StreamableHTTPServerTransport({ sessionIdGenerator: undefined });
-  res.on("close", () => {
-    void transport.close();
-    void server.close();
-  });
-  await server.connect(transport);
-  await transport.handleRequest(req, res, req.body);
-});
-
-const port = Number(process.env.MCP_PORT ?? 3333);
-app.listen(port, () => console.log(`MCP-server op http://localhost:${port}/mcp`));
+app.listen(env.MCP_PORT, () => console.log(`MCP-server op ${env.MCP_PUBLIC_URL}/mcp`));

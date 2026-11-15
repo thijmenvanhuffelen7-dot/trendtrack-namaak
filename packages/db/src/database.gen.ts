@@ -249,6 +249,72 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"oauth_clients": {
+                  Row: {
+                    "client_id": string,"client_name": string,"created_at": string,"redirect_uris": (string)[]
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "client_id": string,"client_name": string,"created_at"?: string,"redirect_uris": (string)[]
+                  }
+                  Update: {
+                    "client_id"?: string,"client_name"?: string,"created_at"?: string,"redirect_uris"?: (string)[]
+                  }
+                  Relationships: [
+                    
+                  ]
+                },"oauth_codes": {
+                  Row: {
+                    "client_id": string,"code_challenge": string,"code_hash": string,"expires_at": string,"redirect_uri": string,"resource": string | null,"scope": string,"used_at": string | null,"user_id": string,"workspace_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "client_id": string,"code_challenge": string,"code_hash": string,"expires_at": string,"redirect_uri": string,"resource"?: string | null,"scope"?: string,"used_at"?: string | null,"user_id": string,"workspace_id": string
+                  }
+                  Update: {
+                    "client_id"?: string,"code_challenge"?: string,"code_hash"?: string,"expires_at"?: string,"redirect_uri"?: string,"resource"?: string | null,"scope"?: string,"used_at"?: string | null,"user_id"?: string,"workspace_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "oauth_codes_client_id_fkey"
+      columns: ["client_id"]
+isOneToOne: false
+      referencedRelation: "oauth_clients"
+      referencedColumns: ["client_id"]
+    },{
+      foreignKeyName: "oauth_codes_workspace_id_fkey"
+      columns: ["workspace_id"]
+isOneToOne: false
+      referencedRelation: "workspaces"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"oauth_tokens": {
+                  Row: {
+                    "client_id": string,"created_at": string,"expires_at": string,"kind": string,"last_used_at": string | null,"revoked_at": string | null,"scope": string,"token_hash": string,"user_id": string,"workspace_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "client_id": string,"created_at"?: string,"expires_at": string,"kind": string,"last_used_at"?: string | null,"revoked_at"?: string | null,"scope"?: string,"token_hash": string,"user_id": string,"workspace_id": string
+                  }
+                  Update: {
+                    "client_id"?: string,"created_at"?: string,"expires_at"?: string,"kind"?: string,"last_used_at"?: string | null,"revoked_at"?: string | null,"scope"?: string,"token_hash"?: string,"user_id"?: string,"workspace_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "oauth_tokens_client_id_fkey"
+      columns: ["client_id"]
+isOneToOne: false
+      referencedRelation: "oauth_clients"
+      referencedColumns: ["client_id"]
+    },{
+      foreignKeyName: "oauth_tokens_workspace_id_fkey"
+      columns: ["workspace_id"]
+isOneToOne: false
+      referencedRelation: "workspaces"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"plans": {
                   Row: {
                     "id": string,"is_public": boolean,"limits": NonNullable<Json>,"monthly_price_cents": number,"name": string,"sort_order": number

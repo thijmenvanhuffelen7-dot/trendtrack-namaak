@@ -19,6 +19,23 @@ services:
       driver: json-file
       options: { max-size: "10m", max-file: "5" }
 
+  mcp:
+    build:
+      context: .
+      dockerfile: apps/mcp/Dockerfile
+    env_file: .env.production
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:3333:3333" # publiek via de reverse proxy (HTTPS), zie docs/runbook.md
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:3333/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+    logging:
+      driver: json-file
+      options: { max-size: "10m", max-file: "5" }
+
   # Extra worker zonder scheduler (opschalen: docker compose up -d --scale worker-extra=2)
   worker-extra:
     build:

@@ -60,6 +60,8 @@ export const AdFiltersSchema = z.object({
     .optional(),
   domain: text.optional(),
   advertiser_id: z.guid().optional(),
+  /** Eén of meer niches (komma-gescheiden), bv. "Kettingen,Oorbellen". */
+  niche: text.optional(),
   sort: z.enum(["newest", "longest", "reach"]).default("newest"),
   page,
   per_page: perPage(24),

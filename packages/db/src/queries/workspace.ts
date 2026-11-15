@@ -195,7 +195,7 @@ export async function isTracked(db: Db, workspaceId: string, shopId: string) {
 export async function trackBrand(
   serviceDb: Db,
   workspaceId: string,
-  userId: string,
+  userId: string | null,
   shopId: string,
 ) {
   const { error } = await serviceDb

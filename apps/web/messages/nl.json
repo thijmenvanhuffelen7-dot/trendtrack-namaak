@@ -402,7 +402,7 @@
     "docs": "API-documentatie",
     "example": "Voorbeeld",
     "mcpTitle": "MCP-server",
-    "mcpBody": "Gebruik TrendTrack direct in Claude, ChatGPT of Cursor. De instructies volgen zodra de MCP-server live is.",
+    "mcpBody": "Gebruik TrendTrack direct in Claude, ChatGPT of Cursor via de MCP-server.",
     "error": "Dat lukte niet: {message}"
   }
 }
