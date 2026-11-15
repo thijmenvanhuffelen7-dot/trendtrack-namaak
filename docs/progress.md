@@ -281,4 +281,29 @@ daarom gebruiken we `/meta.json` voor detectie.
 - Seats: het aantal wordt bijgehouden, maar teamleden uitnodigen bestaat nog niet.
 - Iedereen in een workspace kan nu het abonnement wijzigen (alleen eigenaar is nog niet afgedwongen).
 
-## Volgende: Prompt 11 — publieke REST API
+## Prompt 11: publieke REST API — klaar (2026-11-15)
+
+- API-keys: `/app/api` (maken, één keer tonen, intrekken; max 10 per workspace). Format
+  `tt_live_` + 32 tekens; alleen de sha-256-hash en de eerste 12 tekens staan in de database.
+- Endpoints (`apps/web/src/app/api/v1`): `GET /shops`, `/shops/{domain}`, `/shops/{domain}/products`,
+  `/ads`, `/ads/{id}`, `/advertisers`, `/advertisers/{id}`, `/emails`, `POST /lookups`
+- Eén wrapper (`lib/api/handler.ts`): key (Bearer of X-API-Key) → plan (402 zonder API) →
+  rate limit per key (429 + retry-after) → maandquotum via `checkAndRecordUsage` (402) → zod-validatie
+  (400 met details). Fouten altijd `{ error: { code, message, details } }`.
+- Rate limits per key in Postgres (`api_rate_hit`, vaste vensters per seconde en per UTC-dag):
+  Pro 5/s en 2.000/dag, Agency 10/s en 10.000/dag (`API_RATE_LIMITS` in plans.ts). Een 429 kost
+  geen quotum. Oude tellers ruimt de dagelijkse onderhoudsjob op.
+- Geschatte getallen altijd `{ low, mid, high, confidence, currency, estimate: true }`
+- Paginering met opake cursor (`next_cursor`); intern pagina + limit
+- OpenAPI 3.1 gegenereerd uit dezelfde zod-schema's: `/api/v1/openapi.json`; leesbare docs op `/docs/api`
+- Gedeelde query `getShopOverview()` in packages/db (ook voor MCP)
+- Getest: 18 integratietests via de echte route-handlers (elk antwoord gevalideerd tegen het
+  schema van de spec), en met curl tegen de draaiende app (key gemaakt via de pagina; 20
+  gelijktijdige requests => 4× 200, 16× 429)
+
+### Open
+
+- Geen CORS op de data-endpoints (bedoeld voor server-naar-server; de key hoort niet in een browser).
+- Cursor is offset-gebaseerd: bij veel nieuwe data tussen twee pagina's kan een item verschuiven.
+
+## Volgende: Prompt 12 — remote MCP-server

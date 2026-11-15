@@ -379,5 +379,30 @@
     "languageHint": "De taal van het dashboard.",
     "billing": "Abonnement en verbruik",
     "billingHint": "Plan, verbruik, upgraden en facturen."
+  },
+  "api": {
+    "title": "API & MCP",
+    "description": "Gebruik TrendTrack-data in je eigen tools, scripts en AI-assistenten.",
+    "keys": "API-keys",
+    "keysHint": "Een key geeft toegang tot de data van je workspace. Behandel hem als een wachtwoord.",
+    "name": "Naam van de key",
+    "namePlaceholder": "bv. Zapier of mijn script",
+    "create": "Key maken",
+    "created": "Je nieuwe key",
+    "createdHint": "Kopieer hem nu. Je ziet hem hierna niet meer terug; we bewaren alleen een versleutelde versie.",
+    "prefix": "Key",
+    "createdAt": "Gemaakt",
+    "lastUsed": "Laatst gebruikt",
+    "never": "Nooit",
+    "revoke": "Intrekken",
+    "revoked": "Ingetrokken",
+    "empty": "Nog geen keys.",
+    "noAccess": "De API en MCP-server zitten in Pro en Agency. Je kunt al een key maken, maar calls geven een 402 tot je upgradet.",
+    "quota": "Verbruik deze maand: {used} van {limit} calls (API en MCP samen).",
+    "docs": "API-documentatie",
+    "example": "Voorbeeld",
+    "mcpTitle": "MCP-server",
+    "mcpBody": "Gebruik TrendTrack direct in Claude, ChatGPT of Cursor. De instructies volgen zodra de MCP-server live is.",
+    "error": "Dat lukte niet: {message}"
   }
 }

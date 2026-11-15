@@ -95,6 +95,26 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"api_rate_counters": {
+                  Row: {
+                    "bucket": string,"count": number,"key_id": string,"window_start": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "bucket": string,"count"?: number,"key_id": string,"window_start": string
+                  }
+                  Update: {
+                    "bucket"?: string,"count"?: number,"key_id"?: string,"window_start"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "api_rate_counters_key_id_fkey"
+      columns: ["key_id"]
+isOneToOne: false
+      referencedRelation: "api_keys"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"billing_events": {
                   Row: {
                     "event_id": string,"processed_at": string,"provider": string,"type": string
@@ -516,11 +536,19 @@ isOneToOne: false
               "jobs": number,"name": string,"state": string
             }[]
                            },
+"api_rate_hit":
+{ Args: { "p_key": string,"p_per_day": number,"p_per_second": number }; Returns: {
+              "allowed": boolean,"day_count": number,"day_reset": string,"limited_by": string,"second_count": number
+            }[]
+                           },
 "is_admin":
 { Args: Record<PropertyKey, never>; Returns: boolean
                            },
 "is_workspace_member":
 { Args: { "ws": string }; Returns: boolean
+                           },
+"prune_api_rate_counters":
+{ Args: Record<PropertyKey, never>; Returns: number
                            },
 "prune_job_runs":
 { Args: { "keep_days"?: number }; Returns: number

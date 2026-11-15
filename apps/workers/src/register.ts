@@ -291,6 +291,7 @@ export async function registerAll(d: RegisterDeps) {
     async () => {
       const growth = await recomputeGrowthScores(d.pool);
       const { rows } = await d.pool.query<{ n: string }>("select public.prune_job_runs(30) as n");
+      await d.pool.query("select public.prune_api_rate_counters()");
       return { growthUpdated: growth, prunedRuns: Number(rows[0]?.n ?? 0) };
     },
   );

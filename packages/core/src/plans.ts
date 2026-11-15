@@ -161,3 +161,14 @@ export function parseLookupKey(
 export function isPlanId(v: unknown): v is PlanId {
   return typeof v === "string" && v in PLANS;
 }
+
+/** Rate limits per API-key (bovenop het maandquotum). Bescherming tegen pieken en lussen. */
+export const API_RATE_LIMITS: Record<PlanId, { perSecond: number; perDay: number }> = {
+  free: { perSecond: 0, perDay: 0 },
+  starter: { perSecond: 0, perDay: 0 },
+  pro: { perSecond: 5, perDay: 2_000 },
+  agency: { perSecond: 10, perDay: 10_000 },
+};
+
+/** Max aantal actieve API-keys per workspace. */
+export const MAX_API_KEYS = 10;

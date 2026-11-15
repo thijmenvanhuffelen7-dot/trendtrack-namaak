@@ -154,3 +154,51 @@ export async function listShopEvents(
   return data;
 }
 export type ShopEventRow = Awaited<ReturnType<typeof listShopEvents>>[number];
+
+/**
+ * Alles over één shop in één keer: detail, aantallen producten, samenvatting van ads en e-mails
+ * en de laatste 30 dagen snapshots. Gedeeld door de REST API en de MCP-server.
+ */
+export async function getShopOverview(db: Db, domain: string) {
+  const shop = await getShopByDomain(db, domain);
+  if (!shop) return null;
+  const [products, ads, emails, history] = await Promise.all([
+    db.from("products").select("id", { count: "exact", head: true }).eq("shop_id", shop.id),
+    db
+      .from("ads")
+      .select("is_active, eu_total_reach, est_spend_low, est_spend_high")
+      .eq("shop_id", shop.id)
+      .limit(10_000),
+    db
+      .from("emails")
+      .select("type, received_at")
+      .eq("shop_id", shop.id)
+      .order("received_at", { ascending: false })
+      .limit(10_000),
+    getShopSnapshots(db, shop.id, 30),
+  ]);
+  if (ads.error) throw ads.error;
+  if (emails.error) throw emails.error;
+  const adRows = ads.data;
+  const sum = (f: (a: (typeof adRows)[number]) => number | null) =>
+    adRows.reduce((s, a) => s + (f(a) ?? 0), 0);
+  const byType = { welcome: 0, flow: 0, campaign: 0 };
+  for (const e of emails.data) byType[e.type]++;
+  return {
+    shop,
+    productCount: products.count ?? 0,
+    ads: {
+      active: adRows.filter((a) => a.is_active).length,
+      total: adRows.length,
+      totalReach: sum((a) => a.eu_total_reach),
+      spendLow: sum((a) => a.est_spend_low),
+      spendHigh: sum((a) => a.est_spend_high),
+    },
+    emails: {
+      count: emails.data.length,
+      byType,
+      lastReceivedAt: emails.data[0]?.received_at ?? null,
+    },
+    history,
+  };
+}

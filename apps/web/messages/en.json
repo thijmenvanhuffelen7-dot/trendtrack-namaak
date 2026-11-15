@@ -379,5 +379,30 @@
     "languageHint": "The language of the dashboard.",
     "billing": "Subscription and usage",
     "billingHint": "Plan, usage, upgrades and invoices."
+  },
+  "api": {
+    "title": "API & MCP",
+    "description": "Use TrendTrack data in your own tools, scripts and AI assistants.",
+    "keys": "API keys",
+    "keysHint": "A key gives access to your workspace's data. Treat it like a password.",
+    "name": "Key name",
+    "namePlaceholder": "e.g. Zapier or my script",
+    "create": "Create key",
+    "created": "Your new key",
+    "createdHint": "Copy it now. You will not see it again; we only store an encrypted version.",
+    "prefix": "Key",
+    "createdAt": "Created",
+    "lastUsed": "Last used",
+    "never": "Never",
+    "revoke": "Revoke",
+    "revoked": "Revoked",
+    "empty": "No keys yet.",
+    "noAccess": "The API and MCP server are included in Pro and Agency. You can already create a key, but calls return 402 until you upgrade.",
+    "quota": "Usage this month: {used} of {limit} calls (API and MCP combined).",
+    "docs": "API documentation",
+    "example": "Example",
+    "mcpTitle": "MCP server",
+    "mcpBody": "Use TrendTrack directly in Claude, ChatGPT or Cursor. Instructions follow once the MCP server is live.",
+    "error": "That did not work: {message}"
   }
 }

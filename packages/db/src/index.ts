@@ -9,3 +9,4 @@ export * from "./queries/shops";
 export * from "./queries/workspace";
 export * from "./billing";
 export * from "./usage";
+export * from "./api-keys";
