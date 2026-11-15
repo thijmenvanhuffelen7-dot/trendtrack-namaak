@@ -63,4 +63,4 @@ jobs:
       - run: pnpm e2e
       - name: Logs bij een fout
         if: failure()
-        run: tail -100 web.log mcp.log workers.log
+        run: tail -n 100 web.log mcp.log workers.log

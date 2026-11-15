@@ -404,8 +404,12 @@ test.describe.serial("dashboard", () => {
     const names = await page.locator("tbody tr td:first-child").allInnerTexts();
     expect(names.length).toBeGreaterThan(1);
     expect([...names].sort((a, b) => a.localeCompare(b, "nl"))).toEqual(names);
+    // Eerst de sorteer-navigatie laten afronden; anders tekent die het formulier opnieuw en is de invoer weg.
+    await page.waitForLoadState("networkidle");
     await page.fill("#f-rev-min", "999999999");
+    await expect(page.locator("#f-rev-min")).toHaveValue("999999999");
     await page.click("main form button:has-text('Filteren')");
+    await expect(page).toHaveURL(/revenue_min=999999999/);
     await expect(page.locator("main")).toContainText(/Geen|geen/);
   });
 
@@ -804,6 +808,15 @@ test.describe.serial("admin", () => {
   });
 
   test("admin/jobs toont runs van de workers", async () => {
+    // Zelf een job veroorzaken: een lookup die de worker oppakt (hangt niet van andere tests af).
+    const [ws] = await rest("workspaces?select=id&limit=1");
+    await rest("lookup_requests", {
+      method: "POST",
+      body: JSON.stringify({ workspace_id: ws.id, domain: `jobs-${Date.now().toString(36)}.nl` }),
+    });
+    await expect
+      .poll(async () => (await rest("job_runs?select=id&limit=1")).length, { timeout: 60_000 })
+      .toBeGreaterThan(0);
     await page.goto("/admin/jobs");
     await expect(page.locator("body")).toContainText(/shop\.detect|scheduler|monitor/);
   });
