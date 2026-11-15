@@ -10,6 +10,7 @@ account maken (`/login?mode=signup`) en inloggen zonder dat er een mail verstuur
 wachtwoord kiest. Ingelogde gebruikers kunnen dat ook onder Instellingen → Wachtwoord.
 
 **Productie (Supabase-dashboard):**
+
 - Authentication → Sign In / Providers → Email: **"Confirm email" uit** zolang er geen eigen SMTP is.
   Dan krijgt een nieuw account meteen een sessie. Aan = eerst bevestigen per mail (vereist SMTP).
 - De ingebouwde mailer van Supabase stuurt alleen naar adressen van je eigen Supabase-team en maar een
