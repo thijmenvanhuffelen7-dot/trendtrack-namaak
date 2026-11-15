@@ -60,6 +60,8 @@ function withReferral(request: NextRequest, response: NextResponse) {
 }
 
 export const config = {
+  // Node.js in plaats van Edge: Vercel-services ondersteunen geen Edge Functions (sinds Next 15.5 stabiel).
+  runtime: "nodejs",
   // Alles behalve statische bestanden en API-routes.
   matcher: ["/((?!_next/|api/|mcp|oauth/token|oauth/register|.*\\.[a-z0-9]+$).*)"],
 };
