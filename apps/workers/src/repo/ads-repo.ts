@@ -1,6 +1,7 @@
 import type { Db } from "@trendtrack/db";
 import type { Json } from "@trendtrack/db";
-import type { MappedAd } from "@trendtrack/core";
+import type { MappedAd, ShopEventInput } from "@trendtrack/core";
+import { insertEvents } from "./supabase-shop-repo";
 
 export interface AdRow extends Omit<MappedAd, "page_id" | "page_name"> {
   platform: "meta";
@@ -13,8 +14,13 @@ export interface AdsRepo {
   upsertAdvertisers(
     pages: { page_id: string; page_name: string | null }[],
   ): Promise<{ ids: Map<string, string>; created: string[] }>;
-  existingAdCountries(externalIds: string[]): Promise<Map<string, string[]>>;
-  upsertAds(rows: AdRow[]): Promise<number>;
+  /** Wat we al wisten van deze ads: landen en of ze actief waren. */
+  existingAds(
+    externalIds: string[],
+  ): Promise<Map<string, { countries: string[]; is_active: boolean }>>;
+  /** Upsert; geeft external_id => ads.id terug. */
+  upsertAds(rows: AdRow[]): Promise<Map<string, string>>;
+  saveEvents(events: ShopEventInput[]): Promise<void>;
   shopIdsByDomain(domains: string[]): Promise<Map<string, string>>;
   /** Koppelt een adverteerder aan een shop als hij nog geen shop heeft. */
   linkAdvertiserShop(advertiserId: string, shopId: string): Promise<void>;
@@ -57,28 +63,36 @@ export class SupabaseAdsRepo implements AdsRepo {
     return { ids, created: unique.map((p) => p.page_id).filter((id) => !existed.has(id)) };
   }
 
-  async existingAdCountries(externalIds: string[]) {
-    const map = new Map<string, string[]>();
+  async saveEvents(events: ShopEventInput[]) {
+    await insertEvents(this.db, events);
+  }
+
+  async existingAds(externalIds: string[]) {
+    const map = new Map<string, { countries: string[]; is_active: boolean }>();
     if (externalIds.length === 0) return map;
     const { data, error } = await this.db
       .from("ads")
-      .select("external_id, countries")
+      .select("external_id, countries, is_active")
       .eq("platform", "meta")
       .in("external_id", externalIds);
     if (error) throw error;
-    for (const r of data) map.set(r.external_id, r.countries);
+    for (const r of data)
+      map.set(r.external_id, { countries: r.countries, is_active: r.is_active });
     return map;
   }
 
   async upsertAds(rows: AdRow[]) {
+    const ids = new Map<string, string>();
     for (let i = 0; i < rows.length; i += 200) {
       const batch = rows.slice(i, i + 200).map((r) => ({ ...r, raw: r.raw as Json }));
-      const { error } = await this.db
+      const { data, error } = await this.db
         .from("ads")
-        .upsert(batch, { onConflict: "platform,external_id" });
+        .upsert(batch, { onConflict: "platform,external_id" })
+        .select("id, external_id");
       if (error) throw error;
+      for (const r of data) ids.set(r.external_id, r.id);
     }
-    return rows.length;
+    return ids;
   }
 
   async shopIdsByDomain(domains: string[]) {

@@ -96,6 +96,12 @@ describe("snapshotShop", () => {
     expect(est.growth_score).not.toBeNull();
     expect(est.est_signals).toHaveProperty("ads");
 
+    // Feed-events voor de Brandtracker.
+    expect([...day2.snapshots.events.values()].map((e) => e.type).sort()).toEqual([
+      "new_product",
+      "price_change",
+    ]);
+
     // Bestsellerposities staan in de product-snapshots.
     const ketting = day2.snapshots.productSnaps.get(`${shopId}:1@2026-11-15`)!;
     expect(ketting).toMatchObject({ position_in_bestsellers: 1, available_variants: 1 });

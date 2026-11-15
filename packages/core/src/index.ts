@@ -13,3 +13,5 @@ export * from "./email-address";
 export * from "./email-classify";
 export * from "./email-sanitize";
 export * from "./email-inbound";
+export * from "./shop-events";
+export * from "./filters";

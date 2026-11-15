@@ -1,5 +1,5 @@
 import { readFileSync } from "node:fs";
-import type { DailySignal, ProductRecord, ProductState } from "@trendtrack/core";
+import type { DailySignal, ProductRecord, ProductState, ShopEventInput } from "@trendtrack/core";
 import { summarizeAds, type ActiveAdRow } from "../repo/ad-stats";
 import type {
   ProductSnapshotRow,
@@ -106,6 +106,7 @@ export class MemorySnapshotRepo implements SnapshotRepo {
   shopSnaps = new Map<string, ShopSnapshotRow>();
   estimates = new Map<string, ShopEstimateFields>();
   activeAds: (ActiveAdRow & { shopId: string })[] = [];
+  events = new Map<string, ShopEventInput>();
 
   constructor(private readonly shops: MemoryShopRepo) {}
 
@@ -166,6 +167,9 @@ export class MemorySnapshotRepo implements SnapshotRepo {
   }
   async updateShopEstimate(shopId: string, fields: ShopEstimateFields) {
     this.estimates.set(shopId, fields);
+  }
+  async saveEvents(events: ShopEventInput[]) {
+    for (const e of events) if (!this.events.has(e.dedupe_key)) this.events.set(e.dedupe_key, e);
   }
   async activeShopifyDomains(limit: number) {
     return [...this.shops.shops.values()]

@@ -1,5 +1,6 @@
 import {
   diffSnapshots,
+  dominantProductType,
   estimateAov,
   estimateRevenue,
   extractReviewCount,
@@ -9,6 +10,7 @@ import {
   type ProductRecord,
   type ProductState,
   type RevenueEstimate,
+  type ShopEventInput,
   type SnapshotDiff,
 } from "@trendtrack/core";
 import { crawlBestsellers } from "../crawler/crawl-bestsellers";
@@ -105,6 +107,9 @@ export async function snapshotShop(input: string, deps: SnapshotDeps): Promise<S
     ];
   });
   await deps.snapshots.saveProductSnapshots(productRows);
+  await deps.repo.upsertShop(domain, { niche: dominantProductType(records) });
+  if (hasPrevious)
+    await deps.snapshots.saveEvents(diffEvents(shop.id, capturedOn, now, diff, records, ids));
 
   // 5. Ads en historie => schatting.
   const ads = await deps.snapshots.adStats(shop.id, now);
@@ -196,6 +201,63 @@ async function markBlocked(
 ): Promise<SnapshotResult> {
   await deps.repo.upsertShop(domain, { status: "blocked" });
   return { domain, capturedOn, skipped: "blocked" };
+}
+
+/** Zet de verschillen om naar feed-events (max 100 per soort, zodat een herindeling de feed niet overspoelt). */
+function diffEvents(
+  shopId: string,
+  capturedOn: string,
+  now: Date,
+  diff: SnapshotDiff,
+  records: ProductRecord[],
+  ids: Map<string, string>,
+): ShopEventInput[] {
+  const byId = new Map(records.map((r) => [r.external_id, r]));
+  const at = now.toISOString();
+  const events: ShopEventInput[] = [];
+  for (const ext of diff.newProducts.slice(0, 100)) {
+    const r = byId.get(ext);
+    events.push({
+      shop_id: shopId,
+      type: "new_product",
+      occurred_at: at,
+      ref_id: ids.get(ext) ?? null,
+      payload: {
+        title: r?.title ?? ext,
+        handle: r?.handle ?? null,
+        price: r?.price_min ?? null,
+        image_url: r?.image_url ?? null,
+      },
+      dedupe_key: `new_product:${shopId}:${ext}`,
+    });
+  }
+  for (const c of diff.priceChanges.slice(0, 100)) {
+    const r = byId.get(c.external_id);
+    events.push({
+      shop_id: shopId,
+      type: "price_change",
+      occurred_at: at,
+      ref_id: ids.get(c.external_id) ?? null,
+      payload: {
+        title: r?.title ?? c.external_id,
+        handle: r?.handle ?? null,
+        from: c.from,
+        to: c.to,
+      },
+      dedupe_key: `price:${shopId}:${c.external_id}:${capturedOn}`,
+    });
+  }
+  for (const ext of diff.removedProducts.slice(0, 100)) {
+    events.push({
+      shop_id: shopId,
+      type: "removed_product",
+      occurred_at: at,
+      ref_id: null,
+      payload: { external_id: ext },
+      dedupe_key: `removed:${shopId}:${ext}:${capturedOn}`,
+    });
+  }
+  return events;
 }
 
 /** Eerste snapshot: "nieuw" = gepubliceerd in de afgelopen 24 uur. */

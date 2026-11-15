@@ -1,5 +1,5 @@
 import type { Db } from "@trendtrack/db";
-import type { DailySignal, ProductRecord, ProductState } from "@trendtrack/core";
+import type { DailySignal, ProductRecord, ProductState, ShopEventInput } from "@trendtrack/core";
 import { summarizeAds } from "./ad-stats";
 import type { ShopFields, ShopRepo, ShopRow } from "./shop-repo";
 import type {
@@ -120,6 +120,15 @@ export class SupabaseShopRepo implements ShopRepo {
   }
 }
 
+export async function insertEvents(db: Db, events: ShopEventInput[]) {
+  for (let i = 0; i < events.length; i += 500) {
+    const { error } = await db
+      .from("shop_events")
+      .upsert(events.slice(i, i + 500), { onConflict: "dedupe_key", ignoreDuplicates: true });
+    if (error) throw error;
+  }
+}
+
 export class SupabaseSnapshotRepo implements SnapshotRepo {
   constructor(private readonly db: Db) {}
 
@@ -227,6 +236,10 @@ export class SupabaseSnapshotRepo implements SnapshotRepo {
   async updateShopEstimate(shopId: string, fields: ShopEstimateFields) {
     const { error } = await this.db.from("shops").update(fields).eq("id", shopId);
     if (error) throw error;
+  }
+
+  async saveEvents(events: ShopEventInput[]) {
+    await insertEvents(this.db, events);
   }
 
   async activeShopifyDomains(limit: number) {

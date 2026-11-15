@@ -3,3 +3,7 @@ export * from "./env";
 export type { Database, Json } from "./database.gen";
 export * from "./email-env";
 export * from "./email-ingest";
+export * from "./queries/ads";
+export * from "./queries/emails";
+export * from "./queries/shops";
+export * from "./queries/workspace";

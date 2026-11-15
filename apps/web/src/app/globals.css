@@ -1,43 +1,59 @@
 @import "tailwindcss";
 @import "tw-animate-css";
 
-@custom-variant dark (&:is(.dark *));
-
 :root {
   --radius: 0.5rem;
   --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --primary: oklch(0.205 0 0);
+  --foreground: oklch(0.18 0 0);
+  --card: oklch(1 0 0);
+  --muted: oklch(0.968 0.002 250);
+  --muted-foreground: oklch(0.5 0.01 250);
+  --primary: oklch(0.24 0.02 255);
   --primary-foreground: oklch(0.985 0 0);
-  --border: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --border: oklch(0.915 0.004 250);
+  --ring: oklch(0.6 0.08 255);
+  --positive: oklch(0.5 0.13 150);
+  --danger: oklch(0.53 0.19 27);
+  --warning: oklch(0.58 0.13 70);
+  /* Grafieken (dataviz-palet, slot 1) */
+  --series-1: #2a78d6;
+  --chart-grid: oklch(0.93 0.003 250);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: oklch(0.145 0 0);
-    --foreground: oklch(0.985 0 0);
-    --muted: oklch(0.269 0 0);
-    --muted-foreground: oklch(0.708 0 0);
-    --primary: oklch(0.922 0 0);
-    --primary-foreground: oklch(0.205 0 0);
-    --border: oklch(1 0 0 / 10%);
-    --ring: oklch(0.556 0 0);
+    --background: oklch(0.16 0.005 255);
+    --foreground: oklch(0.96 0 0);
+    --card: oklch(0.19 0.006 255);
+    --muted: oklch(0.24 0.008 255);
+    --muted-foreground: oklch(0.72 0.01 250);
+    --primary: oklch(0.93 0 0);
+    --primary-foreground: oklch(0.2 0.01 255);
+    --border: oklch(1 0 0 / 11%);
+    --ring: oklch(0.6 0.08 255);
+    --positive: oklch(0.75 0.15 150);
+    --danger: oklch(0.72 0.17 25);
+    --warning: oklch(0.8 0.13 80);
+    --series-1: #3987e5;
+    --chart-grid: oklch(1 0 0 / 9%);
   }
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-card: var(--card);
   --color-muted: var(--muted);
   --color-muted-foreground: var(--muted-foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
   --color-border: var(--border);
   --color-ring: var(--ring);
+  --color-positive: var(--positive);
+  --color-danger: var(--danger);
+  --color-warning: var(--warning);
   --radius-md: var(--radius);
+  --radius-lg: calc(var(--radius) + 2px);
 }
 
 body {
@@ -50,4 +66,9 @@ body {
     "Segoe UI",
     Roboto,
     sans-serif;
+  font-feature-settings: "tnum" 0;
+}
+
+.tabular {
+  font-variant-numeric: tabular-nums;
 }

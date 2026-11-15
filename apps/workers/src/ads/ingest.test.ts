@@ -1,4 +1,9 @@
-import { MetaAdSchema, type AdsArchiveQuery, type MetaAd } from "@trendtrack/core";
+import {
+  MetaAdSchema,
+  type AdsArchiveQuery,
+  type MetaAd,
+  type ShopEventInput,
+} from "@trendtrack/core";
 import { describe, expect, it } from "vitest";
 import { JOBS } from "../jobs";
 import type { AdRow, AdsRepo } from "../repo/ads-repo";
@@ -34,16 +39,21 @@ class MemoryAdsRepo implements AdsRepo {
       created: [...new Set(created)],
     };
   }
-  async existingAdCountries(ids: string[]) {
+  events: ShopEventInput[] = [];
+  async existingAds(ids: string[]) {
     return new Map(
-      ids.flatMap((id) =>
-        this.ads.has(id) ? [[id, this.ads.get(id)!.countries] as [string, string[]]] : [],
-      ),
+      ids.flatMap((id) => {
+        const a = this.ads.get(id);
+        return a ? [[id, { countries: a.countries, is_active: a.is_active }] as const] : [];
+      }),
     );
   }
   async upsertAds(rows: AdRow[]) {
     for (const r of rows) this.ads.set(r.external_id, r);
-    return rows.length;
+    return new Map(rows.map((r) => [r.external_id, `ad-${r.external_id}`]));
+  }
+  async saveEvents(events: ShopEventInput[]) {
+    this.events.push(...events);
   }
   async shopIdsByDomain(domains: string[]) {
     return new Map(
@@ -129,6 +139,41 @@ describe("syncAdvertiser", () => {
     expect(both.countries).toEqual(["BE", "NL"]);
     // BE-CPM is lager: spend-schatting wordt opnieuw berekend
     expect(both.est_spend_low).toBeLessThan(nlOnly.est_spend_low!);
+  });
+});
+
+describe("feed-events", () => {
+  it("meldt een ad die net gestopt is één keer, en oude ads niet als nieuw", async () => {
+    const repo = new MemoryAdsRepo();
+    const [active, stopped] = page(1);
+    // Eerste sync: ad 1 loopt al sinds september (geen nieuws), ad 2 stopte 20 okt (te oud).
+    await syncAdvertiser("100000000000001", ["NL"], {
+      client: fakeClient([[active!, stopped!]]).client,
+      ads: repo,
+      now,
+    });
+    expect(repo.events).toEqual([]);
+
+    // Ad 1 stopt gisteren => stopped_ad
+    const justStopped = { ...active!, ad_delivery_stop_time: "2026-11-14" };
+    await syncAdvertiser("100000000000001", ["NL"], {
+      client: fakeClient([[justStopped]]).client,
+      ads: repo,
+      now,
+    });
+    expect(repo.events.map((e) => [e.type, e.dedupe_key, e.shop_id])).toEqual([
+      ["stopped_ad", "stopped_ad:1200000000000001", "shop-zz"],
+    ]);
+    expect(repo.events[0]?.payload.run_days).toBe(65);
+
+    // Een gloednieuwe ad => new_ad
+    const fresh = { ...active!, id: "1200000000000099", ad_delivery_start_time: "2026-11-14" };
+    await syncAdvertiser("100000000000001", ["NL"], {
+      client: fakeClient([[fresh]]).client,
+      ads: repo,
+      now,
+    });
+    expect(repo.events.at(-1)).toMatchObject({ type: "new_ad", ref_id: "ad-1200000000000099" });
   });
 });
 

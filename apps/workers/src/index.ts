@@ -5,6 +5,7 @@ import { readConfig } from "./config";
 import { createCrawlerDeps, KEYWORDS_PATH, SEED_DOMAINS_PATH } from "./context";
 import { startImapPoller } from "./email/imap-poller";
 import { startHealthServer } from "./health";
+import { startLookupDispatcher } from "./infra/lookups";
 import { closePool, getPool } from "./infra/pg";
 import { registerAll } from "./register";
 import { SupabaseAdsRepo } from "./repo/ads-repo";
@@ -34,6 +35,8 @@ async function main() {
     keywordsPath: KEYWORDS_PATH,
   });
 
+  const stopLookups = startLookupDispatcher(pool, boss);
+
   // E-mail via IMAP (alternatief voor de inbound-webhook in de web-app).
   let stopImap: (() => void) | undefined;
   if (process.env.EMAIL_INBOUND_MODE === "imap") {
@@ -50,6 +53,7 @@ async function main() {
 
   const stop = async () => {
     stopImap?.();
+    stopLookups();
     health.close();
     await boss.stop({ graceful: true, timeout: 30_000 });
     await closePool();

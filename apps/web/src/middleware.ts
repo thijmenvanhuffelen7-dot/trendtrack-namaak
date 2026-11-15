@@ -1,31 +1,44 @@
+import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
 /**
- * Tijdelijke beveiliging van /admin met Basic auth (ADMIN_PASSWORD).
- * Vanaf Prompt 8 (Supabase Auth) vervangen door een check op profiles.is_admin.
- * Zonder ADMIN_PASSWORD bestaat /admin niet (404).
+ * Ververst de Supabase-sessie en schermt /app en /admin af voor niet-ingelogde bezoekers.
+ * Of iemand admin is controleert de admin-layout zelf (profiles.is_admin).
  */
-export function middleware(req: NextRequest) {
-  const password = process.env.ADMIN_PASSWORD;
-  if (!password) return new NextResponse("Not found", { status: 404 });
+export async function middleware(request: NextRequest) {
+  let response = NextResponse.next({ request });
+  const supabase = createServerClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!,
+    {
+      cookies: {
+        getAll: () => request.cookies.getAll(),
+        setAll: (list) => {
+          for (const { name, value } of list) request.cookies.set(name, value);
+          response = NextResponse.next({ request });
+          for (const { name, value, options } of list) response.cookies.set(name, value, options);
+        },
+      },
+    },
+  );
+  const {
+    data: { user },
+  } = await supabase.auth.getUser();
 
-  const header = req.headers.get("authorization") ?? "";
-  if (header.startsWith("Basic ")) {
-    const decoded = atob(header.slice(6));
-    const given = decoded.slice(decoded.indexOf(":") + 1);
-    if (constantTimeEqual(given, password)) return NextResponse.next();
+  const { pathname, search } = request.nextUrl;
+  if (!user && pathname !== "/login") {
+    const url = request.nextUrl.clone();
+    url.pathname = "/login";
+    url.search = `?next=${encodeURIComponent(pathname + search)}`;
+    return NextResponse.redirect(url);
   }
-  return new NextResponse("Authenticatie vereist", {
-    status: 401,
-    headers: { "www-authenticate": 'Basic realm="TrendTrack admin", charset="UTF-8"' },
-  });
+  if (user && pathname === "/login") {
+    const url = request.nextUrl.clone();
+    url.pathname = "/app";
+    url.search = "";
+    return NextResponse.redirect(url);
+  }
+  return response;
 }
 
-function constantTimeEqual(a: string, b: string) {
-  if (a.length !== b.length) return false;
-  let diff = 0;
-  for (let i = 0; i < a.length; i++) diff |= a.charCodeAt(i) ^ b.charCodeAt(i);
-  return diff === 0;
-}
-
-export const config = { matcher: ["/admin", "/admin/:path*"] };
+export const config = { matcher: ["/app", "/app/:path*", "/admin", "/admin/:path*", "/login"] };

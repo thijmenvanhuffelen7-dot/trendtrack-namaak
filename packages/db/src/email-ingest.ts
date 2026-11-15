@@ -101,6 +101,19 @@ export async function ingestInboundEmail(
   });
   if (insertError) throw insertError;
 
+  // Feed-event voor de Brandtracker.
+  await db.from("shop_events").upsert(
+    {
+      shop_id: inbox.shop_id,
+      type: "new_email",
+      occurred_at: email.receivedAt,
+      ref_id: id,
+      payload: { subject: email.subject, from: email.from },
+      dedupe_key: `new_email:${id}`,
+    },
+    { onConflict: "dedupe_key", ignoreDuplicates: true },
+  );
+
   const classified = await reclassifyShopEmails(db, inbox.shop_id, inbox.id, inbox.subscribed_at);
   const mine = classified.find((c) => c.id === id);
   return {

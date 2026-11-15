@@ -8,6 +8,7 @@ export interface ShopFields {
   theme_name?: string | null;
   apps?: string[];
   status?: ShopStatus;
+  niche?: string | null;
   last_crawled_at?: string;
 }
 

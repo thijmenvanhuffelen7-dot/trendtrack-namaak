@@ -1,4 +1,4 @@
-import type { DailySignal, ProductState } from "@trendtrack/core";
+import type { DailySignal, ProductState, ShopEventInput } from "@trendtrack/core";
 
 export interface ProductSnapshotRow {
   product_id: string;
@@ -68,4 +68,6 @@ export interface SnapshotRepo {
   saveShopSnapshot(row: ShopSnapshotRow): Promise<void>;
   updateShopEstimate(shopId: string, fields: ShopEstimateFields): Promise<void>;
   activeShopifyDomains(limit: number): Promise<string[]>;
+  /** Events voor de Brandtracker-feed; dubbelen (zelfde dedupe_key) worden genegeerd. */
+  saveEvents(events: ShopEventInput[]): Promise<void>;
 }

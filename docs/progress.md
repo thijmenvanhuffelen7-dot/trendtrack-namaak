@@ -191,4 +191,36 @@ daarom gebruiken we `/meta.json` voor detectie.
   nagespeeld en werken; bouw het image op je VPS of lokaal.
 - `/admin` gaat in Prompt 8 over op Supabase Auth + `profiles.is_admin`.
 
-## Volgende: Prompt 8 — dashboard-basis, shops en shop-detail
+## Prompt 8: dashboard-basis, shops en shop-detail — klaar (2026-11-15)
+
+- Migratie `20261115040000_dashboard.sql`: `shops.niche` + `shops.active_ads_count` (trigger op ads),
+  `ads.run_days_final`, view `advertiser_stats`, `lookup_requests`, `shop_events`, `shop_facets()`
+- Login: magic link (`/login`, `/auth/confirm`) en Google (`/auth/callback`, knop achter
+  `NEXT_PUBLIC_GOOGLE_LOGIN`), uitloggen, middleware beschermt `/app` en `/admin`. Zie `docs/auth.md`.
+- `/admin` nu via `profiles.is_admin` (Basic auth is weg); `pnpm workers admin --email=...`
+- next-intl: NL standaard, EN via knop (cookie + profiel), 246 sleutels in `messages/{nl,en}.json`
+- `packages/core/filters.ts`: zod-schema's voor shop-, ad-, e-mail- en adverteerderfilters
+  (gedeeld met API/MCP), `parseFilters` (kapotte waarden vallen weg), `toQueryString`
+- `packages/db/queries/*`: shops (lijst, detail, snapshots, producten, bestsellers, events, facets),
+  ads, adverteerders, e-mails, folders, brandtracker, lookups
+- Dashboard `/app`: sidebar, zoekbalk (naam => lijst, domein => shop, onbekend => lookup)
+  - `/app/shops`: tabel met filters in de URL (land, niche, thema, app, omzet, ads, groei, eerst
+    gezien), sorteren en paginering aan de serverkant
+  - `/app/shops/[domain]`: tabs Overzicht (schatting als bandbreedte + betrouwbaarheid + uitleg,
+    twee grafieken met hover en tabelweergave), Producten, Ads, E-mails, Tech; "Volg in Brandtracker"
+    en "Opslaan in folder"
+  - onbekend domein: lookup-status die elke 3 s ververst
+- Workers: lookup-dispatcher (pakt `lookup_requests` op met voorrang), feed-events bij snapshots,
+  ads en e-mails, niche per shop
+- `/schattingen`: publieke uitleg van het schattingsmodel (NL/EN)
+- Getest: unit + integratie (queries tegen de seed), en in de browser met Playwright: magic link
+  uit de lokale mailbox, filteren, sorteren, shop-detail, volgen, opslaan, zoeken, lookup, EN,
+  404 op /admin voor niet-admins, uitloggen
+
+### Open
+
+- Google-login niet getest (OAuth-client van de gebruiker nodig).
+- Lookup van een echt domein blijft in de cloud-sessie op "ophalen" staan (geen netwerk naar shops).
+- Logo's: letter-avatar; we laden geen afbeeldingen van externe sites.
+
+## Volgende: Prompt 9 — ads library, e-mail library, folders en Brandtracker

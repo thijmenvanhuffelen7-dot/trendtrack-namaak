@@ -1,6 +1,8 @@
 import {
   estimateAdSpend,
+  isRecent,
   mapMetaAd,
+  type ShopEventInput,
   type MetaAd,
   type MetaAdLibraryClient,
 } from "@trendtrack/core";
@@ -37,12 +39,14 @@ export async function ingestAds(
     mapped.map((m) => ({ page_id: m.page_id, page_name: m.page_name })),
   );
   // Landen samenvoegen met wat we al wisten (een ad kan in NL én BE gevonden worden).
-  const known = await deps.ads.existingAdCountries(mapped.map((m) => m.external_id));
+  const known = await deps.ads.existingAds(mapped.map((m) => m.external_id));
   const domains = [...new Set(mapped.map((m) => m.landing_domain).filter((d): d is string => !!d))];
   const shopIds = await deps.ads.shopIdsByDomain(domains);
 
   const rows: AdRow[] = mapped.map(({ page_id, page_name: _name, ...m }) => {
-    const countriesAll = [...new Set([...(known.get(m.external_id) ?? []), ...m.countries])].sort();
+    const countriesAll = [
+      ...new Set([...(known.get(m.external_id)?.countries ?? []), ...m.countries]),
+    ].sort();
     const spend = estimateAdSpend(m.eu_total_reach, countriesAll);
     return {
       ...m,
@@ -54,7 +58,9 @@ export async function ingestAds(
       shop_id: m.landing_domain ? (shopIds.get(m.landing_domain) ?? null) : null,
     };
   });
-  const saved = await deps.ads.upsertAds(rows);
+  const adIds = await deps.ads.upsertAds(rows);
+  const saved = rows.length;
+  await deps.ads.saveEvents(adEvents(rows, known, adIds, now));
 
   for (const r of rows)
     if (r.shop_id) await deps.ads.linkAdvertiserShop(r.advertiser_id, r.shop_id);
@@ -73,6 +79,53 @@ export async function ingestAds(
       estimate: true,
     },
   };
+}
+
+/** Feed-events: nieuwe ads en ads die net gestopt zijn (alleen recent en alleen als de shop bekend is). */
+function adEvents(
+  rows: AdRow[],
+  known: Map<string, { is_active: boolean }>,
+  adIds: Map<string, string>,
+  now: Date,
+): ShopEventInput[] {
+  const events: ShopEventInput[] = [];
+  for (const r of rows) {
+    if (!r.shop_id) continue;
+    const before = known.get(r.external_id);
+    const base = { shop_id: r.shop_id, ref_id: adIds.get(r.external_id) ?? null };
+    const payload = {
+      title: r.title,
+      body: r.body?.slice(0, 200) ?? null,
+      external_id: r.external_id,
+    };
+    if (!before && isRecent(r.started_at, now)) {
+      events.push({
+        ...base,
+        type: "new_ad",
+        occurred_at: r.started_at!,
+        payload,
+        dedupe_key: `new_ad:${r.external_id}`,
+      });
+    }
+    const justStopped = !r.is_active && (before ? before.is_active : true);
+    if (justStopped && isRecent(r.ended_at, now)) {
+      const runDays =
+        r.started_at && r.ended_at
+          ? Math.max(
+              0,
+              Math.floor((Date.parse(r.ended_at) - Date.parse(r.started_at)) / 86_400_000),
+            )
+          : null;
+      events.push({
+        ...base,
+        type: "stopped_ad",
+        occurred_at: r.ended_at!,
+        payload: { ...payload, run_days: runDays },
+        dedupe_key: `stopped_ad:${r.external_id}`,
+      });
+    }
+  }
+  return events;
 }
 
 function emptyResult(): IngestResult {

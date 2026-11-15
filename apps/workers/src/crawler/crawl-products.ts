@@ -1,4 +1,5 @@
 import {
+  dominantProductType,
   normalizeDomain,
   parseProductsPage,
   toProductRecord,
@@ -70,7 +71,10 @@ export async function crawlProducts(
     await deps.repo.upsertShop(domain, { status: "blocked" });
     log("geblokkeerd tijdens product-crawl", { domain, page: pages + 1 });
   } else {
-    await deps.repo.upsertShop(domain, { last_crawled_at: seenAt });
+    await deps.repo.upsertShop(domain, {
+      last_crawled_at: seenAt,
+      niche: dominantProductType(records),
+    });
   }
   return { domain, products: saved, pages, blocked };
 }

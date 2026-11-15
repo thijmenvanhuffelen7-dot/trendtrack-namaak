@@ -9,6 +9,7 @@ import { detectShop } from "./crawler/detect-shop";
 import { runDiscovery } from "./crawler/discovery";
 import { withDomainLock } from "./infra/domain-lock";
 import { tracked, type JobLike } from "./infra/job-runs";
+import { completeLookups, noteLookupError } from "./infra/lookups";
 import {
   DiscoverAdsPayloadSchema,
   DiscoverPayloadSchema,
@@ -90,11 +91,22 @@ export async function registerAll(d: RegisterDeps) {
     conc[JOBS.shopDetect]!,
     domainKey,
     domainJob(d, async (domain) => {
-      const r = await detectShop(domain, d.shop);
-      if (r.status === "active" && r.isShopify) {
-        await boss.send(JOBS.shopCrawlProducts, { domain: r.domain }, { singletonKey: r.domain });
+      try {
+        const r = await detectShop(domain, d.shop);
+        await completeLookups(d.pool, r);
+        if (r.status === "active" && r.isShopify) {
+          await boss.send(
+            JOBS.shopCrawlProducts,
+            { domain: r.domain },
+            { singletonKey: r.domain, priority: 5 },
+          );
+        }
+        return { status: r.status, isShopify: r.isShopify, linkedAds: r.linkedAds };
+      } catch (err) {
+        // Laat de gebruiker zien wat er misging; pg-boss probeert het later opnieuw.
+        await noteLookupError(d.pool, domain, err instanceof Error ? err.message : String(err));
+        throw err;
       }
-      return { status: r.status, isShopify: r.isShopify, linkedAds: r.linkedAds };
     }),
   );
 

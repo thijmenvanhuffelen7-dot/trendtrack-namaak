@@ -35,6 +35,7 @@ const HELP = `Gebruik: pnpm workers <command> [opties]
                             nep-mail verwerken alsof hij <hours> uur na inschrijven binnenkwam
   enqueue <job> [--domain=<d>]
                             job handmatig in de wachtrij, bv. scheduler.hourly_shops of shop.snapshot
+  admin --email=<e-mail>    gebruiker admin maken (toegang tot /admin)
   discover [--limit=500]    nieuwe domeinen uit ads en data/seed-domains.txt in de wachtrij
 `;
 
@@ -48,6 +49,7 @@ async function main() {
       "page-id": { type: "string" },
       keyword: { type: "string" },
       country: { type: "string" },
+      email: { type: "string" },
       subscribed: { type: "boolean" },
       at: { type: "string" },
       list: { type: "boolean" },
@@ -179,6 +181,19 @@ async function main() {
       } finally {
         await boss.stop({ graceful: false });
       }
+      return;
+    }
+    case "admin": {
+      if (!values.email) throw new Error("--email is verplicht");
+      const { data, error } = await createServiceClient()
+        .from("profiles")
+        .update({ is_admin: true })
+        .eq("email", values.email)
+        .select("id, email");
+      if (error) throw error;
+      if (!data.length)
+        throw new Error(`Geen gebruiker met e-mail ${values.email}; log eerst één keer in.`);
+      console.log(`${values.email} is nu admin.`);
       return;
     }
     case "discover": {

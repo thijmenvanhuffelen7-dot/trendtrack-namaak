@@ -25,17 +25,23 @@ export type Database = {
           Tables: {
             "ads": {
                   Row: {
-                    "advertiser_id": string | null,"body": string | null,"countries": (string)[],"cta": string | null,"ended_at": string | null,"est_spend_high": number | null,"est_spend_low": number | null,"eu_total_reach": number | null,"external_id": string,"first_seen_at": string,"fts": unknown,"id": string,"is_active": boolean,"landing_domain": string | null,"landing_url": string | null,"languages": (string)[],"media_type": string | null,"media_urls": (string)[],"platform": Database["public"]['Enums']["ad_platform"],"raw": Json | null,"shop_id": string | null,"snapshot_url": string | null,"started_at": string | null,"title": string | null,"updated_at": string
+                    "advertiser_id": string | null,"body": string | null,"countries": (string)[],"cta": string | null,"ended_at": string | null,"est_spend_high": number | null,"est_spend_low": number | null,"eu_total_reach": number | null,"external_id": string,"first_seen_at": string,"fts": unknown,"id": string,"is_active": boolean,"landing_domain": string | null,"landing_url": string | null,"languages": (string)[],"media_type": string | null,"media_urls": (string)[],"platform": Database["public"]['Enums']["ad_platform"],"raw": Json | null,"run_days_final": number | null,"shop_id": string | null,"snapshot_url": string | null,"started_at": string | null,"title": string | null,"updated_at": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "advertiser_id"?: string | null,"body"?: string | null,"countries"?: (string)[],"cta"?: string | null,"ended_at"?: string | null,"est_spend_high"?: number | null,"est_spend_low"?: number | null,"eu_total_reach"?: number | null,"external_id": string,"first_seen_at"?: string,"fts"?: never,"id"?: string,"is_active"?: boolean,"landing_domain"?: string | null,"landing_url"?: string | null,"languages"?: (string)[],"media_type"?: string | null,"media_urls"?: (string)[],"platform": Database["public"]['Enums']["ad_platform"],"raw"?: Json | null,"shop_id"?: string | null,"snapshot_url"?: string | null,"started_at"?: string | null,"title"?: string | null,"updated_at"?: string
+                    "advertiser_id"?: string | null,"body"?: string | null,"countries"?: (string)[],"cta"?: string | null,"ended_at"?: string | null,"est_spend_high"?: number | null,"est_spend_low"?: number | null,"eu_total_reach"?: number | null,"external_id": string,"first_seen_at"?: string,"fts"?: never,"id"?: string,"is_active"?: boolean,"landing_domain"?: string | null,"landing_url"?: string | null,"languages"?: (string)[],"media_type"?: string | null,"media_urls"?: (string)[],"platform": Database["public"]['Enums']["ad_platform"],"raw"?: Json | null,"run_days_final"?: never,"shop_id"?: string | null,"snapshot_url"?: string | null,"started_at"?: string | null,"title"?: string | null,"updated_at"?: string
                   }
                   Update: {
-                    "advertiser_id"?: string | null,"body"?: string | null,"countries"?: (string)[],"cta"?: string | null,"ended_at"?: string | null,"est_spend_high"?: number | null,"est_spend_low"?: number | null,"eu_total_reach"?: number | null,"external_id"?: string,"first_seen_at"?: string,"fts"?: never,"id"?: string,"is_active"?: boolean,"landing_domain"?: string | null,"landing_url"?: string | null,"languages"?: (string)[],"media_type"?: string | null,"media_urls"?: (string)[],"platform"?: Database["public"]['Enums']["ad_platform"],"raw"?: Json | null,"shop_id"?: string | null,"snapshot_url"?: string | null,"started_at"?: string | null,"title"?: string | null,"updated_at"?: string
+                    "advertiser_id"?: string | null,"body"?: string | null,"countries"?: (string)[],"cta"?: string | null,"ended_at"?: string | null,"est_spend_high"?: number | null,"est_spend_low"?: number | null,"eu_total_reach"?: number | null,"external_id"?: string,"first_seen_at"?: string,"fts"?: never,"id"?: string,"is_active"?: boolean,"landing_domain"?: string | null,"landing_url"?: string | null,"languages"?: (string)[],"media_type"?: string | null,"media_urls"?: (string)[],"platform"?: Database["public"]['Enums']["ad_platform"],"raw"?: Json | null,"run_days_final"?: never,"shop_id"?: string | null,"snapshot_url"?: string | null,"started_at"?: string | null,"title"?: string | null,"updated_at"?: string
                   }
                   Relationships: [
                     {
+      foreignKeyName: "ads_advertiser_id_fkey"
+      columns: ["advertiser_id"]
+isOneToOne: false
+      referencedRelation: "advertiser_stats"
+      referencedColumns: ["id"]
+    },{
       foreignKeyName: "ads_advertiser_id_fkey"
       columns: ["advertiser_id"]
 isOneToOne: false
@@ -183,6 +189,32 @@ isOneToOne: false
                   Relationships: [
                     
                   ]
+                },"lookup_requests": {
+                  Row: {
+                    "created_at": string,"domain": string,"error": string | null,"id": string,"requested_by": string | null,"shop_id": string | null,"source": string,"status": string,"updated_at": string,"workspace_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"domain": string,"error"?: string | null,"id"?: string,"requested_by"?: string | null,"shop_id"?: string | null,"source"?: string,"status"?: string,"updated_at"?: string,"workspace_id": string
+                  }
+                  Update: {
+                    "created_at"?: string,"domain"?: string,"error"?: string | null,"id"?: string,"requested_by"?: string | null,"shop_id"?: string | null,"source"?: string,"status"?: string,"updated_at"?: string,"workspace_id"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "lookup_requests_shop_id_fkey"
+      columns: ["shop_id"]
+isOneToOne: false
+      referencedRelation: "shops"
+      referencedColumns: ["id"]
+    },{
+      foreignKeyName: "lookup_requests_workspace_id_fkey"
+      columns: ["workspace_id"]
+isOneToOne: false
+      referencedRelation: "workspaces"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"plans": {
                   Row: {
                     "id": string,"is_public": boolean,"limits": NonNullable<Json>,"monthly_price_cents": number,"name": string,"sort_order": number
@@ -271,6 +303,26 @@ isOneToOne: true
       referencedColumns: ["id"]
     }
                   ]
+                },"shop_events": {
+                  Row: {
+                    "created_at": string,"dedupe_key": string,"id": number,"occurred_at": string,"payload": NonNullable<Json>,"ref_id": string | null,"shop_id": string,"type": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"dedupe_key": string,"id"?: never,"occurred_at"?: string,"payload"?: NonNullable<Json>,"ref_id"?: string | null,"shop_id": string,"type": string
+                  }
+                  Update: {
+                    "created_at"?: string,"dedupe_key"?: string,"id"?: never,"occurred_at"?: string,"payload"?: NonNullable<Json>,"ref_id"?: string | null,"shop_id"?: string,"type"?: string
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "shop_events_shop_id_fkey"
+      columns: ["shop_id"]
+isOneToOne: false
+      referencedRelation: "shops"
+      referencedColumns: ["id"]
+    }
+                  ]
                 },"shop_snapshots": {
                   Row: {
                     "active_ads_count": number | null,"captured_on": string,"est_confidence": number | null,"est_daily_revenue": number | null,"est_daily_revenue_high": number | null,"est_daily_revenue_low": number | null,"new_products": number | null,"price_changes": number | null,"product_count": number | null,"removed_products": number | null,"review_count": number | null,"sellout_value": number | null,"sellouts": number | null,"shop_id": string,"total_reach": number | null
@@ -293,14 +345,14 @@ isOneToOne: false
                   ]
                 },"shops": {
                   Row: {
-                    "apps": NonNullable<Json>,"country": string | null,"created_at": string,"currency": string | null,"domain": string,"est_confidence": number | null,"est_monthly_orders": number | null,"est_monthly_orders_high": number | null,"est_monthly_orders_low": number | null,"est_monthly_revenue": number | null,"est_monthly_revenue_high": number | null,"est_monthly_revenue_low": number | null,"est_signals": Json | null,"est_updated_at": string | null,"first_seen_at": string,"growth_score": number | null,"id": string,"last_crawled_at": string | null,"name": string | null,"platform": string | null,"status": Database["public"]['Enums']["shop_status"],"theme_name": string | null,"updated_at": string
+                    "active_ads_count": number,"apps": NonNullable<Json>,"country": string | null,"created_at": string,"currency": string | null,"domain": string,"est_confidence": number | null,"est_monthly_orders": number | null,"est_monthly_orders_high": number | null,"est_monthly_orders_low": number | null,"est_monthly_revenue": number | null,"est_monthly_revenue_high": number | null,"est_monthly_revenue_low": number | null,"est_signals": Json | null,"est_updated_at": string | null,"first_seen_at": string,"growth_score": number | null,"id": string,"last_crawled_at": string | null,"name": string | null,"niche": string | null,"platform": string | null,"status": Database["public"]['Enums']["shop_status"],"theme_name": string | null,"updated_at": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "apps"?: NonNullable<Json>,"country"?: string | null,"created_at"?: string,"currency"?: string | null,"domain": string,"est_confidence"?: number | null,"est_monthly_orders"?: number | null,"est_monthly_orders_high"?: number | null,"est_monthly_orders_low"?: number | null,"est_monthly_revenue"?: number | null,"est_monthly_revenue_high"?: number | null,"est_monthly_revenue_low"?: number | null,"est_signals"?: Json | null,"est_updated_at"?: string | null,"first_seen_at"?: string,"growth_score"?: number | null,"id"?: string,"last_crawled_at"?: string | null,"name"?: string | null,"platform"?: string | null,"status"?: Database["public"]['Enums']["shop_status"],"theme_name"?: string | null,"updated_at"?: string
+                    "active_ads_count"?: number,"apps"?: NonNullable<Json>,"country"?: string | null,"created_at"?: string,"currency"?: string | null,"domain": string,"est_confidence"?: number | null,"est_monthly_orders"?: number | null,"est_monthly_orders_high"?: number | null,"est_monthly_orders_low"?: number | null,"est_monthly_revenue"?: number | null,"est_monthly_revenue_high"?: number | null,"est_monthly_revenue_low"?: number | null,"est_signals"?: Json | null,"est_updated_at"?: string | null,"first_seen_at"?: string,"growth_score"?: number | null,"id"?: string,"last_crawled_at"?: string | null,"name"?: string | null,"niche"?: string | null,"platform"?: string | null,"status"?: Database["public"]['Enums']["shop_status"],"theme_name"?: string | null,"updated_at"?: string
                   }
                   Update: {
-                    "apps"?: NonNullable<Json>,"country"?: string | null,"created_at"?: string,"currency"?: string | null,"domain"?: string,"est_confidence"?: number | null,"est_monthly_orders"?: number | null,"est_monthly_orders_high"?: number | null,"est_monthly_orders_low"?: number | null,"est_monthly_revenue"?: number | null,"est_monthly_revenue_high"?: number | null,"est_monthly_revenue_low"?: number | null,"est_signals"?: Json | null,"est_updated_at"?: string | null,"first_seen_at"?: string,"growth_score"?: number | null,"id"?: string,"last_crawled_at"?: string | null,"name"?: string | null,"platform"?: string | null,"status"?: Database["public"]['Enums']["shop_status"],"theme_name"?: string | null,"updated_at"?: string
+                    "active_ads_count"?: number,"apps"?: NonNullable<Json>,"country"?: string | null,"created_at"?: string,"currency"?: string | null,"domain"?: string,"est_confidence"?: number | null,"est_monthly_orders"?: number | null,"est_monthly_orders_high"?: number | null,"est_monthly_orders_low"?: number | null,"est_monthly_revenue"?: number | null,"est_monthly_revenue_high"?: number | null,"est_monthly_revenue_low"?: number | null,"est_signals"?: Json | null,"est_updated_at"?: string | null,"first_seen_at"?: string,"growth_score"?: number | null,"id"?: string,"last_crawled_at"?: string | null,"name"?: string | null,"niche"?: string | null,"platform"?: string | null,"status"?: Database["public"]['Enums']["shop_status"],"theme_name"?: string | null,"updated_at"?: string
                   }
                   Relationships: [
                     
@@ -428,7 +480,21 @@ isOneToOne: false
                 }
           }
           Views: {
-            [_ in never]: never
+            "advertiser_stats": {
+                  Row: {
+                    "active_ads": number | null,"country": string | null,"est_spend_high": number | null,"est_spend_low": number | null,"first_seen_at": string,"id": string,"last_ad_started_at": string | null,"page_id": string,"page_name": string | null,"platform": Database["public"]['Enums']["ad_platform"],"shop_domain": string | null,"shop_id": string | null,"shop_name": string | null,"total_ads": number | null,"total_reach": number | null
+                  }
+                  ComputedFields: never
+                  Relationships: [
+                    {
+      foreignKeyName: "advertisers_shop_id_fkey"
+      columns: ["shop_id"]
+isOneToOne: false
+      referencedRelation: "shops"
+      referencedColumns: ["id"]
+    }
+                  ]
+                }
           }
           Functions: {
             "admin_queue_stats":
@@ -444,6 +510,12 @@ isOneToOne: false
                            },
 "prune_job_runs":
 { Args: { "keep_days"?: number }; Returns: number
+                           },
+"refresh_shop_ad_count":
+{ Args: { "target": string }; Returns: undefined
+                           },
+"shop_facets":
+{ Args: Record<PropertyKey, never>; Returns: Json
                            }
           }
           Enums: {
