@@ -1,0 +1,14 @@
+{
+  "products": [
+    {
+      "id": 9003,
+      "title": "Naamring goud",
+      "handle": "naamring-goud",
+      "vendor": "Zilverzand",
+      "product_type": "Ringen",
+      "tags": [],
+      "variants": [{ "id": 3, "price": "44.95", "available": false }],
+      "images": []
+    }
+  ]
+}

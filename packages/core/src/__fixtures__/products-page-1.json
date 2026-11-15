@@ -1,0 +1,31 @@
+{
+  "products": [
+    {
+      "id": 9001,
+      "title": "Schakelketting zilver",
+      "handle": "schakelketting-zilver",
+      "vendor": "Zilverzand",
+      "product_type": "Kettingen",
+      "created_at": "2026-09-01T10:00:00+02:00",
+      "published_at": "2026-09-02T10:00:00+02:00",
+      "tags": ["zilver", "ketting"],
+      "variants": [
+        { "id": 1, "price": "39.95", "compare_at_price": "59.95", "available": true },
+        { "id": 2, "price": "49.95", "compare_at_price": null, "available": false }
+      ],
+      "images": [{ "src": "https://cdn.shopify.com/s/files/1/ketting.jpg" }]
+    },
+    {
+      "id": 9002,
+      "title": "Parel oorbellen",
+      "handle": "oorbellen-parel",
+      "vendor": "Zilverzand",
+      "product_type": "",
+      "created_at": "2026-11-01T10:00:00+01:00",
+      "published_at": null,
+      "tags": "parel, oorbellen ,",
+      "variants": [{ "id": 3, "price": "24.95", "compare_at_price": "0.00", "available": true }],
+      "images": []
+    }
+  ]
+}

@@ -41,4 +41,45 @@
 - Omdat schrijven alleen via de service role mag, moeten web-acties (folder maken, merk volgen)
   via server actions/route handlers lopen die eerst auth + `checkAndRecordUsage` doen.
 
-## Volgende: Prompt 3 — Shopify shop crawler
+## Prompt 3: Shopify shop crawler — klaar (2026-11-15), met kanttekening
+
+- `packages/core`:
+  - `app-signatures.ts`: 64 apps/tools (o.a. Klaviyo, Judge.me, Loox, Recharge, Vitals, en NL-specifiek
+    Kiyoh, WebwinkelKeur, Trusted Shops, Feedback Company) + `detectApps()`
+  - `shopify-detect.ts`: `parseShopifyHomepage()` (Shopify ja/nee, naam, valuta, land, locale,
+    thema via `Shopify.theme.schema_name`, myshopify-domein, apps)
+  - `shopify-products.ts`: zod-schema voor `/products.json`, `toProductRecord()`, `extractProductHandles()`
+  - `robots.ts`: robots.txt-parser (groepen, `*`, `$`, langste match, crawl-delay)
+- `apps/workers`:
+  - `http/polite-fetcher.ts`: max 1 req/s per domein (requests per domein in serie), robots.txt
+    (+ crawl-delay), timeouts, retries met backoff + Retry-After, eigen User-Agent (`CRAWLER_CONTACT`),
+    SSRF-bescherming (geen IP's/localhost/afwijkende poorten/privé-IP's, ook niet na redirects),
+    401/403 en aanhoudende 429/430 => `BlockedError`
+  - `crawler/detect-shop.ts` (shop.detect): homepage + `/meta.json`, upsert shop, koppelt ads
+    met hetzelfde `landing_domain`. Blokkeert/weert ons => `blocked`. Domein bestaat niet => `dead`
+    (alleen als DNS verder wél werkt). Wachtwoordpagina => `dead`. Netwerkstoring => status blijft, job faalt
+    en wordt opnieuw geprobeerd.
+  - `crawler/crawl-products.ts` (shop.crawl_products): pagineert `/products.json?limit=250&page=N`
+  - `crawler/crawl-bestsellers.ts` (shop.crawl_bestsellers): zie kanttekening
+  - `crawler/discovery.ts` (shop.discover): domeinen uit ads + `data/seed-domains.txt`;
+    `requestLookup()` voor gebruikers (hoogste prioriteit). Dedupe via pg-boss `singletonKey` + policy `short`.
+  - `register.ts`: queues + handlers; detect => crawl_products => crawl_bestsellers
+  - CLI: `pnpm workers crawl --domain=<domein>` en `pnpm workers discover`
+- Tests: 38 unit tests met fixtures (geen netwerk) + integratietest die een volledige crawl
+  (nep-netwerk) naar de echte lokale Supabase schrijft (`pnpm test:db`)
+
+### Kanttekening: bestsellers en robots.txt
+
+De standaard robots.txt van elke Shopify-store bevat `Disallow: /collections/*sort_by*`.
+"Respecteer robots.txt" en "lees `/collections/all?sort_by=best-selling`" gaan dus bijna nooit samen.
+De crawler gebruikt `sort_by` alleen als robots.txt het toestaat, en valt anders terug op een eigen
+bestseller-collectie van de winkel (`/collections/bestsellers/products.json`, `best-sellers`, `meest-verkocht`, ...).
+Hebben ze die niet, dan is er geen bestsellerdata. Ook `/cart.js` is verboden (`Disallow: /cart`),
+daarom gebruiken we `/meta.json` voor detectie.
+
+### Niet getest
+
+- Een echte NL-store crawlen lukte niet in de cloud-sessie: geen DNS en de proxy blokkeert webshops.
+  Lokaal of op de VPS: `pnpm workers crawl --domain=<shop>`.
+
+## Volgende: Prompt 4 — dagelijkse snapshots en sales-schatting

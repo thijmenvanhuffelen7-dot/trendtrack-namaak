@@ -1,0 +1,24 @@
+{
+  "products": [
+    {
+      "id": 9001,
+      "title": "Schakelketting zilver",
+      "handle": "schakelketting-zilver",
+      "vendor": "Zilverzand",
+      "product_type": "Kettingen",
+      "tags": ["zilver"],
+      "variants": [{ "id": 1, "price": "39.95", "available": true }],
+      "images": []
+    },
+    {
+      "id": 9002,
+      "title": "Parel oorbellen",
+      "handle": "oorbellen-parel",
+      "vendor": "Zilverzand",
+      "product_type": "Oorbellen",
+      "tags": [],
+      "variants": [{ "id": 2, "price": "24.95", "available": true }],
+      "images": []
+    }
+  ]
+}

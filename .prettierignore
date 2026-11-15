@@ -4,3 +4,5 @@ dist
 pnpm-lock.yaml
 supabase/.temp
 **/*.gen.ts
+**/__fixtures__
+**/test/fixtures

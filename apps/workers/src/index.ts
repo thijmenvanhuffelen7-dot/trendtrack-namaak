@@ -1,6 +1,7 @@
 import PgBoss from "pg-boss";
+import { createCrawlerDeps, SEED_DOMAINS_PATH } from "./context";
+import { registerShopJobs } from "./register";
 
-/** Start de pg-boss worker. Job-handlers worden vanaf Prompt 3 geregistreerd. */
 async function main() {
   const connectionString = process.env.DATABASE_URL;
   if (!connectionString) throw new Error("DATABASE_URL ontbreekt (zie .env.example)");
@@ -8,6 +9,7 @@ async function main() {
   const boss = new PgBoss(connectionString);
   boss.on("error", (err) => console.error("[pg-boss]", err));
   await boss.start();
+  await registerShopJobs(boss, createCrawlerDeps(), SEED_DOMAINS_PATH);
   console.log("workers gestart");
 
   const stop = async () => {

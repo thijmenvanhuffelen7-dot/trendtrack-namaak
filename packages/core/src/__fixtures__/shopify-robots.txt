@@ -1,0 +1,35 @@
+# we use Shopify as our ecommerce platform
+
+User-agent: *
+Disallow: /a/downloads/-/*
+Disallow: /admin
+Disallow: /cart
+Disallow: /orders
+Disallow: /checkouts/
+Disallow: /checkout
+Disallow: /collections/*sort_by*
+Disallow: /*/collections/*sort_by*
+Disallow: /collections/*+*
+Disallow: /collections/*%2B*
+Disallow: /*/collections/*+*
+Disallow: /search
+Disallow: /policies/
+Disallow: /*?*oseid=*
+Disallow: /*preview_theme_id*
+Allow: /search/$
+Sitemap: https://zilverzand.nl/sitemap.xml
+
+# Google adsbot ignores robots.txt unless specifically named!
+User-agent: adsbot-google
+Disallow: /checkouts/
+Disallow: /checkout
+Disallow: /carts
+Disallow: /orders
+
+User-agent: Nutch
+Disallow: /
+
+User-agent: BadBot
+User-agent: TrendTrackBot-Banned
+Disallow: /
+Crawl-delay: 10

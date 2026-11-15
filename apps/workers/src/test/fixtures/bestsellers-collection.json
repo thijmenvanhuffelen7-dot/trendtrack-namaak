@@ -1,0 +1,18 @@
+{
+  "products": [
+    {
+      "id": 9003,
+      "title": "Naamring goud",
+      "handle": "naamring-goud",
+      "variants": [],
+      "images": []
+    },
+    {
+      "id": 9001,
+      "title": "Schakelketting zilver",
+      "handle": "schakelketting-zilver",
+      "variants": [],
+      "images": []
+    }
+  ]
+}

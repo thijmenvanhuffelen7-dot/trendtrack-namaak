@@ -1,0 +1,2 @@
+# Handmatige seedlijst: één domein per regel. Commentaar met #.
+# Voeg hier NL/BE Shopify-stores toe die je wilt laten crawlen.
