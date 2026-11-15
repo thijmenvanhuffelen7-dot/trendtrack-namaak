@@ -567,7 +567,7 @@ test.describe.serial("dashboard", () => {
       )
       .not.toMatchObject({ status: "queued", error: null });
     await expect(page.locator("main")).toContainText(
-      /aan het ophalen|niet bereikbaar|lukt nog niet|niet gelukt|bestaat niet/,
+      /aan het ophalen|niet bereikbaar|niet meer bereikbaar|lukt nog niet|niet gelukt|bestaat niet/,
       { timeout: 30_000 },
     );
   });
