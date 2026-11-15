@@ -9,7 +9,8 @@
   "scripts": {
     "lint": "eslint .",
     "typecheck": "tsc -p tsconfig.json",
-    "gen:types": "supabase gen types typescript --local > src/database.gen.ts"
+    "gen:types": "supabase gen types typescript --local > src/database.gen.ts",
+    "test:integration": "vitest run --config vitest.integration.config.ts"
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.57.0",
