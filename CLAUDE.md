@@ -16,7 +16,7 @@ packages/db     Supabase-client, gegenereerde types (database.gen.ts) en gedeeld
 packages/core   Gedeelde logica: schattingsmodellen, URL-normalisatie, types, plannen
 supabase/       Supabase CLI-config, migraties en seed
 data/           Seedlijsten (domeinen, ad-zoekwoorden)
-docs/           progress.md, estimation.md, runbook.md
+docs/           progress.md, estimation.md, auth.md, emails.md, workers.md
 ```
 
 Workspace-packages exporteren TypeScript-bron (`exports: ./src/index.ts`); er is geen build-stap
@@ -34,6 +34,9 @@ voor packages. Next transpileert ze via `transpilePackages`, workers en mcp draa
 - Data alleen via officiële/publieke bronnen. Geen scraping van de Meta Ad Library-website.
   Shops die blokkeren markeren we als `blocked`, we omzeilen dat niet.
 - Logica die web, API en MCP delen hoort in `packages/core` of `packages/db`, niet gedupliceerd.
+- Web: lezen met de sessie van de gebruiker (`getSession().db`, RLS); schrijven via server actions
+  met `serviceDb()` na `getSession()`. UI-teksten via next-intl (`messages/nl.json` en `en.json`,
+  zelfde sleutels). Filters en queries komen uit `packages/core/filters.ts` en `packages/db/queries`.
 - Commit na elke afgeronde stap en werk `docs/progress.md` bij.
 
 ## Lokaal draaien
@@ -57,6 +60,7 @@ pnpm lint
 pnpm typecheck
 pnpm test            # alle Vitest-projecten
 pnpm format:check
+pnpm test:db         # integratietests tegen de lokale Supabase (mogen testdata wissen)
 pnpm db:reset        # migraties + seed opnieuw
 pnpm db:types        # TS-types genereren naar packages/db/src/database.gen.ts
 ```

@@ -92,3 +92,5 @@ update public.shops set
 where domain in ('zilverzand.nl', 'bosbad.be', 'fietsfabriekje.nl');
 update public.shop_snapshots set est_daily_revenue_low = round(est_daily_revenue * 0.65, 2), est_daily_revenue_high = round(est_daily_revenue * 1.45, 2)
 where est_daily_revenue_low is null and est_daily_revenue is not null;
+
+update public.ads set snapshot_url = 'https://www.facebook.com/ads/library/?id=' || external_id where snapshot_url is null;

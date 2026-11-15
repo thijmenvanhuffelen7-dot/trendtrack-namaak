@@ -71,6 +71,17 @@ export default async function AppLayout({ children }: { children: React.ReactNod
                 autoComplete="off"
               />
             </form>
+            <form action={setLocaleAction} className="md:hidden">
+              <input type="hidden" name="locale" value={other} />
+              <Button
+                type="submit"
+                variant="ghost"
+                size="sm"
+                aria-label={`${tc("language")}: ${other.toUpperCase()}`}
+              >
+                {other.toUpperCase()}
+              </Button>
+            </form>
             <form action="/auth/signout" method="post" className="md:hidden">
               <Button type="submit" variant="ghost" size="sm">
                 {tc("signOut")}

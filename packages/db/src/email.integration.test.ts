@@ -15,11 +15,28 @@ describe("e-mail library", () => {
   let shopId = "";
 
   afterAll(async () => {
-    const { data } = await db.from("emails").select("html_storage_path").eq("shop_id", shopId);
+    // Alleen opruimen wat deze test zelf maakte (mails van het test-seed-adres), niet de seed-data.
+    const { data: inbox } = await db
+      .from("seed_inboxes")
+      .select("id")
+      .eq("shop_id", shopId)
+      .maybeSingle();
+    if (!inbox) return;
+    const { data } = await db
+      .from("emails")
+      .select("id, html_storage_path")
+      .eq("seed_inbox_id", inbox.id);
     const paths = (data ?? []).map((e) => e.html_storage_path).filter((p): p is string => !!p);
     if (paths.length) await db.storage.from(EMAIL_BUCKET).remove(paths);
-    await db.from("emails").delete().eq("shop_id", shopId);
-    await db.from("seed_inboxes").delete().eq("shop_id", shopId);
+    await db
+      .from("shop_events")
+      .delete()
+      .in(
+        "ref_id",
+        (data ?? []).map((e) => e.id),
+      );
+    await db.from("emails").delete().eq("seed_inbox_id", inbox.id);
+    await db.from("seed_inboxes").delete().eq("id", inbox.id);
   });
 
   it("koppelt een mail aan de juiste shop, schoont hem op en classificeert hem", async () => {

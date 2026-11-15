@@ -223,4 +223,35 @@ daarom gebruiken we `/meta.json` voor detectie.
 - Lookup van een echt domein blijft in de cloud-sessie op "ophalen" staan (geen netwerk naar shops).
 - Logo's: letter-avatar; we laden geen afbeeldingen van externe sites.
 
-## Volgende: Prompt 9 — ads library, e-mail library, folders en Brandtracker
+## Prompt 9: ads library, e-mail library, folders en Brandtracker — klaar (2026-11-15)
+
+- `/app/ads`: grid met ad-kaarten (tekst, adverteerder, startdatum, looptijd, EU-bereik,
+  spend-schatting, landingsdomein, label "Lang lopend" vanaf 30 dagen). Filters in de URL: full-text,
+  status, land, taal, looptijd (lopend én gestopt), bereik, mediatype, sortering. Klik opent een
+  detailpaneel (`?ad=<id>`) met de landingspagina in een iframe zonder scripts, link naar de shop,
+  link naar de Meta Ad Library en "Opslaan in folder".
+- `/app/advertisers`: gesorteerd op actieve ads of totaal bereik (view `advertiser_stats`)
+- `/app/emails` + `/app/emails/[id]`: filters op type, shop, niche, periode, onderwerp; de mail
+  staat in `<iframe sandbox srcDoc>` zonder `allow-scripts` en zonder `allow-same-origin`
+- `/app/folders` + `/app/folders/[id]`: maken, items verwijderen, verwijderen, delen aan/uit;
+  `/share/[token]`: publieke alleen-lezen pagina (noindex, 404 bij fout of ingetrokken token)
+- `/app/brandtracker`: gevolgde shops + feed per dag met filter op soort (nieuwe ad, ad gestopt,
+  nieuw product, prijswijziging, nieuwe e-mail); voorkeur "dagelijkse samenvatting" per shop
+- Lege staten en `loading.tsx`-skeletons op alle lijstpagina's
+- Getest in de browser (Playwright): ads filteren en zoeken, paneel, opslaan in folder,
+  adverteerders, e-mails, shop volgen, feed + filter, delen (publiek 200, na uitzetten 404),
+  item verwijderen, lege staat, mobiel (390 px, geen horizontale scroll). Integratietest: twee
+  snapshot-runs leveren een `price_change`-event op dat de feed-query teruggeeft.
+
+### Open / eerlijk
+
+- **Geen creatives**: de Meta API geeft geen afbeeldingen/video's, dus ad-kaarten tonen tekst en
+  cijfers; de creative staat achter "Bekijk in Meta Ad Library". Mediatype-filter bestaat, maar
+  alles is nu `unknown`.
+- **Landingspagina in iframe**: veel shops verbieden insluiten (X-Frame-Options); dan blijft het
+  vak leeg en gebruik je "Open landingspagina". Screenshots maken we (nog) niet.
+- **Dagelijkse samenvatting per e-mail wordt niet verstuurd**: alleen de voorkeur wordt bewaard.
+  Versturen vraagt een mailprovider (bv. Resend/Postmark) en een dagelijkse job.
+- Limieten (aantal folders, gevolgde merken) komen in Prompt 10; de server actions zijn de plek.
+
+## Volgende: Prompt 10 — plannen, betalingen en limieten (Stripe-testkeys nodig)

@@ -1,4 +1,4 @@
-import { createServiceClient } from "@trendtrack/db";
+import { createServiceClient, listShopEvents } from "@trendtrack/db";
 import { afterAll, describe, expect, it } from "vitest";
 import { detectShop } from "../crawler/detect-shop";
 import { SupabaseShopRepo, SupabaseSnapshotRepo } from "../repo/supabase-shop-repo";
@@ -82,6 +82,12 @@ describe("snapshot naar Supabase", () => {
     expect(data!.est_monthly_revenue!).toBeLessThanOrEqual(data!.est_monthly_revenue_high!);
     expect(data!.est_confidence).toBeGreaterThan(0);
     expect(data!.growth_score).not.toBeNull();
+
+    // De prijswijziging (40 → 42) staat als event klaar voor de Brandtracker-feed.
+    const events = await listShopEvents(db, [shop!.id]);
+    expect(events.map((e) => [e.type, e.payload])).toEqual([
+      ["price_change", expect.objectContaining({ title: "Ketting", from: 40, to: 42 })],
+    ]);
 
     const { data: snaps } = await db
       .from("shop_snapshots")
