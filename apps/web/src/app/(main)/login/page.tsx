@@ -30,11 +30,11 @@ export default async function LoginPage({
           <h1 style={{ fontSize: "clamp(2rem, 1.6rem + 1.4vw, 2.6rem)" }}>
             {mode === "signup" ? t("titleSignUp") : t("title")}
           </h1>
-          <p className="mt-3 text-[15px] text-[#c4c4cc]">{t("subtitle")}</p>
+          <p className="mt-3 text-[15px] text-[var(--s-body)]">{t("subtitle")}</p>
           {error && (
             <p
               role="alert"
-              className="mt-6 rounded-xl border border-[#e5484d]/40 bg-[#e5484d]/10 p-3 text-[14px] text-[#ffb3b5]"
+              className="mt-6 rounded-xl border border-[#e5484d]/40 bg-[#e5484d]/10 p-3 text-[14px] text-[var(--s-danger)]"
             >
               {error === "link" ? t("errorLink") : t("errorOauth")}
             </p>

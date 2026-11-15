@@ -8,6 +8,7 @@ import {
   type BillingInterval,
   type PlanId,
 } from "@trendtrack/core/plans";
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { useState } from "react";
 
@@ -83,17 +84,19 @@ export function PricingTable({ headingLevel = 2 }: { headingLevel?: 1 | 2 }) {
       : `/login?next=${encodeURIComponent(`/app/settings/billing?interval=${interval}`)}`;
 
   return (
-    <section aria-labelledby="pricing-title" className="s-section s-glow relative">
+    <section aria-labelledby="pricing-title" className="s-section relative">
       <div className="s-wrap">
         <div data-reveal className="flex flex-wrap items-end justify-between gap-6">
           <div>
+            <span className="s-eyebrow">Prijzen</span>
             <H
               id="pricing-title"
+              className="mt-5"
               style={{ fontSize: headingLevel === 1 ? "var(--step-display)" : "var(--step-head)" }}
             >
-              Wat het <span className="s-accent-text">kost.</span>
+              Wat het kost
             </H>
-            <p className="mt-4 max-w-xl text-[var(--step-lead)] text-[#c4c4cc]">
+            <p className="mt-4 max-w-xl text-[var(--step-lead)] text-[var(--s-body)]">
               Gratis beginnen, opschalen wanneer je wilt. Langer vooruit betalen is goedkoper.
             </p>
           </div>
@@ -111,13 +114,17 @@ export function PricingTable({ headingLevel = 2 }: { headingLevel?: 1 | 2 }) {
                 onClick={() => setInterval(i)}
                 className={`rounded-xl px-4 py-2 text-[14px] transition-colors ${
                   interval === i
-                    ? "bg-white/[0.09] text-[var(--s-ink)] shadow-[inset_0_1px_0_rgb(255_255_255/0.08)]"
+                    ? "bg-[var(--s-ink)] text-[var(--s-bg)]"
                     : "text-[var(--s-muted)] hover:text-[var(--s-ink)]"
                 }`}
               >
                 {i === "month" ? "Maand" : i === "quarter" ? "Kwartaal" : "Jaar"}
                 {INTERVAL_DISCOUNT[i] > 0 && (
-                  <span className="ml-1.5 text-[#5fe3c5]">−{INTERVAL_DISCOUNT[i] * 100}%</span>
+                  <span
+                    className={`ml-1.5 font-semibold ${interval === i ? "" : "text-[var(--s-accent)]"}`}
+                  >
+                    −{INTERVAL_DISCOUNT[i] * 100}%
+                  </span>
                 )}
               </button>
             ))}
@@ -131,18 +138,21 @@ export function PricingTable({ headingLevel = 2 }: { headingLevel?: 1 | 2 }) {
             return (
               <li
                 key={id}
-                className={`s-frame relative flex ${pro ? "border-[var(--s-accent-hi)]/40 shadow-[0_0_60px_-12px_rgb(25_179_148/0.35)]" : ""}`}
+                className={`relative flex rounded-[24px] ${pro ? "s-dark shadow-[0_30px_60px_-30px_rgb(6_38_33/0.7)]" : ""}`}
               >
-                <div className="s-card flex w-full flex-col p-6">
+                <div className={`flex w-full flex-col p-6 ${pro ? "" : "s-card"}`}>
                   <div className="flex h-7 items-center justify-between">
                     <Sub className="text-[22px]">{PLANS[id].name}</Sub>
-                    {pro && <span className="s-tag bg-[var(--s-accent)] text-white">Populair</span>}
+                    {pro && <span className="s-tag bg-white text-[#0f1412]">Populair</span>}
                   </div>
                   <p className="mt-6 font-[family-name:var(--font-display)] text-[44px] leading-none font-bold tracking-[-0.04em] tabular-nums">
                     {p.main}
                   </p>
                   <p className="mt-2 min-h-[2.6em] text-[14px] text-[var(--s-muted)]">{p.sub}</p>
                   <Link href={cta(id)} className={`mt-5 w-full ${pro ? "s-btn" : "s-btn-ghost"}`}>
+                    <span className="s-btn-icon">
+                      <ArrowRight className="size-4" aria-hidden />
+                    </span>
                     {id === "free" ? "Gratis beginnen" : `Kies ${PLANS[id].name}`}
                   </Link>
                   <dl className="mt-6 space-y-3 border-t border-[var(--s-line)] pt-6 text-[14px]">

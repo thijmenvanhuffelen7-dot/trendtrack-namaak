@@ -448,4 +448,14 @@ als signaalkleuren). Alleen de stijl is overgenomen: geen logo, teksten of afbee
   prestaties, SEO 100, best practices 100. Geen horizontaal scrollen op 390 px.
 - Het dashboard (`/app`) en de loginpagina hebben nog de oude, lichte stijl.
 
+## Ontwerp publieke site v3 (2026-11-15)
+
+Op verzoek naar voorbeeld van een video van droptoday.ai (mobiel), met de eigen teal-kleuren: lichte basis
+(gebroken wit) met diepgroene afgeronde panelen (`.s-dark` draait alle tokens om), vette koppen in Satoshi,
+pilknoppen met een pijl-blokje, omlijnde sectielabels ("• Prijzen •"), chips, een genummerde lijst die
+oplicht tijdens het scrollen, FAQ met donkere vraagbalk, Pro-prijskaart op groen. Niet overgenomen: klant-
+reviews, sterrenscore en "trusted by"-logo's (die zijn er niet; we verzinnen ze niet). De hero toont de echte
+uitkomst van de zoekopdracht als zwevende kaartjes op een dashboardscherm. Loginpagina mee omgezet.
+57 e2e-tests groen; Lighthouse 93–100 (de loginpagina staat bewust op noindex).
+
 ## Alle 14 prompts gebouwd. Wat de eigenaar nog moet doen: zie docs/deploy.md → "Na de eerste deploy".

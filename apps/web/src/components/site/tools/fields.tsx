@@ -25,7 +25,7 @@ export function NumField({
   return (
     <label htmlFor={id} className="block">
       <span className="mb-1 block text-[15px] text-[var(--s-muted)]">{label}</span>
-      <span className="flex items-center rounded-xl border border-[var(--s-line-2)] bg-[#0a0a0b] transition-colors focus-within:border-[var(--s-accent-hi)] hover:border-white/20">
+      <span className="flex items-center rounded-xl border border-[var(--s-line-2)] bg-[var(--s-field)] transition-colors focus-within:border-[var(--s-accent-hi)] hover:border-[var(--s-line-2)]">
         <input
           id={id}
           inputMode="decimal"

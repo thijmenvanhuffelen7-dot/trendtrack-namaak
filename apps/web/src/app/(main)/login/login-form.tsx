@@ -70,7 +70,7 @@ export function LoginForm({
               onClick={() => setView(v)}
               className={`rounded-xl px-3 py-2 text-[14px] transition-colors ${
                 view === v
-                  ? "bg-white/[0.09] text-[var(--s-ink)]"
+                  ? "bg-[var(--s-tint-2)] text-[var(--s-ink)]"
                   : "text-[var(--s-muted)] hover:text-[var(--s-ink)]"
               }`}
             >
@@ -141,7 +141,7 @@ export function LoginForm({
             )}
           </Field>
           {errorText(pwState) && (
-            <p role="alert" className="text-[14px] text-[#ff8a8d]">
+            <p role="alert" className="text-[14px] text-[var(--s-danger)]">
               {errorText(pwState)}
             </p>
           )}
@@ -179,7 +179,7 @@ export function LoginForm({
             />
           </Field>
           {errorText(linkState) && (
-            <p role="alert" className="text-[14px] text-[#ff8a8d]">
+            <p role="alert" className="text-[14px] text-[var(--s-danger)]">
               {errorText(linkState)}
             </p>
           )}
@@ -204,7 +204,7 @@ export function LoginForm({
             />
           </Field>
           {errorText(resetState) && (
-            <p role="alert" className="text-[14px] text-[#ff8a8d]">
+            <p role="alert" className="text-[14px] text-[var(--s-danger)]">
               {errorText(resetState)}
             </p>
           )}
@@ -264,7 +264,7 @@ function Done({ title, body }: { title: string; body: string }) {
       className="rounded-2xl border border-[var(--s-accent-hi)]/40 bg-[var(--s-accent)]/15 p-5"
     >
       <p className="font-medium">{title}</p>
-      <p className="mt-1 text-[15px] text-[#c4c4cc]">{body}</p>
+      <p className="mt-1 text-[15px] text-[var(--s-body)]">{body}</p>
     </div>
   );
 }

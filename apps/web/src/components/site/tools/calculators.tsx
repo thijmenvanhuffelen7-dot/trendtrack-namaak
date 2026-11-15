@@ -13,8 +13,8 @@ function Out({ items }: { items: [string, string, boolean?][] }) {
           key={label}
           className={
             big
-              ? "rounded-2xl bg-[linear-gradient(135deg,#19b394,#0c7866_55%,#075245)] shadow-[inset_0_1px_0_rgb(255_255_255/0.2)] p-6 md:col-span-2"
-              : "rounded-2xl border border-[var(--s-line)] bg-white/[0.02] p-5"
+              ? "rounded-2xl bg-[linear-gradient(135deg,#19b394,#0c7866_55%,#075245)] shadow-[inset_0_1px_0_rgb(255_255_255/0.2)] text-white p-6 md:col-span-2"
+              : "rounded-2xl border border-[var(--s-line)] bg-[var(--s-tint)] p-5"
           }
         >
           <p

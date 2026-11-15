@@ -32,7 +32,7 @@ export function PageTitle({
         {title}
       </h1>
       {lead && (
-        <p className="s-rise-3 mt-6 max-w-[42rem] text-[var(--step-lead)] leading-relaxed text-[#c4c4cc]">
+        <p className="s-rise-3 mt-6 max-w-[42rem] text-[var(--step-lead)] leading-relaxed text-[var(--s-body)]">
           {lead}
         </p>
       )}

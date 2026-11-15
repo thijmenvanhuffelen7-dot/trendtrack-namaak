@@ -84,7 +84,7 @@ export default function AffiliatePublic() {
           {STEPS.map(([title, text], i) => (
             <li key={title} className="s-frame">
               <div className="s-card flex gap-4 p-5">
-                <span className="grid size-8 shrink-0 place-items-center rounded-lg border border-[var(--s-line-2)] bg-white/[0.04] text-[14px] text-[#5fe3c5]">
+                <span className="grid size-8 shrink-0 place-items-center rounded-lg border border-[var(--s-line-2)] bg-[var(--s-tint)] text-[14px] text-[var(--s-accent-soft)]">
                   {i + 1}
                 </span>
                 <div>

@@ -26,11 +26,11 @@ export function HeaderSearch() {
   return (
     <Link
       href="/#zoek"
-      className="hidden h-10 w-60 items-center gap-2 rounded-xl border border-[var(--s-line-2)] bg-[#0a0a0b] px-3 text-[14px] text-[var(--s-faint)] transition-colors hover:border-white/20 hover:text-[var(--s-muted)] lg:flex"
+      className="hidden h-10 w-60 items-center gap-2 rounded-xl border border-[var(--s-line-2)] bg-[var(--s-field)] px-3 text-[14px] text-[var(--s-faint)] transition-colors hover:border-[var(--s-line-2)] hover:text-[var(--s-muted)] lg:flex"
     >
       <Search className="size-4" aria-hidden />
       <span className="flex-1">Zoek een webshop…</span>
-      <kbd className="rounded-md border border-[var(--s-line-2)] bg-white/5 px-1.5 py-0.5 font-sans text-[11px] text-[var(--s-muted)]">
+      <kbd className="rounded-md border border-[var(--s-line-2)] bg-[var(--s-tint)] px-1.5 py-0.5 font-sans text-[11px] text-[var(--s-muted)]">
         ⌘ K
       </kbd>
     </Link>

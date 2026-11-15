@@ -45,13 +45,13 @@ const COLUMNS: [string, [string, string][]][] = [
 /** Afsluiter: kolommen met links, en onderaan het woordmerk groot en bijna onzichtbaar. */
 export function SiteFooter() {
   return (
-    <footer className="relative overflow-hidden border-t border-white/[0.06] bg-[#0a0a0b]">
+    <footer className="s-inset s-dark mt-4 mb-3">
       <div className="s-wrap grid gap-12 pt-16 pb-8 md:grid-cols-[1.2fr_2fr]">
         <div>
           <Link href="/" aria-label="TrendTrack, naar de homepage">
             <Logo />
           </Link>
-          <p className="mt-5 max-w-sm text-[17px] leading-relaxed text-[#d4d4d8]">
+          <p className="mt-5 max-w-sm text-[17px] leading-relaxed text-[var(--s-body)]">
             Zie wat webshops in Nederland en België verkopen, waar ze op adverteren en wat ze
             mailen.
           </p>
@@ -84,28 +84,20 @@ export function SiteFooter() {
           ))}
         </div>
       </div>
-      <div className="s-wrap relative flex flex-col gap-6 pt-6 pb-10 md:flex-row md:items-end md:justify-between">
-        {/* Decoratief woordmerk: als CSS-inhoud, zodat het geen tekst is voor schermlezers of contrastchecks. */}
+      <div className="s-wrap flex flex-col gap-4 border-t border-[var(--s-line)] pt-6 text-[14px] text-[var(--s-muted)] md:flex-row md:items-center md:justify-between">
+        <p>
+          © {new Date().getFullYear()} TrendTrack · Gemaakt in {SITE.city}
+        </p>
+        <p>Ad-data uit de officiële Meta Ad Library (EU). Omzetcijfers zijn schattingen.</p>
+      </div>
+      {/* Decoratief woordmerk: als CSS-inhoud, zodat het geen tekst is voor schermlezers of contrastchecks. */}
+      <div className="s-wrap overflow-hidden pt-4">
         <div
           aria-hidden
           data-word="trendtrack"
-          className="pointer-events-none font-[family-name:var(--font-display)] leading-[0.8] font-extrabold tracking-[-0.06em] text-white/[0.035] select-none before:content-[attr(data-word)]"
-          style={{ fontSize: "clamp(4rem, 15vw, 15rem)" }}
+          className="pointer-events-none -mb-[0.18em] font-[family-name:var(--font-display)] leading-none font-bold tracking-[-0.06em] whitespace-nowrap text-[var(--s-ghost)] select-none before:content-[attr(data-word)]"
+          style={{ fontSize: "clamp(4rem, 17.5vw, 16.5rem)" }}
         />
-        <div className="flex shrink-0 items-end gap-4 text-[14px] text-[var(--s-muted)] md:text-right">
-          <span
-            aria-hidden
-            className="size-12 shrink-0 rounded-md bg-[linear-gradient(135deg,#2ad1ae,#0c7866_55%,#064a3e)]"
-          />
-          <div>
-            <p className="text-[var(--s-ink)]">Gemaakt in {SITE.city}</p>
-            <p>
-              © {new Date().getFullYear()} TrendTrack. Ad-data uit de officiële Meta Ad Library
-              (EU).
-            </p>
-            <p>Omzetcijfers zijn schattingen, altijd als bandbreedte.</p>
-          </div>
-        </div>
       </div>
     </footer>
   );

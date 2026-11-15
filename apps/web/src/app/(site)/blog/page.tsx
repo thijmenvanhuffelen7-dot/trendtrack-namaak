@@ -28,7 +28,7 @@ export default function BlogIndex() {
               <p className="mt-3 flex-1 text-[15px] leading-relaxed text-[var(--s-muted)]">
                 {p.description}
               </p>
-              <p className="mt-6 text-[14px] text-[var(--s-faint)] transition-colors group-hover:text-[#5fe3c5]">
+              <p className="mt-6 text-[14px] text-[var(--s-faint)] transition-colors group-hover:text-[var(--s-accent-soft)]">
                 Lees verder →
               </p>
             </Link>

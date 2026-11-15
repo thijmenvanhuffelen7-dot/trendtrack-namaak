@@ -66,61 +66,62 @@ export function FeatureTabs() {
     refs.current[next]?.focus();
   };
   return (
-    <section aria-labelledby="features-title" className="s-section pt-0">
-      <div className="s-wrap">
-        <h2 id="features-title" className="sr-only">
-          Wat er in TrendTrack zit
-        </h2>
-        <div className="s-frame">
-          <div
-            role="tablist"
-            aria-label="Onderdelen"
-            onKeyDown={onKey}
-            className="s-fade-x-sm flex gap-1 overflow-x-auto rounded-[19px] border border-[var(--s-line)] bg-[var(--s-bg-2)] p-1.5"
-          >
-            {FEATURES.map((x, i) => (
-              <button
-                key={x.id}
-                ref={(el) => {
-                  refs.current[i] = el;
-                }}
-                role="tab"
-                id={`tab-${x.id}`}
-                aria-selected={i === active}
-                aria-controls={`panel-${x.id}`}
-                tabIndex={i === active ? 0 : -1}
-                onClick={() => setActive(i)}
-                className={`shrink-0 rounded-[14px] px-4 py-2.5 text-[15px] transition-colors ${
-                  i === active
-                    ? "bg-white/[0.08] text-[var(--s-ink)] shadow-[inset_0_1px_0_rgb(255_255_255/0.08)]"
-                    : "text-[var(--s-muted)] hover:text-[var(--s-ink)]"
-                }`}
-              >
-                {x.tab}
-              </button>
-            ))}
+    <section aria-labelledby="features-title" className="s-inset s-dark mt-4">
+      <div className="s-wrap py-[clamp(64px,7vw,112px)]">
+        <div className="mx-auto max-w-3xl text-center">
+          <span className="s-eyebrow">Wat je krijgt</span>
+          <h2 id="features-title" className="mt-5" style={{ fontSize: "var(--step-head)" }}>
+            Eén dashboard voor omzet, ads en <span className="s-accent-text">nieuwsbrieven.</span>
+          </h2>
+        </div>
+        <div
+          role="tablist"
+          aria-label="Onderdelen"
+          onKeyDown={onKey}
+          className="mx-auto mt-10 grid max-w-3xl grid-cols-2 gap-1.5 rounded-[20px] border border-[var(--s-line)] bg-[var(--s-bg-2)] p-1.5 sm:grid-cols-3"
+        >
+          {FEATURES.map((x, i) => (
+            <button
+              key={x.id}
+              ref={(el) => {
+                refs.current[i] = el;
+              }}
+              role="tab"
+              id={`tab-${x.id}`}
+              aria-selected={i === active}
+              aria-controls={`panel-${x.id}`}
+              tabIndex={i === active ? 0 : -1}
+              onClick={() => setActive(i)}
+              className={`rounded-[14px] px-3 py-2.5 text-[14px] font-medium transition-colors ${
+                i === active
+                  ? "bg-[#ecefed] text-[#0f1412]"
+                  : "text-[var(--s-muted)] hover:bg-[var(--s-tint)] hover:text-[var(--s-ink)]"
+              }`}
+            >
+              {x.tab}
+            </button>
+          ))}
+        </div>
+        <div
+          role="tabpanel"
+          id={`panel-${f.id}`}
+          aria-labelledby={`tab-${f.id}`}
+          className="mt-8 grid gap-8 md:grid-cols-[0.8fr_1.6fr] md:items-center"
+        >
+          <div key={f.id} className="s-card s-rise p-6">
+            <h3 className="text-[clamp(1.4rem,2.2vw,1.9rem)]">{f.title}</h3>
+            <p className="mt-3 text-[16px] leading-relaxed text-[var(--s-body)]">{f.text}</p>
           </div>
-          <div
-            role="tabpanel"
-            id={`panel-${f.id}`}
-            aria-labelledby={`tab-${f.id}`}
-            className="grid gap-8 p-5 md:grid-cols-[0.8fr_1.6fr] md:items-center md:p-8"
-          >
-            <div key={f.id} className="s-rise">
-              <h3 className="text-[clamp(1.6rem,2.4vw,2.2rem)]">{f.title}</h3>
-              <p className="mt-4 text-[17px] leading-relaxed text-[#c4c4cc]">{f.text}</p>
-            </div>
-            <div className="overflow-hidden rounded-[18px] border border-[var(--s-line)] bg-white">
-              <Image
-                key={f.screen}
-                src={`/screens/${f.screen}.webp`}
-                alt={f.alt}
-                width={1056}
-                height={800}
-                sizes="(min-width: 768px) 60vw, 100vw"
-                className="s-rise block h-auto w-full"
-              />
-            </div>
+          <div className="overflow-hidden rounded-[22px] border border-white/15 bg-white shadow-[0_30px_80px_-30px_rgb(0_0_0/0.6)]">
+            <Image
+              key={f.screen}
+              src={`/screens/${f.screen}.webp`}
+              alt={f.alt}
+              width={1056}
+              height={800}
+              sizes="(min-width: 768px) 60vw, 100vw"
+              className="s-rise block h-auto w-full"
+            />
           </div>
         </div>
       </div>

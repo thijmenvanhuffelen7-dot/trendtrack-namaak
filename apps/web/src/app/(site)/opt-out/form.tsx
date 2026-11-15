@@ -8,7 +8,7 @@ export function OptoutForm() {
   if (state.ok)
     return (
       <p
-        className="max-w-xl rounded-2xl border border-[var(--s-accent-hi)]/40 bg-[var(--s-accent)]/15 p-6 text-[var(--step-lead)] text-[#d7fff4]"
+        className="max-w-xl rounded-2xl border border-[var(--s-accent-hi)]/40 bg-[var(--s-accent)]/15 p-6 text-[var(--step-lead)] text-[var(--s-ink)]"
         role="status"
       >
         {state.message}

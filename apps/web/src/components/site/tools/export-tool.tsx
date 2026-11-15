@@ -44,7 +44,7 @@ export function ExportTool() {
         {error && <p className="text-[var(--s-yellow)]">{error}</p>}
         {r && (
           <div>
-            <div className="flex flex-wrap items-center gap-4 rounded-2xl bg-[linear-gradient(135deg,#19b394,#0c7866_55%,#075245)] shadow-[inset_0_1px_0_rgb(255_255_255/0.2)] p-6">
+            <div className="flex flex-wrap items-center gap-4 rounded-2xl bg-[linear-gradient(135deg,#19b394,#0c7866_55%,#075245)] shadow-[inset_0_1px_0_rgb(255_255_255/0.2)] text-white p-6">
               <p className="text-[clamp(1.6rem,3vw,2.6rem)] leading-none font-semibold tracking-[-0.04em]">
                 {r.count} producten
               </p>
@@ -78,7 +78,7 @@ export function ExportTool() {
               </thead>
               <tbody>
                 {r.preview.map((p, i) => (
-                  <tr key={i} className={i % 2 ? "" : "bg-white/[0.02]"}>
+                  <tr key={i} className={i % 2 ? "" : "bg-[var(--s-tint)]"}>
                     <td className="p-3">{p.title}</td>
                     <td className="p-3 text-[var(--s-muted)]">{p.type ?? "–"}</td>
                     <td className="p-3 text-right tabular-nums">

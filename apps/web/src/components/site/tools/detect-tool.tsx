@@ -65,7 +65,7 @@ export function DetectTool({ mode }: { mode: "theme" | "apps" }) {
         {error && <p className="text-[var(--s-yellow)]">{error}</p>}
         {r && (
           <div className="grid gap-3 md:grid-cols-[minmax(0,1fr)_minmax(0,1.4fr)]">
-            <div className="rounded-2xl bg-[linear-gradient(135deg,#19b394,#0c7866_55%,#075245)] shadow-[inset_0_1px_0_rgb(255_255_255/0.2)] p-6">
+            <div className="rounded-2xl bg-[linear-gradient(135deg,#19b394,#0c7866_55%,#075245)] shadow-[inset_0_1px_0_rgb(255_255_255/0.2)] text-white p-6">
               <p className="text-[15px]">{r.name ?? r.domain}</p>
               <p className="mt-2 text-[clamp(2rem,4vw,3.4rem)] leading-none font-semibold tracking-[-0.04em]">
                 {r.isShopify ? (r.theme ?? "Eigen thema") : "Geen Shopify"}
@@ -76,7 +76,7 @@ export function DetectTool({ mode }: { mode: "theme" | "apps" }) {
                 {r.currency ? ` · ${r.currency}` : ""}
               </p>
             </div>
-            <div className="rounded-2xl border border-[var(--s-line)] bg-white/[0.02] p-6">
+            <div className="rounded-2xl border border-[var(--s-line)] bg-[var(--s-tint)] p-6">
               <p className="font-medium">{r.apps.length} apps en tools herkend</p>
               {r.apps.length === 0 ? (
                 <p className="mt-2 text-[var(--s-muted)]">

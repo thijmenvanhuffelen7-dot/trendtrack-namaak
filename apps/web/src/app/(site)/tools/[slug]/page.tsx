@@ -76,7 +76,7 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
             <h1 id="tool-title" className="s-rise-2" style={{ fontSize: "var(--step-display)" }}>
               {t.h1}
             </h1>
-            <p className="s-rise-3 mt-6 max-w-[42rem] text-[var(--step-lead)] leading-relaxed text-[#c4c4cc]">
+            <p className="s-rise-3 mt-6 max-w-[42rem] text-[var(--step-lead)] leading-relaxed text-[var(--s-body)]">
               {t.intro}
             </p>
           </div>
@@ -93,7 +93,7 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
         </section>
       </div>
 
-      <section aria-labelledby="how-title" className="s-section border-t border-white/[0.06]">
+      <section aria-labelledby="how-title" className="s-section border-t border-[var(--s-line)]">
         <div className="s-wrap grid gap-12 lg:grid-cols-[1fr_1.2fr]" data-reveal>
           <div>
             <h2 id="how-title" style={{ fontSize: "var(--step-head)" }}>
@@ -102,10 +102,10 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
             <ol className="mt-8 space-y-5">
               {t.how.map((h, i) => (
                 <li key={h} className="flex gap-4">
-                  <span className="grid size-8 shrink-0 place-items-center rounded-lg border border-[var(--s-line-2)] bg-white/[0.04] text-[14px] text-[#5fe3c5]">
+                  <span className="grid size-8 shrink-0 place-items-center rounded-lg border border-[var(--s-line-2)] bg-[var(--s-tint)] text-[14px] text-[var(--s-accent-soft)]">
                     {i + 1}
                   </span>
-                  <p className="pt-1 text-[16px] leading-relaxed text-[#d4d4d8]">{h}</p>
+                  <p className="pt-1 text-[16px] leading-relaxed text-[var(--s-body)]">{h}</p>
                 </li>
               ))}
             </ol>
@@ -137,7 +137,7 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
                 <h2 id="more-title" style={{ fontSize: "clamp(2rem, 1.4rem + 2vw, 3rem)" }}>
                   Meer dan <span className="s-accent-text">één shop?</span>
                 </h2>
-                <p className="mt-4 max-w-md text-[17px] text-[#c4c4cc]">
+                <p className="mt-4 max-w-md text-[17px] text-[var(--s-body)]">
                   Met een gratis account zie je van elke webshop de geschatte omzet, de ads en de
                   nieuwsbrieven.
                 </p>
@@ -150,7 +150,7 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
                   <li key={o.slug}>
                     <Link
                       href={`/tools/${o.slug}`}
-                      className="flex items-center justify-between rounded-xl border border-[var(--s-line)] bg-white/[0.02] px-4 py-3 text-[15px] transition-colors hover:border-white/20 hover:bg-white/[0.05]"
+                      className="flex items-center justify-between rounded-xl border border-[var(--s-line)] bg-[var(--s-tint)] px-4 py-3 text-[15px] transition-colors hover:border-[var(--s-line-2)] hover:bg-[var(--s-tint-2)]"
                     >
                       {o.h1}
                       <span className="text-[var(--s-faint)]">→</span>

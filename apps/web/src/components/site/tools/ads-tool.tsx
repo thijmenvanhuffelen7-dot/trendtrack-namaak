@@ -70,7 +70,7 @@ export function AdsTool() {
         )}
         {r && r.ads.length > 0 && (
           <>
-            <ol className="divide-y divide-[var(--s-line)] overflow-hidden rounded-2xl border border-[var(--s-line)] bg-white/[0.02]">
+            <ol className="divide-y divide-[var(--s-line)] overflow-hidden rounded-2xl border border-[var(--s-line)] bg-[var(--s-tint)]">
               {r.ads.map((a, i) => (
                 <li key={i} className="grid gap-2 p-5 md:grid-cols-[minmax(0,1fr)_12rem]">
                   <div className="min-w-0">

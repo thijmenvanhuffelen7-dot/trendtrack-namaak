@@ -28,7 +28,7 @@ export default function ToolsIndex() {
                 <p className="mt-2 flex-1 text-[15px] leading-relaxed text-[var(--s-muted)]">
                   {t.description}
                 </p>
-                <p className="mt-4 text-[14px] text-[var(--s-faint)] transition-colors group-hover:text-[#5fe3c5]">
+                <p className="mt-4 text-[14px] text-[var(--s-faint)] transition-colors group-hover:text-[var(--s-accent-soft)]">
                   Gratis, zonder account →
                 </p>
               </div>
