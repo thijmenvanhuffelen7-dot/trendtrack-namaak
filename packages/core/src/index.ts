@@ -4,3 +4,6 @@ export * from "./robots";
 export * from "./shopify-detect";
 export * from "./shopify-products";
 export * from "./types";
+export * from "./estimation";
+export * from "./reviews";
+export * from "./snapshot-diff";

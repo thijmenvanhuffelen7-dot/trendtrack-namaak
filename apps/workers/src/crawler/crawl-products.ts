@@ -1,5 +1,11 @@
-import { normalizeDomain, parseProductsPage, toProductRecord } from "@trendtrack/core";
+import {
+  normalizeDomain,
+  parseProductsPage,
+  toProductRecord,
+  type ProductRecord,
+} from "@trendtrack/core";
 import { BlockedError } from "../http/errors";
+import type { PoliteFetcher } from "../http/polite-fetcher";
 import { logOf, nowOf, type CrawlerDeps } from "./deps";
 
 export interface CrawlProductsResult {
@@ -12,7 +18,38 @@ export interface CrawlProductsResult {
 /** Shopify geeft max 250 per pagina; 100 pagina's = 25.000 producten is ruim genoeg. */
 const MAX_PAGES = 100;
 
-/** Pagineert door /products.json tot een lege pagina en upsert alle producten. */
+export interface FetchAllProductsResult {
+  records: ProductRecord[];
+  pages: number;
+  /** True als de shop ons halverwege blokkeerde; `records` is dan onvolledig. */
+  blocked: boolean;
+}
+
+/** Pagineert door /products.json tot een lege pagina. Slaat niets op. */
+export async function fetchAllProducts(
+  domain: string,
+  fetcher: PoliteFetcher,
+  log: (msg: string, extra?: Record<string, unknown>) => void = () => undefined,
+): Promise<FetchAllProductsResult> {
+  const records: ProductRecord[] = [];
+  let page = 1;
+  try {
+    for (; page <= MAX_PAGES; page++) {
+      const products = parseProductsPage(
+        await fetcher.getJson(`https://${domain}/products.json?limit=250&page=${page}`),
+      );
+      if (products.length === 0) break;
+      records.push(...products.map(toProductRecord));
+      log("pagina opgehaald", { domain, page, count: products.length });
+    }
+  } catch (err) {
+    if (err instanceof BlockedError) return { records, pages: page - 1, blocked: true };
+    throw err;
+  }
+  return { records, pages: page - 1, blocked: false };
+}
+
+/** Haalt alle producten op en upsert ze. */
 export async function crawlProducts(
   input: string,
   deps: CrawlerDeps,
@@ -27,27 +64,13 @@ export async function crawlProducts(
   }
 
   const seenAt = nowOf(deps).toISOString();
-  let total = 0;
-  let page = 1;
-  try {
-    for (; page <= MAX_PAGES; page++) {
-      const json = await deps.fetcher.getJson(
-        `https://${domain}/products.json?limit=250&page=${page}`,
-      );
-      const products = parseProductsPage(json);
-      if (products.length === 0) break;
-      total += await deps.repo.upsertProducts(shop.id, products.map(toProductRecord), seenAt);
-      log("pagina opgeslagen", { domain, page, count: products.length });
-    }
-  } catch (err) {
-    if (err instanceof BlockedError) {
-      await deps.repo.upsertShop(domain, { status: "blocked" });
-      log("geblokkeerd tijdens product-crawl", { domain, page });
-      return { domain, products: total, pages: page - 1, blocked: true };
-    }
-    throw err;
+  const { records, pages, blocked } = await fetchAllProducts(domain, deps.fetcher, log);
+  const saved = await deps.repo.upsertProducts(shop.id, records, seenAt);
+  if (blocked) {
+    await deps.repo.upsertShop(domain, { status: "blocked" });
+    log("geblokkeerd tijdens product-crawl", { domain, page: pages + 1 });
+  } else {
+    await deps.repo.upsertShop(domain, { last_crawled_at: seenAt });
   }
-
-  await deps.repo.upsertShop(domain, { last_crawled_at: seenAt });
-  return { domain, products: total, pages: page - 1, blocked: false };
+  return { domain, products: saved, pages, blocked };
 }

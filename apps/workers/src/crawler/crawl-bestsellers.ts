@@ -10,6 +10,8 @@ export interface CrawlBestsellersResult {
   /** Gebruikte URL (of null als niets bruikbaar was). */
   url: string | null;
   saved: number;
+  /** Product-handles in bestsellervolgorde (positie 1 eerst). */
+  handles: string[];
 }
 
 /**
@@ -36,7 +38,7 @@ export async function crawlBestsellers(
   const log = logOf(deps);
   const shop = await deps.repo.getShop(domain);
   if (!shop || shop.status !== "active" || shop.platform !== "shopify") {
-    return { domain, source: "none", url: null, saved: 0 };
+    return { domain, source: "none", url: null, saved: 0, handles: [] };
   }
   const capturedOn = isoDate(nowOf(deps));
 
@@ -49,7 +51,7 @@ export async function crawlBestsellers(
         const handles = extractProductHandles(await response.text());
         if (handles.length > 0) {
           const saved = await deps.repo.saveBestsellerPositions(shop.id, handles, capturedOn);
-          return { domain, source: "sort_by", url: sortUrl, saved };
+          return { domain, source: "sort_by", url: sortUrl, saved, handles };
         }
       }
     } else {
@@ -66,20 +68,17 @@ export async function crawlBestsellers(
       if (!response.ok) continue;
       const products = parseProductsPage(await response.json());
       if (products.length === 0) continue;
-      const saved = await deps.repo.saveBestsellerPositions(
-        shop.id,
-        products.map((p) => p.handle),
-        capturedOn,
-      );
-      return { domain, source: "collection", url, saved };
+      const handles = products.map((p) => p.handle);
+      const saved = await deps.repo.saveBestsellerPositions(shop.id, handles, capturedOn);
+      return { domain, source: "collection", url, saved, handles };
     }
   } catch (err) {
     if (err instanceof BlockedError) {
       await deps.repo.upsertShop(domain, { status: "blocked" });
-      return { domain, source: "none", url: null, saved: 0 };
+      return { domain, source: "none", url: null, saved: 0, handles: [] };
     }
     if (!(err instanceof RobotsDisallowedError)) throw err;
   }
 
-  return { domain, source: "none", url: null, saved: 0 };
+  return { domain, source: "none", url: null, saved: 0, handles: [] };
 }

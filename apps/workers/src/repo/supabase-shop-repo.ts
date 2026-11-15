@@ -1,6 +1,14 @@
 import type { Db } from "@trendtrack/db";
-import type { ProductRecord } from "@trendtrack/core";
+import type { DailySignal, ProductRecord, ProductState } from "@trendtrack/core";
+import { summarizeAds } from "./ad-stats";
 import type { ShopFields, ShopRepo, ShopRow } from "./shop-repo";
+import type {
+  AdStats,
+  ProductSnapshotRow,
+  ShopEstimateFields,
+  ShopSnapshotRow,
+  SnapshotRepo,
+} from "./snapshot-repo";
 
 const BATCH = 250;
 
@@ -109,5 +117,127 @@ export class SupabaseShopRepo implements ShopRepo {
     const { data, error } = await this.db.from("shops").select("domain").in("domain", domains);
     if (error) throw error;
     return new Set(data.map((r) => r.domain));
+  }
+}
+
+export class SupabaseSnapshotRepo implements SnapshotRepo {
+  constructor(private readonly db: Db) {}
+
+  async productIds(shopId: string) {
+    const map = new Map<string, string>();
+    for (let from = 0; ; from += 1000) {
+      const { data, error } = await this.db
+        .from("products")
+        .select("id, external_id")
+        .eq("shop_id", shopId)
+        .range(from, from + 999);
+      if (error) throw error;
+      for (const p of data) map.set(p.external_id, p.id);
+      if (data.length < 1000) break;
+    }
+    return map;
+  }
+
+  async previousProductStates(shopId: string, beforeDate: string) {
+    const { data: latest, error } = await this.db
+      .from("product_snapshots")
+      .select("captured_on, products!inner(shop_id)")
+      .eq("products.shop_id", shopId)
+      .lt("captured_on", beforeDate)
+      .order("captured_on", { ascending: false })
+      .limit(1);
+    if (error) throw error;
+    const date = latest[0]?.captured_on ?? null;
+    if (!date) return { date: null, states: [] };
+
+    const states: ProductState[] = [];
+    for (let from = 0; ; from += 1000) {
+      const { data, error: e } = await this.db
+        .from("product_snapshots")
+        .select(
+          "price, available_variants, position_in_bestsellers, inventory_signal, products!inner(shop_id, external_id)",
+        )
+        .eq("products.shop_id", shopId)
+        .eq("captured_on", date)
+        .range(from, from + 999);
+      if (e) throw e;
+      for (const r of data) {
+        const signal = (r.inventory_signal ?? {}) as { total_variants?: number };
+        states.push({
+          external_id: r.products.external_id,
+          price: r.price,
+          available_variants: r.available_variants ?? 0,
+          total_variants: signal.total_variants ?? r.available_variants ?? 0,
+          position: r.position_in_bestsellers,
+        });
+      }
+      if (data.length < 1000) break;
+    }
+    return { date, states };
+  }
+
+  async saveProductSnapshots(rows: ProductSnapshotRow[]) {
+    for (let i = 0; i < rows.length; i += 500) {
+      const { error } = await this.db
+        .from("product_snapshots")
+        .upsert(rows.slice(i, i + 500), { onConflict: "product_id,captured_on" });
+      if (error) throw error;
+    }
+  }
+
+  async shopHistory(shopId: string, sinceDate: string, untilDate: string): Promise<DailySignal[]> {
+    const { data, error } = await this.db
+      .from("shop_snapshots")
+      .select(
+        "captured_on, sellout_value, review_count, active_ads_count, new_products, product_count, est_daily_revenue",
+      )
+      .eq("shop_id", shopId)
+      .gte("captured_on", sinceDate)
+      .lt("captured_on", untilDate)
+      .order("captured_on");
+    if (error) throw error;
+    return data.map((r) => ({
+      date: r.captured_on,
+      selloutValue: r.sellout_value,
+      reviewCount: r.review_count,
+      activeAds: r.active_ads_count,
+      newProducts: r.new_products,
+      productCount: r.product_count,
+      estDailyRevenue: r.est_daily_revenue,
+    }));
+  }
+
+  async adStats(shopId: string, asOf: Date): Promise<AdStats> {
+    const { data, error } = await this.db
+      .from("ads")
+      .select("eu_total_reach, est_spend_low, est_spend_high, started_at")
+      .eq("shop_id", shopId)
+      .eq("is_active", true);
+    if (error) throw error;
+    return summarizeAds(data, asOf);
+  }
+
+  async saveShopSnapshot(row: ShopSnapshotRow) {
+    const { error } = await this.db
+      .from("shop_snapshots")
+      .upsert(row, { onConflict: "shop_id,captured_on" });
+    if (error) throw error;
+  }
+
+  async updateShopEstimate(shopId: string, fields: ShopEstimateFields) {
+    const { error } = await this.db.from("shops").update(fields).eq("id", shopId);
+    if (error) throw error;
+  }
+
+  async activeShopifyDomains(limit: number) {
+    const { data, error } = await this.db
+      .from("shops")
+      .select("domain")
+      .eq("status", "active")
+      .eq("platform", "shopify")
+      .order("last_crawled_at", { ascending: true, nullsFirst: true })
+      .limit(limit);
+    if (error) throw error;
+    return data.map((r) => r.domain);
   }
 }

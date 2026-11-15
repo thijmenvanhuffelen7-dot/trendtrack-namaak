@@ -1,15 +1,20 @@
 import type PgBoss from "pg-boss";
 import { crawlBestsellers } from "./crawler/crawl-bestsellers";
 import { crawlProducts } from "./crawler/crawl-products";
-import type { CrawlerDeps } from "./crawler/deps";
+import { snapshotShop, type SnapshotDeps } from "./snapshot/snapshot-shop";
 import { detectShop } from "./crawler/detect-shop";
 import { runDiscovery } from "./crawler/discovery";
 import { DiscoverPayloadSchema, DomainPayloadSchema, JOBS } from "./jobs";
 
-const SHOP_QUEUES = [JOBS.shopDetect, JOBS.shopCrawlProducts, JOBS.shopCrawlBestsellers] as const;
+const SHOP_QUEUES = [
+  JOBS.shopDetect,
+  JOBS.shopCrawlProducts,
+  JOBS.shopCrawlBestsellers,
+  JOBS.shopSnapshot,
+] as const;
 
 /** Maakt de queues aan en registreert de shop-handlers. */
-export async function registerShopJobs(boss: PgBoss, deps: CrawlerDeps, seedFilePath: string) {
+export async function registerShopJobs(boss: PgBoss, deps: SnapshotDeps, seedFilePath: string) {
   // policy "short": per singletonKey (domein) maximaal één job in de wachtrij.
   for (const name of SHOP_QUEUES) await boss.createQueue(name, { name, policy: "short" });
   await boss.createQueue(JOBS.shopDiscover, { name: JOBS.shopDiscover, policy: "singleton" });
@@ -44,6 +49,17 @@ export async function registerShopJobs(boss: PgBoss, deps: CrawlerDeps, seedFile
   await boss.work(JOBS.shopCrawlBestsellers, { batchSize: 1 }, async ([job]) => {
     const { domain } = DomainPayloadSchema.parse(job!.data);
     return crawlBestsellers(domain, deps);
+  });
+
+  await boss.work(JOBS.shopSnapshot, { batchSize: 1 }, async ([job]) => {
+    const { domain } = DomainPayloadSchema.parse(job!.data);
+    const r = await snapshotShop(domain, deps);
+    return {
+      skipped: r.skipped,
+      products: r.products,
+      estimate: r.estimate,
+      growthScore: r.growthScore,
+    };
   });
 
   await boss.work(JOBS.shopDiscover, { batchSize: 1 }, async ([job]) => {

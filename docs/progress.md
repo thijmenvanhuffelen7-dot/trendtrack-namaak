@@ -82,4 +82,30 @@ daarom gebruiken we `/meta.json` voor detectie.
 - Een echte NL-store crawlen lukte niet in de cloud-sessie: geen DNS en de proxy blokkeert webshops.
   Lokaal of op de VPS: `pnpm workers crawl --domain=<shop>`.
 
-## Volgende: Prompt 4 — dagelijkse snapshots en sales-schatting
+## Prompt 4: dagelijkse snapshots en sales-schatting — klaar (2026-11-15)
+
+- `packages/core`:
+  - `snapshot-diff.ts`: nieuwe/verdwenen producten, prijswijzigingen, uitverkochte varianten
+    (+ sellout value), restocks, bestsellerverschuivingen
+  - `reviews.ts`: reviewtelling uit JSON-LD AggregateRating, Judge.me- en Loox-badges
+  - `estimation.ts`: signalen ads (spend × ROAS), uitverkopen en reviews, gewogen gecombineerd tot
+    `{ low, mid, high, confidence, estimate: true }` (+ bestellingen); `growthScore()`; `estimateAov()`
+- Migratie `20261115010000_snapshot_signals.sql`: extra signaalkolommen op `shop_snapshots`,
+  orders-bandbreedte, `est_signals` en `est_updated_at` op `shops`
+- `apps/workers`:
+  - `snapshot/snapshot-shop.ts` (job `shop.snapshot`): homepage (reviews), alle producten,
+    bestsellers, diff t.o.v. vorige snapshot, product- en shop-snapshots, schatting + growth_score
+  - `repo/ad-stats.ts`: actieve ads => spend per maand
+  - CLI: `pnpm workers snapshot --domain=<domein>` of `--all [--limit=50]`
+- `docs/estimation.md`: uitleg van het model, aannames en hoe we het in de UI tonen
+- Tests: groeiende/stabiele/dode reeksen, signalen, diff, reviews; snapshot-flow over twee dagen
+  (in-memory) en integratietest: na twee runs staan schatting + growth_score in de lokale database
+
+### Let op
+
+- Het ads-signaal heeft `est_spend_low/high` op ads nodig; die vult Prompt 5 (Meta + `cpm.ts`).
+  Tot dan hebben alleen de seed-ads een spend-schatting.
+- De dagelijkse planning (alle shops, gespreid) komt in Prompt 7.
+- Aannames (ROAS, factoren) zijn niet gekalibreerd. Zie "Bekende zwaktes" in docs/estimation.md.
+
+## Volgende: Prompt 5 — Meta Ad Library ingest (Meta-token nodig)

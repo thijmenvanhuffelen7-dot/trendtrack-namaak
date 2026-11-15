@@ -219,14 +219,14 @@ isOneToOne: false
                   ]
                 },"shop_snapshots": {
                   Row: {
-                    "active_ads_count": number | null,"captured_on": string,"est_daily_revenue": number | null,"new_products": number | null,"product_count": number | null,"shop_id": string
+                    "active_ads_count": number | null,"captured_on": string,"est_confidence": number | null,"est_daily_revenue": number | null,"est_daily_revenue_high": number | null,"est_daily_revenue_low": number | null,"new_products": number | null,"price_changes": number | null,"product_count": number | null,"removed_products": number | null,"review_count": number | null,"sellout_value": number | null,"sellouts": number | null,"shop_id": string,"total_reach": number | null
                   }
                   ComputedFields: never
                   Insert: {
-                    "active_ads_count"?: number | null,"captured_on": string,"est_daily_revenue"?: number | null,"new_products"?: number | null,"product_count"?: number | null,"shop_id": string
+                    "active_ads_count"?: number | null,"captured_on": string,"est_confidence"?: number | null,"est_daily_revenue"?: number | null,"est_daily_revenue_high"?: number | null,"est_daily_revenue_low"?: number | null,"new_products"?: number | null,"price_changes"?: number | null,"product_count"?: number | null,"removed_products"?: number | null,"review_count"?: number | null,"sellout_value"?: number | null,"sellouts"?: number | null,"shop_id": string,"total_reach"?: number | null
                   }
                   Update: {
-                    "active_ads_count"?: number | null,"captured_on"?: string,"est_daily_revenue"?: number | null,"new_products"?: number | null,"product_count"?: number | null,"shop_id"?: string
+                    "active_ads_count"?: number | null,"captured_on"?: string,"est_confidence"?: number | null,"est_daily_revenue"?: number | null,"est_daily_revenue_high"?: number | null,"est_daily_revenue_low"?: number | null,"new_products"?: number | null,"price_changes"?: number | null,"product_count"?: number | null,"removed_products"?: number | null,"review_count"?: number | null,"sellout_value"?: number | null,"sellouts"?: number | null,"shop_id"?: string,"total_reach"?: number | null
                   }
                   Relationships: [
                     {
@@ -239,14 +239,14 @@ isOneToOne: false
                   ]
                 },"shops": {
                   Row: {
-                    "apps": NonNullable<Json>,"country": string | null,"created_at": string,"currency": string | null,"domain": string,"est_confidence": number | null,"est_monthly_orders": number | null,"est_monthly_revenue": number | null,"est_monthly_revenue_high": number | null,"est_monthly_revenue_low": number | null,"first_seen_at": string,"growth_score": number | null,"id": string,"last_crawled_at": string | null,"name": string | null,"platform": string | null,"status": Database["public"]['Enums']["shop_status"],"theme_name": string | null,"updated_at": string
+                    "apps": NonNullable<Json>,"country": string | null,"created_at": string,"currency": string | null,"domain": string,"est_confidence": number | null,"est_monthly_orders": number | null,"est_monthly_orders_high": number | null,"est_monthly_orders_low": number | null,"est_monthly_revenue": number | null,"est_monthly_revenue_high": number | null,"est_monthly_revenue_low": number | null,"est_signals": Json | null,"est_updated_at": string | null,"first_seen_at": string,"growth_score": number | null,"id": string,"last_crawled_at": string | null,"name": string | null,"platform": string | null,"status": Database["public"]['Enums']["shop_status"],"theme_name": string | null,"updated_at": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "apps"?: NonNullable<Json>,"country"?: string | null,"created_at"?: string,"currency"?: string | null,"domain": string,"est_confidence"?: number | null,"est_monthly_orders"?: number | null,"est_monthly_revenue"?: number | null,"est_monthly_revenue_high"?: number | null,"est_monthly_revenue_low"?: number | null,"first_seen_at"?: string,"growth_score"?: number | null,"id"?: string,"last_crawled_at"?: string | null,"name"?: string | null,"platform"?: string | null,"status"?: Database["public"]['Enums']["shop_status"],"theme_name"?: string | null,"updated_at"?: string
+                    "apps"?: NonNullable<Json>,"country"?: string | null,"created_at"?: string,"currency"?: string | null,"domain": string,"est_confidence"?: number | null,"est_monthly_orders"?: number | null,"est_monthly_orders_high"?: number | null,"est_monthly_orders_low"?: number | null,"est_monthly_revenue"?: number | null,"est_monthly_revenue_high"?: number | null,"est_monthly_revenue_low"?: number | null,"est_signals"?: Json | null,"est_updated_at"?: string | null,"first_seen_at"?: string,"growth_score"?: number | null,"id"?: string,"last_crawled_at"?: string | null,"name"?: string | null,"platform"?: string | null,"status"?: Database["public"]['Enums']["shop_status"],"theme_name"?: string | null,"updated_at"?: string
                   }
                   Update: {
-                    "apps"?: NonNullable<Json>,"country"?: string | null,"created_at"?: string,"currency"?: string | null,"domain"?: string,"est_confidence"?: number | null,"est_monthly_orders"?: number | null,"est_monthly_revenue"?: number | null,"est_monthly_revenue_high"?: number | null,"est_monthly_revenue_low"?: number | null,"first_seen_at"?: string,"growth_score"?: number | null,"id"?: string,"last_crawled_at"?: string | null,"name"?: string | null,"platform"?: string | null,"status"?: Database["public"]['Enums']["shop_status"],"theme_name"?: string | null,"updated_at"?: string
+                    "apps"?: NonNullable<Json>,"country"?: string | null,"created_at"?: string,"currency"?: string | null,"domain"?: string,"est_confidence"?: number | null,"est_monthly_orders"?: number | null,"est_monthly_orders_high"?: number | null,"est_monthly_orders_low"?: number | null,"est_monthly_revenue"?: number | null,"est_monthly_revenue_high"?: number | null,"est_monthly_revenue_low"?: number | null,"est_signals"?: Json | null,"est_updated_at"?: string | null,"first_seen_at"?: string,"growth_score"?: number | null,"id"?: string,"last_crawled_at"?: string | null,"name"?: string | null,"platform"?: string | null,"status"?: Database["public"]['Enums']["shop_status"],"theme_name"?: string | null,"updated_at"?: string
                   }
                   Relationships: [
                     

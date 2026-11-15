@@ -1,6 +1,13 @@
 import { readFileSync } from "node:fs";
-import type { ProductRecord } from "@trendtrack/core";
-import type { CrawlerDeps } from "../crawler/deps";
+import type { DailySignal, ProductRecord, ProductState } from "@trendtrack/core";
+import { summarizeAds, type ActiveAdRow } from "../repo/ad-stats";
+import type {
+  ProductSnapshotRow,
+  ShopEstimateFields,
+  ShopSnapshotRow,
+  SnapshotRepo,
+} from "../repo/snapshot-repo";
+import type { SnapshotDeps } from "../snapshot/snapshot-shop";
 import { PoliteFetcher, type FetchLike } from "../http/polite-fetcher";
 import type { ShopFields, ShopRepo, ShopRow } from "../repo/shop-repo";
 
@@ -93,9 +100,90 @@ export class MemoryShopRepo implements ShopRepo {
   }
 }
 
+/** In-memory SnapshotRepo, gekoppeld aan een MemoryShopRepo. */
+export class MemorySnapshotRepo implements SnapshotRepo {
+  productSnaps = new Map<string, ProductSnapshotRow>();
+  shopSnaps = new Map<string, ShopSnapshotRow>();
+  estimates = new Map<string, ShopEstimateFields>();
+  activeAds: (ActiveAdRow & { shopId: string })[] = [];
+
+  constructor(private readonly shops: MemoryShopRepo) {}
+
+  async productIds(shopId: string) {
+    const m = new Map<string, string>();
+    for (const p of this.shops.products.values())
+      if (p.shopId === shopId) m.set(p.external_id, `${shopId}:${p.external_id}`);
+    return m;
+  }
+  async previousProductStates(shopId: string, beforeDate: string) {
+    const prefix = `${shopId}:`;
+    const rows = [...this.productSnaps.values()].filter(
+      (r) => r.product_id.startsWith(prefix) && r.captured_on < beforeDate,
+    );
+    const date =
+      rows
+        .map((r) => r.captured_on)
+        .sort()
+        .at(-1) ?? null;
+    const states: ProductState[] = rows
+      .filter((r) => r.captured_on === date)
+      .map((r) => ({
+        external_id: r.product_id.slice(prefix.length),
+        price: r.price,
+        available_variants: r.available_variants,
+        total_variants: r.inventory_signal.total_variants,
+        position: r.position_in_bestsellers,
+      }));
+    return { date, states };
+  }
+  async saveProductSnapshots(rows: ProductSnapshotRow[]) {
+    for (const r of rows) this.productSnaps.set(`${r.product_id}@${r.captured_on}`, r);
+  }
+  async shopHistory(shopId: string, sinceDate: string, untilDate: string): Promise<DailySignal[]> {
+    return [...this.shopSnaps.values()]
+      .filter(
+        (r) => r.shop_id === shopId && r.captured_on >= sinceDate && r.captured_on < untilDate,
+      )
+      .sort((a, b) => a.captured_on.localeCompare(b.captured_on))
+      .map((r) => ({
+        date: r.captured_on,
+        selloutValue: r.sellout_value,
+        reviewCount: r.review_count,
+        activeAds: r.active_ads_count,
+        newProducts: r.new_products,
+        productCount: r.product_count,
+        estDailyRevenue: r.est_daily_revenue,
+      }));
+  }
+  async adStats(shopId: string, asOf: Date) {
+    return summarizeAds(
+      this.activeAds.filter((a) => a.shopId === shopId),
+      asOf,
+    );
+  }
+  async saveShopSnapshot(row: ShopSnapshotRow) {
+    this.shopSnaps.set(`${row.shop_id}@${row.captured_on}`, row);
+  }
+  async updateShopEstimate(shopId: string, fields: ShopEstimateFields) {
+    this.estimates.set(shopId, fields);
+  }
+  async activeShopifyDomains(limit: number) {
+    return [...this.shops.shops.values()]
+      .filter((s) => s.status === "active" && s.platform === "shopify")
+      .map((s) => s.domain)
+      .slice(0, limit);
+  }
+}
+
 export function deps(
   fetch: FetchLike,
   repo = new MemoryShopRepo(),
-): CrawlerDeps & { repo: MemoryShopRepo } {
-  return { fetcher: testFetcher(fetch), repo, now: () => new Date("2026-11-15T12:00:00Z") };
+  now = new Date("2026-11-15T12:00:00Z"),
+): SnapshotDeps & { repo: MemoryShopRepo; snapshots: MemorySnapshotRepo } {
+  return {
+    fetcher: testFetcher(fetch),
+    repo,
+    snapshots: new MemorySnapshotRepo(repo),
+    now: () => now,
+  };
 }
