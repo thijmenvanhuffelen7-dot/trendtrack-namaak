@@ -396,4 +396,35 @@ Niet gedaan (kan niet vanuit deze omgeving):
 - E2E alleen lokaal; tegen staging draaien kan met `E2E_BASE_URL`/`E2E_MCP_URL`.
 - Geen echte Stripe-betaling, Meta-API-call of crawl van een echte shop getest (geen netwerk).
 
+## Volledige browsertest (2026-11-15)
+
+`e2e/full-browser.spec.ts`: 44 tests in Chromium tegen de productie-build (met `golden-path` en
+`public-site` samen 54). Elke stap faalt bij een JS-fout, console-error of mislukte request.
+
+- Publiek: alle 20 pagina's op 1440 en 390 px (status, h1, titel, geen horizontaal scrollen, geen kapotte
+  afbeeldingen, alt-teksten), alle interne links, 404's, hero-schatting, prijstermijnen, 3 calculators
+  (met controle van de uitkomst), ads-finder, foutpaden van detector/exporter, mobiel menu,
+  opt-out met IP-limiet, affiliate-cookie, API-docs en OpenAPI.
+- Afscherming: dashboard/admin vragen om login, API/MCP zonder of met foute key.
+- Dashboard: elke pagina, zijbalk, shops filteren/sorteren, zoekbalk, alle tabs van shop-detail,
+  volgen + samenvatting, opslaan in folders vanuit shop/ad/mail, ads-paneel, adverteerders, e-mails,
+  folders delen (uitgelogd bekijken, uitzetten → 404), items eruit, folder weg, onbekende shop opvragen
+  (worker pakt hem op, pagina ververst), API-key maken/gebruiken/intrekken, MCP-URL kopiëren, taal NL/EN,
+  abonnement, affiliate, limieten van het gratis plan, mobiel, uitloggen.
+- Admin: 404 voor niet-admins, alle pagina's, seed-inbox + "ingeschreven", inkomende HTML-mail met
+  XSS-poging via de Postmark-webhook, opt-out goedkeuren (shop overal weg, tool geeft 410), jobs.
+- OAuth 2.1: registreren, toestaan, token, MCP-tool, weigeren, onbekende redirect, koppeling intrekken.
+
+Gevonden en opgelost:
+
+- **Opt-out goedkeuren/afwijzen crashte (500)**: de waarde van de submit-knop kwam niet mee in de server
+  action. Nu twee formulieren met een verborgen veld.
+- **Blogposts gaven na verloop van tijd 404** (`dynamicParams = false` in een route group). Weggehaald.
+- **Mails konden requests naar onze eigen app doen** (relatieve `<img src>` in de iframe). De sanitizer
+  laat alleen absolute http(s)/data-URL's toe en saneert ook bij het tonen, dus ook oude mails.
+- **/privacy scrolde horizontaal op mobiel** (tabel rekte de kolom op). Tabellen scrollen nu in hun eigen vak.
+
+Testvolgorde: na `pnpm db:reset` de workers herstarten (de reset wist hun wachtrij-tabellen). De e2e ruimt
+zijn eigen testmails en seed-inbox op, zodat `pnpm test:db` daarna blijft kloppen.
+
 ## Alle 14 prompts gebouwd. Wat de eigenaar nog moet doen: zie docs/deploy.md → "Na de eerste deploy".

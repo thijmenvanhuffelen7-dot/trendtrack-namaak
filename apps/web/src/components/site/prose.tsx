@@ -7,7 +7,7 @@ export function Prose({ children }: { children: React.ReactNode }) {
 export function Column({ children }: { children: React.ReactNode }) {
   return (
     <div className="mt-12 grid gap-6 md:grid-cols-[var(--s-axis)_1fr]">
-      <div className="md:col-start-2">{children}</div>
+      <div className="min-w-0 md:col-start-2">{children}</div>
     </div>
   );
 }

@@ -121,13 +121,15 @@ export function sanitizeEmailHtml(html: string, opts: SanitizeOptions = {}): str
       "meta",
     ],
     exclusiveFilter: (frame) => {
-      if (frame.tag === "img") return isTrackingPixel(frame.attribs);
+      // Relatieve afbeeldingen zouden in de iframe tegen ónze URL worden opgevraagd.
+      if (frame.tag === "img")
+        return !isAbsolute(frame.attribs.src) || isTrackingPixel(frame.attribs);
       return false;
     },
     transformTags: {
       a: (tagName, attribs) => {
         const href = attribs.href ?? "";
-        if (UNSUBSCRIBE.test(href) || /^mailto:/i.test(href)) {
+        if (UNSUBSCRIBE.test(href) || /^mailto:/i.test(href) || (href && !isAbsolute(href))) {
           const { href: _h, ...rest } = attribs;
           return { tagName, attribs: { ...rest, "data-removed": "personal-link" } };
         }
@@ -148,6 +150,11 @@ export function sanitizeEmailHtml(html: string, opts: SanitizeOptions = {}): str
     clean = clean.split(encodeURIComponent(opts.seedAddress)).join("jij%40voorbeeld.nl");
   }
   return clean;
+}
+
+/** Alleen volledige http(s)- of data-URL's; relatieve paden wijzen in onze app naar onszelf. */
+function isAbsolute(url: string | undefined): boolean {
+  return /^(https?:\/\/|data:image\/)/i.test((url ?? "").trim());
 }
 
 function isTrackingPixel(attribs: Record<string, string>): boolean {

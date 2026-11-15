@@ -58,8 +58,9 @@ jobs:
         run: |
           (cd apps/web && NODE_ENV=production pnpm start > ../../web.log 2>&1 &)
           (pnpm --filter mcp start > mcp.log 2>&1 &)
-          npx --yes wait-on@8 -t 60000 http://localhost:3000/api/health http://localhost:3333/health
+          (pnpm --filter workers dev > workers.log 2>&1 &)
+          npx --yes wait-on@8 -t 60000 http://localhost:3000/api/health http://localhost:3333/health http://localhost:8080/health
       - run: pnpm e2e
       - name: Logs bij een fout
         if: failure()
-        run: tail -100 web.log mcp.log
+        run: tail -100 web.log mcp.log workers.log

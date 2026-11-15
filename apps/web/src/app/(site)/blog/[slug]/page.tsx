@@ -5,8 +5,7 @@ import { Column, PageTitle, Prose } from "@/components/site/prose";
 import { formatDate, POSTS, postBySlug } from "@/lib/site/blog";
 import { SITE } from "@/lib/site/config";
 
-export const dynamicParams = false;
-
+// Bekende posts worden vooraf gebouwd; een onbekende slug geeft notFound() hieronder.
 export function generateStaticParams() {
   return POSTS.map((p) => ({ slug: p.slug }));
 }

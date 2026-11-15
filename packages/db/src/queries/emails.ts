@@ -1,4 +1,4 @@
-import { escapeLike, type EmailFilters } from "@trendtrack/core";
+import { escapeLike, sanitizeEmailHtml, type EmailFilters } from "@trendtrack/core";
 import type { Db } from "../client";
 import { EMAIL_BUCKET } from "../email-ingest";
 
@@ -43,5 +43,7 @@ export async function getEmailHtml(db: Db, path: string | null): Promise<string 
   if (!path) return null;
   const { data, error } = await db.storage.from(EMAIL_BUCKET).download(path);
   if (error) return null;
-  return data.text();
+  // Bij binnenkomst al gesaneerd; nog een keer bij het tonen zodat strengere regels ook gelden voor
+  // mails die eerder zijn opgeslagen.
+  return sanitizeEmailHtml(await data.text());
 }

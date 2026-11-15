@@ -7,6 +7,14 @@ test("calculator rekent in de browser", async ({ page }) => {
 });
 
 test("opt-out-verzoek indienen", async ({ page }) => {
+  // Limiet is 5 per uur per IP; tests draaien allemaal vanaf hetzelfde adres.
+  await fetch(`${process.env.SUPABASE_URL}/rest/v1/public_rate_counters?tool=eq.optout`, {
+    method: "DELETE",
+    headers: {
+      apikey: process.env.SUPABASE_SERVICE_ROLE_KEY!,
+      authorization: `Bearer ${process.env.SUPABASE_SERVICE_ROLE_KEY}`,
+    },
+  });
   await page.goto("/opt-out");
   await page.fill("#oo-domain", `e2e-${Date.now()}.nl`);
   await page.fill("#oo-email", "eigenaar@example.com");

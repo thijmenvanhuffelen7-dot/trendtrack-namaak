@@ -56,33 +56,34 @@ export default async function OptoutAdminPage() {
                   </td>
                   <td className="py-2">
                     {r.status === "pending" && (
-                      <form action={decideOptout} className="flex flex-wrap gap-2">
-                        <input type="hidden" name="id" value={r.id} />
-                        <input
-                          name="note"
-                          placeholder="Notitie"
-                          aria-label={`Notitie bij ${r.domain}`}
-                          className="h-8 w-32 rounded-md border bg-background px-2 text-xs"
-                        />
-                        <Button
-                          type="submit"
-                          name="decision"
-                          value="approve"
-                          size="sm"
-                          className="bg-red-600 text-white hover:bg-red-700"
-                        >
-                          Verwijderen
-                        </Button>
-                        <Button
-                          type="submit"
-                          name="decision"
-                          value="reject"
-                          size="sm"
-                          variant="outline"
-                        >
-                          Afwijzen
-                        </Button>
-                      </form>
+                      <div className="flex flex-wrap gap-2">
+                        {/* Twee formulieren met een verborgen veld: de naam/waarde van een submit-knop
+                            komt niet betrouwbaar mee in een server action. */}
+                        <form action={decideOptout} className="flex gap-2">
+                          <input type="hidden" name="id" value={r.id} />
+                          <input type="hidden" name="decision" value="approve" />
+                          <input
+                            name="note"
+                            placeholder="Notitie"
+                            aria-label={`Notitie bij ${r.domain}`}
+                            className="h-8 w-32 rounded-md border bg-background px-2 text-xs"
+                          />
+                          <Button
+                            type="submit"
+                            size="sm"
+                            className="bg-red-600 text-white hover:bg-red-700"
+                          >
+                            Verwijderen
+                          </Button>
+                        </form>
+                        <form action={decideOptout}>
+                          <input type="hidden" name="id" value={r.id} />
+                          <input type="hidden" name="decision" value="reject" />
+                          <Button type="submit" size="sm" variant="outline">
+                            Afwijzen
+                          </Button>
+                        </form>
+                      </div>
                     )}
                   </td>
                 </tr>

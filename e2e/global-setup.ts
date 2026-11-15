@@ -21,8 +21,11 @@ export default function setup() {
     }
   }
   process.env.MAILPIT_URL ??= "http://127.0.0.1:54324";
-  if (!process.env.STRIPE_WEBHOOK_SECRET && existsSync(".env.local")) {
-    const m = readFileSync(".env.local", "utf8").match(/^STRIPE_WEBHOOK_SECRET=(.+)$/m);
-    if (m?.[1]) process.env.STRIPE_WEBHOOK_SECRET = m[1].trim();
+  if (existsSync(".env.local")) {
+    const env = readFileSync(".env.local", "utf8");
+    for (const key of ["STRIPE_WEBHOOK_SECRET", "INBOUND_WEBHOOK_SECRET"]) {
+      const m = env.match(new RegExp(`^${key}=(.+)$`, "m"));
+      if (!process.env[key] && m?.[1]) process.env[key] = m[1].trim();
+    }
   }
 }

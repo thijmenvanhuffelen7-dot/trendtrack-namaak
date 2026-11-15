@@ -286,7 +286,10 @@ body {
   font-weight: 600;
 }
 .site .s-prose table {
-  width: 100%;
+  /* Brede tabellen scrollen binnen hun eigen vak, niet de hele pagina (mobiel). */
+  display: block;
+  max-width: 100%;
+  overflow-x: auto;
   border-collapse: collapse;
   font-size: 16px;
 }

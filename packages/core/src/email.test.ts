@@ -25,6 +25,18 @@ describe("sanitizeEmailHtml", () => {
     expect(clean).toContain('rel="noopener noreferrer nofollow"');
   });
 
+  it("laat geen relatieve afbeeldingen of links door (die zouden onze eigen app aanroepen)", () => {
+    const out = sanitizeEmailHtml(
+      '<img src="x" onerror="alert(1)"><img src="/logo.png"><img src="https://cdn.shop.nl/a.jpg" width="300"><a href="sale">Sale</a><a href="https://shop.nl/sale">Shop</a>',
+    );
+    expect(out).not.toContain('src="x"');
+    expect(out).not.toContain("/logo.png");
+    expect(out).toContain("https://cdn.shop.nl/a.jpg");
+    expect(out).not.toContain('href="sale"');
+    expect(out).toContain('href="https://shop.nl/sale"');
+    expect(out).not.toContain("onerror");
+  });
+
   it("verwijdert tracking-pixels", () => {
     expect(clean).not.toContain("pixel.gif");
     expect(clean).not.toContain("example.com/x.png");
