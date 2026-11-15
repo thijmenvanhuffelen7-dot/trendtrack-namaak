@@ -26,7 +26,8 @@ export default async function McpPage() {
     listConnectedClients(serviceDb(), workspace.id),
     getLocale(),
   ]);
-  const url = `${(process.env.NEXT_PUBLIC_MCP_URL ?? "http://localhost:3333").replace(/\/$/, "")}/mcp`;
+  // Op Vercel draait de MCP-server op hetzelfde domein als de site (/mcp); op een VPS apart.
+  const url = `${(process.env.NEXT_PUBLIC_MCP_URL ?? process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3333").replace(/\/$/, "")}/mcp`;
   const hasAccess = PLANS[plan.plan].limits.api;
   const cursorConfig = JSON.stringify({ mcpServers: { trendtrack: { url } } }, null, 2);
 

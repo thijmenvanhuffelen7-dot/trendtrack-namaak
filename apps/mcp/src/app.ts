@@ -55,8 +55,9 @@ export function createApp(cfg: AppConfig): Express {
     res.json(metadata());
   });
 
-  // Voor uptime-checks: 200 als de database bereikbaar is, anders 503.
-  app.get("/health", async (_req, res) => {
+  // Voor uptime-checks: 200 als de database bereikbaar is, anders 503. /mcp/health is hetzelfde
+  // adres op een gedeeld domein (Vercel), waar /health niet naar deze service gaat.
+  app.get(["/health", "/mcp/health"], async (_req, res) => {
     const { error } = await cfg.db.from("plans").select("id").limit(1);
     res.status(error ? 503 : 200).json({ ok: !error });
   });

@@ -1,0 +1,22 @@
+{
+  "$schema": "https://openapi.vercel.sh/vercel.json",
+  "regions": ["fra1"],
+  "services": {
+    "web": {
+      "root": "apps/web",
+      "framework": "nextjs"
+    },
+    "mcp": {
+      "root": "apps/mcp",
+      "framework": "express",
+      "entrypoint": "src/vercel.ts"
+    }
+  },
+  "rewrites": [
+    { "source": "/mcp", "destination": { "service": "mcp" } },
+    { "source": "/mcp/(.*)", "destination": { "service": "mcp" } },
+    { "source": "/.well-known/oauth-protected-resource", "destination": { "service": "mcp" } },
+    { "source": "/.well-known/oauth-protected-resource/(.*)", "destination": { "service": "mcp" } },
+    { "source": "/(.*)", "destination": { "service": "web" } }
+  ]
+}
