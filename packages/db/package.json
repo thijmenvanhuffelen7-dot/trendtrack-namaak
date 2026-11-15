@@ -1,0 +1,18 @@
+{
+  "name": "@trendtrack/db",
+  "version": "0.0.0",
+  "private": true,
+  "type": "module",
+  "exports": {
+    ".": "./src/index.ts"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "typecheck": "tsc -p tsconfig.json",
+    "gen:types": "supabase gen types typescript --local > src/database.gen.ts"
+  },
+  "dependencies": {
+    "@supabase/supabase-js": "^2.57.0",
+    "zod": "^4.1.0"
+  }
+}
