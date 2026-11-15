@@ -20,12 +20,16 @@
     "db:stop": "supabase stop",
     "db:reset": "supabase db reset",
     "db:types": "pnpm --filter @trendtrack/db gen:types",
-    "test:db": "pnpm --workspace-concurrency=1 --filter @trendtrack/db --filter workers --filter web --filter mcp test:integration"
+    "test:db": "pnpm --workspace-concurrency=1 --filter @trendtrack/db --filter workers --filter web --filter mcp test:integration",
+    "e2e": "playwright test",
+    "audit:rls": "pnpm --filter @trendtrack/db exec vitest run --config vitest.integration.config.ts src/rls-audit.integration.test.ts"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.0",
+    "@playwright/test": "1.63.0",
     "eslint": "^9.39.0",
     "prettier": "^3.6.0",
+    "stripe": "19.3.0",
     "supabase": "^2.122.1",
     "typescript": "^5.9.0",
     "typescript-eslint": "^8.46.0",

@@ -14,7 +14,7 @@ import {
   type PoliteFetcherOptions,
   type ProductRecord,
 } from "@trendtrack/core";
-import type { Db } from "@trendtrack/db";
+import { isOptedOut, OPTOUT_MESSAGE, type Db } from "@trendtrack/db";
 
 /**
  * Logica van de gratis tools op de publieke site. Gebruikt dezelfde beleefde fetcher als de crawler
@@ -22,15 +22,18 @@ import type { Db } from "@trendtrack/db";
  */
 
 /** Limieten per IP-adres per uur. */
-export const PUBLIC_LIMITS = { detect: 20, products: 5, ads: 20, estimate: 30 } as const;
+export const PUBLIC_LIMITS = { detect: 20, products: 5, ads: 20, estimate: 30, optout: 5 } as const;
 export type PublicTool = keyof typeof PUBLIC_LIMITS;
 
 /** IP uit de proxy-headers (Vercel zet x-forwarded-for). Gehasht met een geheim zout. */
 export function ipHash(headers: Headers): string {
   const ip =
     headers.get("x-forwarded-for")?.split(",")[0]?.trim() || headers.get("x-real-ip") || "onbekend";
+  const salt = process.env.RATE_LIMIT_SALT;
+  // Zonder geheim zout zijn IP-hashes terug te rekenen; in productie is het verplicht.
+  if (!salt && process.env.NODE_ENV === "production") throw new Error("RATE_LIMIT_SALT ontbreekt");
   return createHash("sha256")
-    .update(`${process.env.RATE_LIMIT_SALT ?? "lokaal"}:${ip}`)
+    .update(`${salt ?? "lokaal"}:${ip}`)
     .digest("hex")
     .slice(0, 32);
 }
@@ -79,6 +82,11 @@ function explain(err: unknown, domain: string): ToolError {
   if (err instanceof UnreachableError)
     return new ToolError(422, `${domain} is niet bereikbaar. Klopt het adres?`);
   return new ToolError(500, "Er ging iets mis. Probeer het later opnieuw.");
+}
+
+/** Afgemelde shops (opt-out) bekijken we ook niet via de gratis tools. */
+export async function assertNotOptedOut(db: Db, domain: string) {
+  if (await isOptedOut(db, domain)) throw new ToolError(410, OPTOUT_MESSAGE);
 }
 
 export function parseDomain(input: unknown): string {

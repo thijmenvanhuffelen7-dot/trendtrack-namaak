@@ -15,7 +15,11 @@
   },
   "dependencies": {
     "@supabase/supabase-js": "^2.57.0",
-    "zod": "^4.1.0",
-    "@trendtrack/core": "workspace:*"
+    "@trendtrack/core": "workspace:*",
+    "zod": "^4.1.0"
+  },
+  "devDependencies": {
+    "@types/pg": "8.23.1",
+    "pg": "8.23.1"
   }
 }

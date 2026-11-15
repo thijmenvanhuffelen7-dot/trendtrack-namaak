@@ -1,6 +1,7 @@
 import { serviceDb } from "@/lib/server/db";
 import { limited, toolError } from "@/lib/public/respond";
 import {
+  assertNotOptedOut,
   exportProductsPublic,
   hitPublicLimit,
   parseDomain,
@@ -15,6 +16,7 @@ export async function GET(req: Request) {
   try {
     const url = new URL(req.url);
     const domain = parseDomain(url.searchParams.get("domain"));
+    await assertNotOptedOut(serviceDb(), domain);
     const hit = await hitPublicLimit(serviceDb(), req.headers, "products");
     if (!hit.allowed) return limited(hit.resetAt);
     const rows = await exportProductsPublic(domain);

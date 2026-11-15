@@ -1,4 +1,14 @@
+import { reportError } from "@trendtrack/core";
 import type pg from "pg";
+
+/** Verwachte fouten (shop blokkeert, netwerk, domein bezet): retry, geen melding naar monitoring. */
+const EXPECTED = new Set([
+  "BlockedError",
+  "RobotsDisallowedError",
+  "UnreachableError",
+  "UnsafeTargetError",
+  "DomainBusyError",
+]);
 
 export interface JobLike {
   id: string;
@@ -37,6 +47,8 @@ export function tracked<J extends JobLike, R>(
         "update public.job_runs set status = 'failed', finished_at = now(), duration_ms = $2, error = $3 where id = $1",
         [runId, Date.now() - started, message.slice(0, 2000)],
       );
+      if (!(err instanceof Error && EXPECTED.has(err.name)))
+        void reportError(err, { service: "workers", tags: { job: job.name }, extra: { key } });
       throw err;
     }
   };

@@ -12,3 +12,4 @@ export * from "./usage";
 export * from "./api-keys";
 export * from "./oauth";
 export * from "./affiliates";
+export * from "./optout";

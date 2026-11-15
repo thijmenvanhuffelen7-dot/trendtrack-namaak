@@ -18,6 +18,9 @@ export default async function AdminLayout({ children }: { children: React.ReactN
         <Link href="/admin/inboxes" className="text-muted-foreground hover:text-foreground">
           Seed-inboxen
         </Link>
+        <Link href="/admin/opt-out" className="text-muted-foreground hover:text-foreground">
+          Opt-out
+        </Link>
         <Link href="/app/shops" className="ml-auto text-muted-foreground hover:text-foreground">
           ← Dashboard
         </Link>

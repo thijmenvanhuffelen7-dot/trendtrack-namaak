@@ -329,6 +329,40 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"opted_out_domains": {
+                  Row: {
+                    "created_at": string,"domain": string,"request_id": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "created_at"?: string,"domain": string,"request_id"?: string | null
+                  }
+                  Update: {
+                    "created_at"?: string,"domain"?: string,"request_id"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "opted_out_domains_request_id_fkey"
+      columns: ["request_id"]
+isOneToOne: false
+      referencedRelation: "optout_requests"
+      referencedColumns: ["id"]
+    }
+                  ]
+                },"optout_requests": {
+                  Row: {
+                    "admin_note": string | null,"created_at": string,"decided_at": string | null,"decided_by": string | null,"domain": string,"email": string,"id": string,"reason": string | null,"status": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "admin_note"?: string | null,"created_at"?: string,"decided_at"?: string | null,"decided_by"?: string | null,"domain": string,"email": string,"id"?: string,"reason"?: string | null,"status"?: string
+                  }
+                  Update: {
+                    "admin_note"?: string | null,"created_at"?: string,"decided_at"?: string | null,"decided_by"?: string | null,"domain"?: string,"email"?: string,"id"?: string,"reason"?: string | null,"status"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
                 },"plans": {
                   Row: {
                     "id": string,"is_public": boolean,"limits": NonNullable<Json>,"monthly_price_cents": number,"name": string,"sort_order": number
@@ -640,8 +674,14 @@ isOneToOne: false
               "allowed": boolean,"day_count": number,"day_reset": string,"limited_by": string,"second_count": number
             }[]
                            },
+"approve_optout":
+{ Args: { "p_admin": string,"p_note"?: string,"p_request": string }; Returns: number
+                           },
 "is_admin":
 { Args: Record<PropertyKey, never>; Returns: boolean
+                           },
+"is_opted_out":
+{ Args: { "p_domain": string }; Returns: boolean
                            },
 "is_workspace_member":
 { Args: { "ws": string }; Returns: boolean

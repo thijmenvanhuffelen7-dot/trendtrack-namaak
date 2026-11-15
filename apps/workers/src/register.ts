@@ -64,6 +64,11 @@ const domainJob =
   (d: RegisterDeps, fn: (domain: string) => Promise<unknown>): Handler =>
   async (job) => {
     const { domain } = DomainPayloadSchema.parse(job.data);
+    // Opt-out: afgemelde shops raken we niet meer aan, welke job het ook is.
+    const { rows } = await d.pool.query<{ out: boolean }>("select public.is_opted_out($1) as out", [
+      domain,
+    ]);
+    if (rows[0]?.out) return { skipped: "opted_out", domain };
     return withDomainLock(d.pool, domain, () => fn(domain));
   };
 

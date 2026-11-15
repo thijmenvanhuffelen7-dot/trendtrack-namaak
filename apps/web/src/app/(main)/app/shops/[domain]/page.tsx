@@ -19,7 +19,7 @@ import { ExternalLink } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
-import { fetchShopAction } from "@/app/app/actions";
+import { fetchShopAction } from "@/app/(main)/app/actions";
 import { AdCard } from "@/components/app/ad-card";
 import { EstimateCard } from "@/components/app/estimate";
 import { EventList } from "@/components/app/event-list";

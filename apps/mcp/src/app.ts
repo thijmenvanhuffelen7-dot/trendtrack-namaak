@@ -1,4 +1,5 @@
 import { StreamableHTTPServerTransport } from "@modelcontextprotocol/sdk/server/streamableHttp.js";
+import { reportError } from "@trendtrack/core";
 import type { Db } from "@trendtrack/db";
 import express, { type Express } from "express";
 import { authenticate } from "./auth";
@@ -54,8 +55,10 @@ export function createApp(cfg: AppConfig): Express {
     res.json(metadata());
   });
 
-  app.get("/health", (_req, res) => {
-    res.json({ ok: true });
+  // Voor uptime-checks: 200 als de database bereikbaar is, anders 503.
+  app.get("/health", async (_req, res) => {
+    const { error } = await cfg.db.from("plans").select("id").limit(1);
+    res.status(error ? 503 : 200).json({ ok: !error });
   });
 
   app.post("/mcp", async (req, res) => {
@@ -97,6 +100,7 @@ export function createApp(cfg: AppConfig): Express {
       await transport.handleRequest(req, res, req.body);
     } catch (err) {
       cfg.log?.({ error: String(err) });
+      void reportError(err, { service: "mcp" });
       if (!res.headersSent)
         res
           .status(500)

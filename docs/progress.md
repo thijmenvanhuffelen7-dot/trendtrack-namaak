@@ -357,4 +357,43 @@ Kanttekeningen:
 - Inspector-waarschuwingen op de subpagina's (weinig foto's, weinig beweging, kleine kop bij lange
   blogtitels) laat ik staan: het zijn lees- en rekenpagina's.
 
-## Volgende: Prompt 14 — beveiliging, deploy, opt-out en e2e
+## Prompt 14: beveiliging, deploy, monitoring, opt-out en e2e — klaar (2026-11-15), niet in productie gezet
+
+- **RLS-audit** (`pnpm audit:rls`, `rls-audit.integration.test.ts`): matrix per tabel, alleen SELECT-policies,
+  anon/ingelogd gedrag en aanroepbare functies. Bevinding: trigger-functies waren via /rpc aanroepbaar,
+  rechten ingetrokken. Zie docs/security.md.
+- **Security headers**: CSP, HSTS, X-Frame-Options, Referrer-/Permissions-Policy, COOP; aparte
+  `form-action` voor de OAuth-consent. Geen geheimen in de client-bundles (gecontroleerd in de build).
+  `RATE_LIMIT_SALT` verplicht in productie.
+- **Opt-out**: `/opt-out` (formulier, limiet per IP), `/admin/opt-out` (goedkeuren/afwijzen),
+  `approve_optout` verwijdert alle shopdata, `opted_out_domains` + databasetrigger + check in elke
+  domein-job, lookup en gratis tool.
+- **Monitoring**: `/api/health` (web + db + workers actief), `/health` van MCP checkt nu de db, optionele
+  Sentry/GlitchTip via `SENTRY_DSN` zonder SDK (`packages/core/src/monitoring.ts`) in web, workers en MCP.
+- **Deploy**: `apps/web/vercel.json` (fra1), docker-compose met `caddy` (HTTPS voor MCP) en `backup`
+  (dagelijkse `pg_dump`, getest met pg_dump 17), `scripts/backup.sh`, env-tabel per omgeving in
+  docs/deploy.md, docs/runbook.md (deploy, workers herstarten, Meta-token verlopen, backup, gelekte keys).
+- **E2E** (`pnpm e2e`, Playwright): aanmelden met magic link (Mailpit), shop opzoeken, sorteren, ad opslaan,
+  upgraden via ondertekende Stripe-webhook, API-key + REST-call, MCP-tool, calculator, opt-out, headers.
+  10/10 groen tegen een **productie-build**. CI-job `e2e` toegevoegd (Supabase + build + web + MCP).
+- **Lighthouse** (productie-build, desktop): landing, tools, prijzen, blog en opt-out 99–100 op
+  performance, toegankelijkheid, best practices en SEO.
+
+Gevonden en opgelost tijdens het testen tegen de productie-build:
+
+- De productie-build faalde (`node:`-modules van de fetcher in een edge-bundle via `@trendtrack/core`).
+  Monitoring heeft nu een eigen subpad; de CI-build vangt dit voortaan.
+- **In productie werkten filters, sorteren en het ad-paneel niet** (navigatie binnen dezelfde pagina bleef
+  hangen door `loading.tsx`, alleen in de productie-build; in dev wel). Bestond al sinds Prompt 8/9.
+  `loading.tsx` op de lijstpagina's weggehaald; e2e-regressietest toegevoegd.
+- Meta-description stond in de body (gestreamde metadata door de dynamische root-layout). De publieke site
+  heeft nu een eigen root-layout (`app/(site)/layout.tsx`, statisch); het dashboard staat in `app/(main)`.
+
+Niet gedaan (kan niet vanuit deze omgeving):
+
+- Niets in productie gezet: geen Vercel-, Supabase-cloud-, Stripe-live- of VPS-toegang. Docker-images voor
+  workers/MCP/Caddy niet gebouwd (Docker Hub niet bereikbaar). Stappen staan in docs/deploy.md.
+- E2E alleen lokaal; tegen staging draaien kan met `E2E_BASE_URL`/`E2E_MCP_URL`.
+- Geen echte Stripe-betaling, Meta-API-call of crawl van een echte shop getest (geen netwerk).
+
+## Alle 14 prompts gebouwd. Wat de eigenaar nog moet doen: zie docs/deploy.md → "Na de eerste deploy".

@@ -14,3 +14,7 @@ supabase/.temp
 supabase/.branches
 .env.production
 .taste-skill/
+backups/
+.env.production
+test-results/
+playwright-report/

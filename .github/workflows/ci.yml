@@ -36,3 +36,30 @@ jobs:
       - name: Types zijn up-to-date
         run: pnpm db:types && git diff --exit-code packages/db/src/database.gen.ts
       - run: pnpm test:db
+
+  e2e:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: pnpm/action-setup@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: pnpm
+      - run: pnpm install --frozen-lockfile
+      - run: pnpm exec playwright install --with-deps chromium
+      - run: pnpm exec supabase start -x studio,imgproxy,vector,logflare,supavisor,edge-runtime,realtime
+      - run: pnpm db:reset
+      - run: sh scripts/ci-env.sh .env.local
+      # Productie-build: vangt ook imports die alleen in de build falen (bv. node: in een client-bundle).
+      - run: pnpm --filter web build
+        env: { NODE_ENV: production }
+      - name: Web en MCP starten
+        run: |
+          (cd apps/web && NODE_ENV=production pnpm start > ../../web.log 2>&1 &)
+          (pnpm --filter mcp start > mcp.log 2>&1 &)
+          npx --yes wait-on@8 -t 60000 http://localhost:3000/api/health http://localhost:3333/health
+      - run: pnpm e2e
+      - name: Logs bij een fout
+        if: failure()
+        run: tail -100 web.log mcp.log

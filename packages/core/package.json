@@ -5,7 +5,8 @@
   "type": "module",
   "exports": {
     ".": "./src/index.ts",
-    "./plans": "./src/plans.ts"
+    "./plans": "./src/plans.ts",
+    "./monitoring": "./src/monitoring.ts"
   },
   "scripts": {
     "lint": "eslint .",

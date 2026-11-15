@@ -62,6 +62,8 @@ const ROWS: [string, (id: PlanId) => string][] = [
 export function PricingTable({ headingLevel = 2 }: { headingLevel?: 1 | 2 }) {
   const [interval, setInterval] = useState<BillingInterval>("month");
   const H = headingLevel === 1 ? "h1" : "h2";
+  // Plannamen (mobiel) één niveau onder de kop van de tabel.
+  const Sub = headingLevel === 1 ? "h2" : "h3";
   const price = (id: PlanId) =>
     id === "free"
       ? { main: "€ 0", sub: "voor altijd" }
@@ -147,7 +149,7 @@ export function PricingTable({ headingLevel = 2 }: { headingLevel?: 1 | 2 }) {
                   >
                     {p.main}
                   </span>
-                  <span className="block text-[15px] font-normal opacity-80">{p.sub}</span>
+                  <span className="block text-[15px] font-normal">{p.sub}</span>
                 </th>
               );
             })}
@@ -194,17 +196,17 @@ export function PricingTable({ headingLevel = 2 }: { headingLevel?: 1 | 2 }) {
               key={id}
               className={`p-5 ${id === "pro" ? "bg-[var(--s-accent)]" : "bg-[var(--s-surface)]"}`}
             >
-              <h3 className="text-[9vw] leading-none font-semibold tracking-[-0.04em]">
+              <Sub className="text-[9vw] leading-none font-semibold tracking-[-0.04em]">
                 {PLANS[id].name}
-              </h3>
+              </Sub>
               <p className="mt-1 text-[9vw] leading-none tracking-[-0.04em] tabular-nums">
                 {p.main}
               </p>
-              <p className="mt-1 text-[15px] opacity-80">{p.sub}</p>
+              <p className="mt-1 text-[15px]">{p.sub}</p>
               <dl className="mt-5 space-y-3 text-[17px]">
                 {ROWS.map(([label, val]) => (
                   <div key={label}>
-                    <dt className="opacity-75">{label}</dt>
+                    <dt className="font-medium">{label}</dt>
                     <dd>{val(id)}</dd>
                   </div>
                 ))}

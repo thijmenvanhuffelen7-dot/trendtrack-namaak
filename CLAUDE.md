@@ -61,8 +61,15 @@ pnpm typecheck
 pnpm test            # alle Vitest-projecten
 pnpm format:check
 pnpm test:db         # integratietests tegen de lokale Supabase (mogen testdata wissen)
+pnpm audit:rls       # RLS-audit: wie mag welke tabel lezen/schrijven (onderdeel van test:db)
+pnpm e2e             # Playwright tegen een draaiende stack (web :3000, MCP :3333, Supabase)
 pnpm db:reset        # migraties + seed opnieuw
 pnpm db:types        # TS-types genereren naar packages/db/src/database.gen.ts
 ```
 
-CI (`.github/workflows/ci.yml`) draait lint, typecheck, tests en format-check.
+CI (`.github/workflows/ci.yml`) draait lint, typecheck, tests, format-check, de integratietests en
+e2e tegen een productie-build. Deploy en beheer: `docs/deploy.md`, `docs/runbook.md`, `docs/security.md`.
+
+Let op (Next 15.5): geen `loading.tsx` op pagina's die met query-parameters navigeren (filters, sorteren):
+in de productie-build blijft die navigatie dan hangen. De publieke site (`app/(site)`) en het dashboard
+(`app/(main)`) hebben elk een eigen root-layout; de site leest geen cookies zodat hij statisch blijft.

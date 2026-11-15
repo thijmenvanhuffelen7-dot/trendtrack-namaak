@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale } from "next-intl/server";
-import "./globals.css";
+import "../globals.css";
 
 export const metadata: Metadata = {
   title: "TrendTrack Benelux",

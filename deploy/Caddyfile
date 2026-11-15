@@ -1,0 +1,20 @@
+# HTTPS voor de MCP-server (Let's Encrypt, automatisch vernieuwd).
+# De web-app draait op Vercel; workers hebben geen publieke poort nodig.
+{
+	email {$CADDY_EMAIL}
+}
+
+{$MCP_DOMAIN} {
+	encode gzip
+	header {
+		Strict-Transport-Security "max-age=63072000; includeSubDomains"
+		X-Content-Type-Options nosniff
+		-Server
+	}
+	# MCP-verzoeken kunnen even duren (tools die de database bevragen).
+	reverse_proxy mcp:3333 {
+		transport http {
+			read_timeout 60s
+		}
+	}
+}

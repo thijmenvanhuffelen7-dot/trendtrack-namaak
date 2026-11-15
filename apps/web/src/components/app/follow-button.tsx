@@ -3,7 +3,7 @@
 import { Check, Plus } from "lucide-react";
 import { useTranslations } from "next-intl";
 import { useActionState } from "react";
-import { toggleTrackAction, type TrackState } from "@/app/app/actions";
+import { toggleTrackAction, type TrackState } from "@/app/(main)/app/actions";
 import { LimitInline } from "@/components/app/limit-inline";
 import { Button } from "@/components/ui/button";
 

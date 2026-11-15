@@ -21,3 +21,4 @@ export * from "./http/errors";
 export * from "./http/ip-guard";
 export * from "./http/polite-fetcher";
 export * from "./http/user-agent";
+export * from "./monitoring";

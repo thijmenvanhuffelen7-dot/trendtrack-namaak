@@ -1,4 +1,5 @@
-# Workers op een VPS:  docker compose up -d --build
+# Workers, MCP-server, HTTPS (Caddy) en backups op een VPS:  docker compose up -d --build
+# Zie docs/deploy.md. De web-app draait op Vercel.
 # Env staat in .env.production (zelfde variabelen als .env.example; DATABASE_URL naar Supabase).
 services:
   workers:
@@ -51,3 +52,37 @@ services:
       interval: 30s
       timeout: 5s
       retries: 3
+
+  # HTTPS voor de MCP-server (Let's Encrypt). Vereist DNS van MCP_DOMAIN naar deze server.
+  caddy:
+    image: caddy:2.10-alpine
+    restart: unless-stopped
+    env_file: .env.production
+    ports:
+      - "80:80"
+      - "443:443"
+    volumes:
+      - ./deploy/Caddyfile:/etc/caddy/Caddyfile:ro
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on: [mcp]
+
+  # Dagelijkse pg_dump naar ./backups (14 dagen bewaren). pg_dump-versie >= die van de database (17).
+  backup:
+    image: postgres:17-alpine
+    restart: unless-stopped
+    env_file: .env.production
+    environment:
+      BACKUP_DIR: /backups
+    volumes:
+      - ./scripts/backup.sh:/backup.sh:ro
+      - ./backups:/backups
+    entrypoint:
+      ["/bin/sh", "-c", "while true; do sh /backup.sh || echo 'backup mislukt'; sleep 86400; done"]
+    logging:
+      driver: json-file
+      options: { max-size: "5m", max-file: "3" }
+
+volumes:
+  caddy_data:
+  caddy_config:
