@@ -1,21 +1,27 @@
+import { PLANS } from "@trendtrack/core";
 import { Search } from "lucide-react";
 import Link from "next/link";
 import { getLocale, getTranslations } from "next-intl/server";
 import { AppNav } from "@/components/app/nav";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { getSession } from "@/lib/server/session";
+import { getPlan, getSession } from "@/lib/server/session";
 import { searchAction, setLocaleAction } from "./actions";
 
 export const metadata = { title: "TrendTrack", robots: { index: false } };
 
 export default async function AppLayout({ children }: { children: React.ReactNode }) {
   const { user, workspace, isAdmin } = await getSession();
-  const [t, tc, locale] = await Promise.all([
+  const [t, tc, tl, locale, plan] = await Promise.all([
     getTranslations("nav"),
     getTranslations("common"),
+    getTranslations("limits"),
     getLocale(),
+    getPlan(),
   ]);
+  const trialDays = plan.trialEndsAt
+    ? Math.max(0, Math.ceil((Date.parse(plan.trialEndsAt) - Date.now()) / 86_400_000))
+    : null;
   const other = locale === "nl" ? "en" : "nl";
 
   return (
@@ -30,6 +36,12 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             {user.email}
           </p>
           <p className="truncate px-2.5">{workspace.name}</p>
+          <Link
+            href="/app/settings/billing"
+            className="mx-2.5 block rounded-md border border-border px-2 py-1 text-foreground hover:bg-muted"
+          >
+            {trialDays !== null ? tl("trialBadge", { count: trialDays }) : PLANS[plan.plan].name}
+          </Link>
           <div className="flex items-center gap-1">
             <form action={setLocaleAction}>
               <input type="hidden" name="locale" value={other} />

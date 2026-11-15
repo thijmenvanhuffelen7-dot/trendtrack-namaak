@@ -1,6 +1,7 @@
 "use server";
 
 import {
+  checkAndRecordUsage,
   createFolder,
   deleteFolder,
   removeFolderItem,
@@ -18,6 +19,8 @@ const id = z.guid();
 export async function createFolderAction(form: FormData) {
   const name = z.string().trim().min(1).max(80).parse(form.get("name"));
   const { user, workspace } = await getSession();
+  const usage = await checkAndRecordUsage(serviceDb(), workspace.id, "folder");
+  if (!usage.allowed) redirect("/app/folders?limit=folder");
   const folder = await createFolder(serviceDb(), workspace.id, user.id, name);
   revalidatePath("/app/folders");
   redirect(`/app/folders/${folder.id}`);

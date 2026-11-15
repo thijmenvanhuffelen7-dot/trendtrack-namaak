@@ -7,3 +7,5 @@ export * from "./queries/ads";
 export * from "./queries/emails";
 export * from "./queries/shops";
 export * from "./queries/workspace";
+export * from "./billing";
+export * from "./usage";

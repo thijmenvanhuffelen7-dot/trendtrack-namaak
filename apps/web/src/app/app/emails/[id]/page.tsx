@@ -1,12 +1,13 @@
-import { getEmail, getEmailHtml, listFolders } from "@trendtrack/db";
+import { emailHistoryFloor, getEmail, getEmailHtml, listFolders } from "@trendtrack/db";
 import { ArrowLeft } from "lucide-react";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
 import { SaveToFolder } from "@/components/app/save-to-folder";
-import { Badge } from "@/components/ui/misc";
+import { Badge, EmptyState } from "@/components/ui/misc";
 import { formatDateTime } from "@/lib/format";
-import { getSession } from "@/lib/server/session";
+import { buttonVariants } from "@/components/ui/button";
+import { getPlan, getSession } from "@/lib/server/session";
 
 export default async function EmailPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
@@ -14,6 +15,22 @@ export default async function EmailPage({ params }: { params: Promise<{ id: stri
   const { db, workspace } = await getSession();
   const email = await getEmail(db, id);
   if (!email) notFound();
+  const floor = emailHistoryFloor((await getPlan()).plan);
+  if (floor && email.received_at < floor) {
+    const tl = await getTranslations("limits");
+    return (
+      <EmptyState
+        title={email.subject ?? "–"}
+        action={
+          <Link href="/app/settings/billing" className={buttonVariants()}>
+            {tl("upgrade")}
+          </Link>
+        }
+      >
+        {tl("emailHistory", { days: Math.round((Date.now() - Date.parse(floor)) / 86_400_000) })}
+      </EmptyState>
+    );
+  }
   const [t, locale, html, folders] = await Promise.all([
     getTranslations("emails"),
     getLocale(),

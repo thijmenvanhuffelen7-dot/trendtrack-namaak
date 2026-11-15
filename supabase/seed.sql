@@ -1,11 +1,7 @@
 -- Seed voor lokale ontwikkeling: plannen, 3 voorbeeldshops, producten, adverteerders en 10 ads.
 -- Alle data is verzonnen.
 
-insert into public.plans (id, name, monthly_price_cents, sort_order, limits) values
-  ('free',    'Gratis',  0,     0, '{"shop_lookups_per_week": 5,  "ad_searches_per_day": 20, "folders": 1, "tracked_brands": 0, "api": false}'),
-  ('starter', 'Starter', 2900,  1, '{"shop_lookups_per_week": 50, "ad_searches_per_day": null, "folders": null, "tracked_brands": 3, "api": false}'),
-  ('pro',     'Pro',     5900,  2, '{"shop_lookups_per_week": null, "ad_searches_per_day": null, "folders": null, "tracked_brands": 15, "api": true, "api_calls_per_month": 10000}'),
-  ('agency',  'Agency',  11900, 3, '{"shop_lookups_per_week": null, "ad_searches_per_day": null, "folders": null, "tracked_brands": 40, "api": true, "api_calls_per_month": 50000, "seats": 3}');
+-- Plannen staan in de migratie 20261115050000_billing.sql (bron: packages/core/src/plans.ts).
 
 insert into public.shops (id, domain, name, country, currency, platform, theme_name, apps, status,
                           est_monthly_revenue_low, est_monthly_revenue, est_monthly_revenue_high,

@@ -1,6 +1,8 @@
-import { APP_SIGNATURES, tryNormalizeDomain } from "@trendtrack/core";
+import { APP_SIGNATURES, PLANS, tryNormalizeDomain } from "@trendtrack/core";
 import { AdFiltersSchema, EmailFiltersSchema, parseFilters } from "@trendtrack/core";
 import {
+  checkAndRecordUsage,
+  emailHistoryFloor,
   getLatestLookup,
   getShopByDomain,
   getShopSnapshots,
@@ -29,7 +31,9 @@ import { TrendChart } from "@/components/app/trend-chart";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { Badge, Card, EmptyState, ShopAvatar } from "@/components/ui/misc";
 import { formatDate, formatMoney, formatNumberRange } from "@/lib/format";
-import { getSession } from "@/lib/server/session";
+import { LimitNotice } from "@/components/app/limit-notice";
+import { serviceDb } from "@/lib/server/db";
+import { getPlan, getSession } from "@/lib/server/session";
 import { cn } from "@/lib/utils";
 
 const TABS = ["overview", "products", "ads", "emails", "tech"] as const;
@@ -47,7 +51,13 @@ export default async function ShopPage({
   const tabParam = (await searchParams).tab;
   const tab: Tab = TABS.includes(tabParam as Tab) ? (tabParam as Tab) : "overview";
 
-  const { db, workspace } = await getSession();
+  const { db, workspace, user } = await getSession();
+  // Elke shop die je bekijkt of laat ophalen telt als lookup (dezelfde shop één keer per week).
+  const usage = await checkAndRecordUsage(serviceDb(), workspace.id, "shop_lookup", {
+    key: domain,
+    userId: user.id,
+  });
+  if (!usage.allowed) return <LimitNotice result={usage} />;
   const shop = await getShopByDomain(db, domain);
   if (!shop) return <UnknownShop domain={domain} workspaceId={workspace.id} />;
 
@@ -325,38 +335,56 @@ async function Ads({ shop }: { shop: ShopDetail }) {
 
 async function Emails({ shop, locale }: { shop: ShopDetail; locale: string }) {
   const { db } = await getSession();
-  const [t, te, result] = await Promise.all([
+  const { plan } = await getPlan();
+  const floor = emailHistoryFloor(plan);
+  const [t, te, tl, result] = await Promise.all([
     getTranslations("shop"),
     getTranslations("emails"),
-    listEmails(db, parseFilters(EmailFiltersSchema, { domain: shop.domain, per_page: "100" })),
+    getTranslations("limits"),
+    listEmails(
+      db,
+      parseFilters(EmailFiltersSchema, {
+        domain: shop.domain,
+        per_page: "100",
+        ...(floor ? { since: floor } : {}),
+      }),
+    ),
   ]);
-  if (result.rows.length === 0)
-    return <EmptyState title={t("tabs.emails")}>{t("emailsEmpty")}</EmptyState>;
+  const days = PLANS[plan].limits.emailHistoryDays;
   return (
-    <ol className="relative ml-2 space-y-4 border-l border-border pl-5">
-      {result.rows.map((e) => (
-        <li key={e.id} className="relative">
-          <span
-            aria-hidden
-            className="absolute top-1.5 -left-[25px] size-2 rounded-full bg-muted-foreground"
-          />
-          <p className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
-            <time dateTime={e.received_at}>{formatDate(e.received_at, locale, "long")}</time>
-            <Badge tone={e.type === "campaign" ? "outline" : "neutral"}>
-              {te(`types.${e.type}`)}
-            </Badge>
-            {e.flow_step && <span>{te("step", { step: e.flow_step })}</span>}
-          </p>
-          <Link
-            href={`/app/emails/${e.id}`}
-            className="mt-0.5 block font-medium underline-offset-2 hover:underline"
-          >
-            {e.subject ?? "–"}
-          </Link>
-          {e.preheader && <p className="text-sm text-muted-foreground">{e.preheader}</p>}
-        </li>
-      ))}
-    </ol>
+    <>
+      {days !== null && (
+        <p className="mb-4 text-sm text-muted-foreground">{tl("emailHistory", { days })}</p>
+      )}
+      {result.rows.length === 0 ? (
+        <EmptyState title={t("tabs.emails")}>{t("emailsEmpty")}</EmptyState>
+      ) : (
+        <ol className="relative ml-2 space-y-4 border-l border-border pl-5">
+          {result.rows.map((e) => (
+            <li key={e.id} className="relative">
+              <span
+                aria-hidden
+                className="absolute top-1.5 -left-[25px] size-2 rounded-full bg-muted-foreground"
+              />
+              <p className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
+                <time dateTime={e.received_at}>{formatDate(e.received_at, locale, "long")}</time>
+                <Badge tone={e.type === "campaign" ? "outline" : "neutral"}>
+                  {te(`types.${e.type}`)}
+                </Badge>
+                {e.flow_step && <span>{te("step", { step: e.flow_step })}</span>}
+              </p>
+              <Link
+                href={`/app/emails/${e.id}`}
+                className="mt-0.5 block font-medium underline-offset-2 hover:underline"
+              >
+                {e.subject ?? "–"}
+              </Link>
+              {e.preheader && <p className="text-sm text-muted-foreground">{e.preheader}</p>}
+            </li>
+          ))}
+        </ol>
+      )}
+    </>
   );
 }
 

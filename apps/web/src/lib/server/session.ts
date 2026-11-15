@@ -1,8 +1,9 @@
 import "server-only";
-import { getWorkspaceForUser } from "@trendtrack/db";
+import { getWorkspaceForUser, getWorkspacePlan } from "@trendtrack/db";
 import { redirect } from "next/navigation";
 import { cache } from "react";
 import { createUserClient } from "@/lib/supabase/server";
+import { serviceDb } from "./db";
 
 /**
  * De ingelogde gebruiker met zijn workspace. Stuurt door naar /login als er geen sessie is.
@@ -46,3 +47,9 @@ export function siteUrl(headers: Headers): string {
 export function safeNext(next: string | null | undefined, fallback = "/app"): string {
   return next && /^\/(?!\/)[\w\-./?=&%[\]]*$/.test(next) ? next : fallback;
 }
+
+/** Het plan dat nu geldt voor de workspace van de ingelogde gebruiker (één keer per request). */
+export const getPlan = cache(async () => {
+  const { workspace } = await getSession();
+  return getWorkspacePlan(serviceDb(), workspace.id);
+});

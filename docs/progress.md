@@ -254,4 +254,31 @@ daarom gebruiken we `/meta.json` voor detectie.
   Versturen vraagt een mailprovider (bv. Resend/Postmark) en een dagelijkse job.
 - Limieten (aantal folders, gevolgde merken) komen in Prompt 10; de server actions zijn de plek.
 
-## Volgende: Prompt 10 — plannen, betalingen en limieten (Stripe-testkeys nodig)
+## Prompt 10: plannen, betalingen en limieten — gebouwd (2026-11-15), Stripe-checkout niet live getest
+
+- `packages/core/plans.ts` (plannen, prijzen met kwartaal −15% / jaar −30%, Agency-seats, lookup
+  keys) en `usage.ts` (acties, periodes in Nederlandse tijd, `resolvePlan`)
+- Migratie `20261115050000_billing.sql`: plannen, 7 dagen gratis Pro bij aanmelding (trigger),
+  `record_usage()` (atomair met advisory lock, dedupe op sleutel), `billing_events`
+- `packages/db`: `checkAndRecordUsage()`, `getWorkspacePlan()`, `getUsageSummary()`,
+  `processBillingEvent()` (idempotent, oude events genegeerd)
+- Web: Stripe Checkout (iDEAL/Bancontact/kaart, btw-ID, promotiecodes) en Customer Portal,
+  webhook `/api/stripe/webhook` (handtekening verplicht), `scripts/stripe-setup.ts`
+- Limieten afgedwongen: shop-pagina en lookups, ad-zoekopdrachten, folders, Brandtracker,
+  e-mailhistorie; nette melding met "Bekijk plannen"
+- `/app/settings` en `/app/settings/billing` (plan, proef, verbruik met balken, plannen met
+  maand/kwartaal/jaar, beheren), plan-badge in de sidebar
+- Getest: unit (prijzen, periodes incl. zomertijd, plankeuze, Stripe-mapping), integratie
+  (limieten, 30 gelijktijdige verzoeken => precies 20 door, webhook met echte Stripe-handtekening
+  => upgrade/downgrade/opzeggen), en in de browser: proef, alle gratis limieten, ondertekende
+  webhook naar de draaiende app => limieten meteen weg, downgrade naar Starter
+- Zie `docs/billing.md`
+
+### Niet getest / open
+
+- Echte Stripe Checkout en het portal: geen `STRIPE_SECRET_KEY` en api.stripe.com is niet
+  bereikbaar vanuit de cloud-sessie. Stappen in `docs/billing.md`.
+- Seats: het aantal wordt bijgehouden, maar teamleden uitnodigen bestaat nog niet.
+- Iedereen in een workspace kan nu het abonnement wijzigen (alleen eigenaar is nog niet afgedwongen).
+
+## Volgende: Prompt 11 — publieke REST API

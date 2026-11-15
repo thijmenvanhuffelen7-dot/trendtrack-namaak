@@ -1,5 +1,12 @@
 import { AdFiltersSchema, parseFilters, toQueryString, type AdFilters } from "@trendtrack/core";
-import { adRunDays, getAd, listAds, listFolders, type AdRow } from "@trendtrack/db";
+import {
+  type AdRow,
+  adRunDays,
+  checkAndRecordUsage,
+  getAd,
+  listAds,
+  listFolders,
+} from "@trendtrack/db";
 import { ExternalLink, X } from "lucide-react";
 import Link from "next/link";
 import { redirect } from "next/navigation";
@@ -11,6 +18,8 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Field, Input, Select } from "@/components/ui/input";
 import { Badge, EmptyState, PageHeader } from "@/components/ui/misc";
 import { formatDate, formatMoneyRange, formatNumber } from "@/lib/format";
+import { LimitNotice } from "@/components/app/limit-notice";
+import { serviceDb } from "@/lib/server/db";
 import { getSession } from "@/lib/server/session";
 
 const DEFAULTS = { sort: "newest", page: 1, per_page: 24 };
@@ -30,11 +39,19 @@ export default async function AdsPage({
     redirect(href(parseFilters(AdFiltersSchema, raw), adId));
   const filters = parseFilters(AdFiltersSchema, raw);
 
-  const { db, workspace } = await getSession();
+  const { db, workspace, user } = await getSession();
+  // Elke nieuwe zoekopdracht telt; bladeren en een ad openen niet.
+  const { page: _page, per_page: _perPage, ...searchKey } = filters;
+  const usage = await checkAndRecordUsage(serviceDb(), workspace.id, "ad_search", {
+    key: toQueryString(searchKey) || "?",
+    userId: user.id,
+  });
   const [t, tc, result, selected, folders] = await Promise.all([
     getTranslations("ads"),
     getTranslations("common"),
-    listAds(db, filters),
+    usage.allowed
+      ? listAds(db, filters)
+      : Promise.resolve({ rows: [] as AdRow[], total: 0, page: 1, perPage: filters.per_page }),
     adId ? getAd(db, adId) : null,
     adId ? listFolders(db, workspace.id) : [],
   ]);
@@ -140,7 +157,9 @@ export default async function AdsPage({
         </div>
       </form>
 
-      {result.rows.length === 0 ? (
+      {!usage.allowed ? (
+        <LimitNotice result={usage} />
+      ) : result.rows.length === 0 ? (
         <EmptyState title={t("emptyTitle")}>{t("emptyBody")}</EmptyState>
       ) : (
         <ul className="grid gap-4 md:grid-cols-2 xl:grid-cols-3">

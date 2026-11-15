@@ -127,7 +127,11 @@
       "strong": "Sterke schatting"
     },
     "basedOn": "Gebaseerd op: {signals}",
-    "signals": { "ads": "ads", "sellouts": "uitverkochte producten", "reviews": "reviews" }
+    "signals": {
+      "ads": "ads",
+      "sellouts": "uitverkochte producten",
+      "reviews": "reviews"
+    }
   },
   "lookup": {
     "unknownTitle": "{domain} kennen we nog niet",
@@ -205,7 +209,11 @@
     "title": "E-mails",
     "description": "Echte nieuwsbrieven van webshops: welkomstmails, flows en campagnes.",
     "type": "Type",
-    "types": { "welcome": "Welkom", "flow": "Flow", "campaign": "Campagne" },
+    "types": {
+      "welcome": "Welkom",
+      "flow": "Flow",
+      "campaign": "Campagne"
+    },
     "shop": "Shop (domein)",
     "since": "Vanaf",
     "until": "Tot en met",
@@ -272,5 +280,104 @@
     "ranDays": "liep {days}",
     "priceFromTo": "{from} → {to}",
     "untitled": "Zonder titel"
+  },
+  "billing": {
+    "title": "Abonnement",
+    "description": "Je plan, je verbruik deze periode en upgraden of opzeggen.",
+    "current": "Huidig plan",
+    "status": {
+      "trialing": "Proefperiode",
+      "active": "Actief",
+      "past_due": "Betaling mislukt",
+      "canceled": "Opgezegd",
+      "incomplete": "Nog niet betaald",
+      "unpaid": "Niet betaald",
+      "free": "Gratis"
+    },
+    "trialLeft": "{count, plural, =0 {Je proef eindigt vandaag} one {Nog # dag gratis Pro} other {Nog # dagen gratis Pro}}",
+    "trialBody": "Daarna ga je automatisch naar het gratis plan, tenzij je kiest voor een betaald plan. Je hebt geen creditcard opgegeven.",
+    "pastDue": "De laatste betaling is mislukt. Werk je betaalmethode bij om je plan te houden.",
+    "cancelsAt": "Je abonnement stopt op {date}.",
+    "renewsAt": "Verlengt op {date}.",
+    "seats": "{count, plural, one {# gebruiker} other {# gebruikers}}",
+    "manage": "Abonnement beheren",
+    "manageHint": "Betaalmethode, facturen, wisselen van plan of opzeggen.",
+    "usage": "Verbruik",
+    "resets": "Reset {date}",
+    "unlimited": "Onbeperkt",
+    "notIncluded": "Niet in je plan",
+    "usageLabels": {
+      "shop_lookup": "Shop-lookups deze week",
+      "ad_search": "Ad-zoekopdrachten vandaag",
+      "folder": "Folders",
+      "tracked_brand": "Gevolgde merken",
+      "api_call": "API- en MCP-calls deze maand"
+    },
+    "plans": "Plannen",
+    "interval": {
+      "month": "Maand",
+      "quarter": "Kwartaal",
+      "year": "Jaar"
+    },
+    "discount": "−{percent}%",
+    "perMonth": "/ maand",
+    "billedAs": "{amount} per {period}",
+    "periodName": {
+      "month": "maand",
+      "quarter": "kwartaal",
+      "year": "jaar"
+    },
+    "choose": "Kies {plan}",
+    "currentPlan": "Je huidige plan",
+    "switchInPortal": "Wisselen via abonnementsbeheer",
+    "extraSeats": "Gebruikers (3 inbegrepen, € 20 per extra gebruiker per maand)",
+    "features": {
+      "lookups": "{count, plural, =-1 {Onbeperkt shop-lookups} other {# shop-lookups per week}}",
+      "adSearches": "{count, plural, =-1 {Onbeperkt ads zoeken} other {# ad-zoekopdrachten per dag}}",
+      "folders": "{count, plural, =-1 {Onbeperkt folders} one {# folder} other {# folders}}",
+      "tracked": "{count, plural, =0 {Geen Brandtracker} one {# merk in Brandtracker} other {# merken in Brandtracker}}",
+      "emails": "{count, plural, =-1 {Volledige e-mail library} other {E-mails van de laatste # dagen}}",
+      "api": "API + MCP ({count} calls per maand)",
+      "noApi": "Geen API of MCP",
+      "seats": "{count, plural, one {# gebruiker} other {# gebruikers}}"
+    },
+    "notConfigured": "Betalingen zijn nog niet ingesteld (STRIPE_SECRET_KEY ontbreekt). Plannen kun je bekijken, maar nog niet afsluiten.",
+    "checkoutSuccess": "Bedankt! Je betaling is gelukt. Je nieuwe plan staat binnen enkele seconden klaar.",
+    "checkoutCancel": "Afrekenen afgebroken. Er is niets in rekening gebracht.",
+    "error": "Dat lukte niet. Probeer het opnieuw of neem contact op.",
+    "vat": "Prijzen inclusief btw. Betalen met iDEAL, Bancontact of creditcard. Kwartaal 15% en jaar 30% korting.",
+    "free": "Gratis"
+  },
+  "limits": {
+    "title": {
+      "shop_lookup": "Je shop-lookups voor deze week zijn op",
+      "ad_search": "Je ad-zoekopdrachten voor vandaag zijn op",
+      "folder": "Je hebt het maximum aantal folders",
+      "tracked_brand": "Je volgt het maximum aantal merken",
+      "api_call": "Je API-calls voor deze maand zijn op"
+    },
+    "notInPlan": {
+      "tracked_brand": "De Brandtracker zit niet in je plan",
+      "api_call": "De API en MCP-server zitten niet in je plan",
+      "folder": "Folders zitten niet in je plan",
+      "shop_lookup": "Shop-lookups zitten niet in je plan",
+      "ad_search": "Ads zoeken zit niet in je plan"
+    },
+    "body": "Je gebruikte {used} van {limit} in het {plan}-plan.",
+    "resets": "De teller gaat weer op 0 op {date}.",
+    "upgrade": "Bekijk plannen",
+    "emailHistory": "Je plan toont e-mails van de laatste {days} dagen. Upgrade voor de volledige library.",
+    "planBadge": "{plan}",
+    "trialBadge": "Pro-proef: {count, plural, =0 {laatste dag} one {nog # dag} other {nog # dagen}}"
+  },
+  "settings": {
+    "title": "Instellingen",
+    "account": "Account",
+    "email": "E-mailadres",
+    "workspace": "Workspace",
+    "language": "Taal",
+    "languageHint": "De taal van het dashboard.",
+    "billing": "Abonnement en verbruik",
+    "billingHint": "Plan, verbruik, upgraden en facturen."
   }
 }

@@ -95,6 +95,20 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"billing_events": {
+                  Row: {
+                    "event_id": string,"processed_at": string,"provider": string,"type": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "event_id": string,"processed_at"?: string,"provider": string,"type": string
+                  }
+                  Update: {
+                    "event_id"?: string,"processed_at"?: string,"provider"?: string,"type"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
                 },"emails": {
                   Row: {
                     "created_at": string,"flow_step": number | null,"from_address": string,"html_storage_path": string | null,"id": string,"message_id": string | null,"preheader": string | null,"received_at": string,"seed_inbox_id": string | null,"shop_id": string,"subject": string | null,"text_preview": string | null,"to_address": string | null,"type": Database["public"]['Enums']["email_type"]
@@ -359,14 +373,14 @@ isOneToOne: false
                   ]
                 },"subscriptions": {
                   Row: {
-                    "billing_interval": string | null,"cancel_at_period_end": boolean,"created_at": string,"current_period_end": string | null,"current_period_start": string | null,"id": string,"plan_id": string,"provider": string,"provider_subscription_id": string | null,"seats": number,"status": Database["public"]['Enums']["subscription_status"],"trial_ends_at": string | null,"updated_at": string,"workspace_id": string
+                    "billing_interval": string | null,"cancel_at_period_end": boolean,"created_at": string,"current_period_end": string | null,"current_period_start": string | null,"id": string,"plan_id": string,"provider": string,"provider_customer_id": string | null,"provider_event_at": string | null,"provider_subscription_id": string | null,"seats": number,"status": Database["public"]['Enums']["subscription_status"],"trial_ends_at": string | null,"updated_at": string,"workspace_id": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "billing_interval"?: string | null,"cancel_at_period_end"?: boolean,"created_at"?: string,"current_period_end"?: string | null,"current_period_start"?: string | null,"id"?: string,"plan_id": string,"provider"?: string,"provider_subscription_id"?: string | null,"seats"?: number,"status": Database["public"]['Enums']["subscription_status"],"trial_ends_at"?: string | null,"updated_at"?: string,"workspace_id": string
+                    "billing_interval"?: string | null,"cancel_at_period_end"?: boolean,"created_at"?: string,"current_period_end"?: string | null,"current_period_start"?: string | null,"id"?: string,"plan_id": string,"provider"?: string,"provider_customer_id"?: string | null,"provider_event_at"?: string | null,"provider_subscription_id"?: string | null,"seats"?: number,"status": Database["public"]['Enums']["subscription_status"],"trial_ends_at"?: string | null,"updated_at"?: string,"workspace_id": string
                   }
                   Update: {
-                    "billing_interval"?: string | null,"cancel_at_period_end"?: boolean,"created_at"?: string,"current_period_end"?: string | null,"current_period_start"?: string | null,"id"?: string,"plan_id"?: string,"provider"?: string,"provider_subscription_id"?: string | null,"seats"?: number,"status"?: Database["public"]['Enums']["subscription_status"],"trial_ends_at"?: string | null,"updated_at"?: string,"workspace_id"?: string
+                    "billing_interval"?: string | null,"cancel_at_period_end"?: boolean,"created_at"?: string,"current_period_end"?: string | null,"current_period_start"?: string | null,"id"?: string,"plan_id"?: string,"provider"?: string,"provider_customer_id"?: string | null,"provider_event_at"?: string | null,"provider_subscription_id"?: string | null,"seats"?: number,"status"?: Database["public"]['Enums']["subscription_status"],"trial_ends_at"?: string | null,"updated_at"?: string,"workspace_id"?: string
                   }
                   Relationships: [
                     {
@@ -510,6 +524,11 @@ isOneToOne: false
                            },
 "prune_job_runs":
 { Args: { "keep_days"?: number }; Returns: number
+                           },
+"record_usage":
+{ Args: { "p_action": string,"p_key"?: string,"p_limit": number,"p_quantity"?: number,"p_record"?: boolean,"p_since": string,"p_source": string,"p_user": string,"p_workspace": string }; Returns: {
+              "allowed": boolean,"duplicate": boolean,"used": number
+            }[]
                            },
 "refresh_shop_ad_count":
 { Args: { "target": string }; Returns: undefined

@@ -1,10 +1,11 @@
 import {
+  type EmailFilters,
   EmailFiltersSchema,
   parseFilters,
+  PLANS,
   toQueryString,
-  type EmailFilters,
 } from "@trendtrack/core";
-import { getShopFacets, listEmails } from "@trendtrack/db";
+import { emailHistoryFloor, getShopFacets, listEmails } from "@trendtrack/db";
 import Link from "next/link";
 import { redirect } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
@@ -13,7 +14,7 @@ import { Button, buttonVariants } from "@/components/ui/button";
 import { Field, Input, Select } from "@/components/ui/input";
 import { Badge, EmptyState, PageHeader } from "@/components/ui/misc";
 import { formatDate } from "@/lib/format";
-import { getSession } from "@/lib/server/session";
+import { getPlan, getSession } from "@/lib/server/session";
 
 const DEFAULTS = { page: 1, per_page: 24 };
 const href = (f: Partial<EmailFilters>) => `/app/emails${toQueryString(f, DEFAULTS)}`;
@@ -28,18 +29,34 @@ export default async function EmailsPage({
     redirect(href(parseFilters(EmailFiltersSchema, raw)));
   const filters = parseFilters(EmailFiltersSchema, raw);
   const { db } = await getSession();
+  const { plan } = await getPlan();
+  const floor = emailHistoryFloor(plan);
+  const effective =
+    floor && (!filters.since || filters.since < floor) ? { ...filters, since: floor } : filters;
+  const tl = await getTranslations("limits");
   const [t, tc, ts, locale, result, facets] = await Promise.all([
     getTranslations("emails"),
     getTranslations("common"),
     getTranslations("shops"),
     getLocale(),
-    listEmails(db, filters),
+    listEmails(db, effective),
     getShopFacets(db),
   ]);
 
   return (
     <>
       <PageHeader title={t("title")} description={t("description")} />
+      {floor && (
+        <p
+          role="status"
+          className="mb-4 rounded-md border border-border bg-muted px-3 py-2 text-sm"
+        >
+          {tl("emailHistory", { days: PLANS[plan].limits.emailHistoryDays ?? 0 })}{" "}
+          <Link href="/app/settings/billing" className="font-medium underline underline-offset-2">
+            {tl("upgrade")}
+          </Link>
+        </p>
+      )}
       <form
         method="get"
         className="mb-5 grid grid-cols-2 gap-3 rounded-lg border border-border bg-card p-4 md:grid-cols-4 xl:grid-cols-6"

@@ -280,5 +280,104 @@
     "ranDays": "ran {days}",
     "priceFromTo": "{from} → {to}",
     "untitled": "Untitled"
+  },
+  "billing": {
+    "title": "Subscription",
+    "description": "Your plan, your usage this period, and upgrading or cancelling.",
+    "current": "Current plan",
+    "status": {
+      "trialing": "Trial",
+      "active": "Active",
+      "past_due": "Payment failed",
+      "canceled": "Cancelled",
+      "incomplete": "Not paid yet",
+      "unpaid": "Unpaid",
+      "free": "Free"
+    },
+    "trialLeft": "{count, plural, =0 {Your trial ends today} one {# day of free Pro left} other {# days of free Pro left}}",
+    "trialBody": "After that you move to the free plan automatically, unless you choose a paid plan. You have not entered a credit card.",
+    "pastDue": "The last payment failed. Update your payment method to keep your plan.",
+    "cancelsAt": "Your subscription ends on {date}.",
+    "renewsAt": "Renews on {date}.",
+    "seats": "{count, plural, one {# user} other {# users}}",
+    "manage": "Manage subscription",
+    "manageHint": "Payment method, invoices, switching plans or cancelling.",
+    "usage": "Usage",
+    "resets": "Resets {date}",
+    "unlimited": "Unlimited",
+    "notIncluded": "Not in your plan",
+    "usageLabels": {
+      "shop_lookup": "Shop lookups this week",
+      "ad_search": "Ad searches today",
+      "folder": "Folders",
+      "tracked_brand": "Followed brands",
+      "api_call": "API and MCP calls this month"
+    },
+    "plans": "Plans",
+    "interval": {
+      "month": "Month",
+      "quarter": "Quarter",
+      "year": "Year"
+    },
+    "discount": "−{percent}%",
+    "perMonth": "/ month",
+    "billedAs": "{amount} per {period}",
+    "periodName": {
+      "month": "month",
+      "quarter": "quarter",
+      "year": "year"
+    },
+    "choose": "Choose {plan}",
+    "currentPlan": "Your current plan",
+    "switchInPortal": "Switch via subscription management",
+    "extraSeats": "Users (3 included, €20 per extra user per month)",
+    "features": {
+      "lookups": "{count, plural, =-1 {Unlimited shop lookups} other {# shop lookups per week}}",
+      "adSearches": "{count, plural, =-1 {Unlimited ad searches} other {# ad searches per day}}",
+      "folders": "{count, plural, =-1 {Unlimited folders} one {# folder} other {# folders}}",
+      "tracked": "{count, plural, =0 {No Brand tracker} one {# brand in Brand tracker} other {# brands in Brand tracker}}",
+      "emails": "{count, plural, =-1 {Full email library} other {Emails from the last # days}}",
+      "api": "API + MCP ({count} calls per month)",
+      "noApi": "No API or MCP",
+      "seats": "{count, plural, one {# user} other {# users}}"
+    },
+    "notConfigured": "Payments are not set up yet (STRIPE_SECRET_KEY missing). You can view plans but not subscribe yet.",
+    "checkoutSuccess": "Thank you! Your payment succeeded. Your new plan is ready within a few seconds.",
+    "checkoutCancel": "Checkout cancelled. Nothing was charged.",
+    "error": "That did not work. Please try again or contact us.",
+    "vat": "Prices include VAT. Pay with iDEAL, Bancontact or card. 15% off quarterly and 30% off yearly.",
+    "free": "Free"
+  },
+  "limits": {
+    "title": {
+      "shop_lookup": "You have used all shop lookups for this week",
+      "ad_search": "You have used all ad searches for today",
+      "folder": "You have reached the maximum number of folders",
+      "tracked_brand": "You follow the maximum number of brands",
+      "api_call": "You have used all API calls for this month"
+    },
+    "notInPlan": {
+      "tracked_brand": "The Brand tracker is not in your plan",
+      "api_call": "The API and MCP server are not in your plan",
+      "folder": "Folders are not in your plan",
+      "shop_lookup": "Shop lookups are not in your plan",
+      "ad_search": "Ad search is not in your plan"
+    },
+    "body": "You used {used} of {limit} on the {plan} plan.",
+    "resets": "The counter resets on {date}.",
+    "upgrade": "View plans",
+    "emailHistory": "Your plan shows emails from the last {days} days. Upgrade for the full library.",
+    "planBadge": "{plan}",
+    "trialBadge": "Pro trial: {count, plural, =0 {last day} one {# day left} other {# days left}}"
+  },
+  "settings": {
+    "title": "Settings",
+    "account": "Account",
+    "email": "Email address",
+    "workspace": "Workspace",
+    "language": "Language",
+    "languageHint": "The language of the dashboard.",
+    "billing": "Subscription and usage",
+    "billingHint": "Plan, usage, upgrades and invoices."
   }
 }

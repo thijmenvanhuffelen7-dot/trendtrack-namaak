@@ -20,7 +20,7 @@
     "db:stop": "supabase stop",
     "db:reset": "supabase db reset",
     "db:types": "pnpm --filter @trendtrack/db gen:types",
-    "test:db": "pnpm --workspace-concurrency=1 --filter @trendtrack/db --filter workers test:integration"
+    "test:db": "pnpm --workspace-concurrency=1 --filter @trendtrack/db --filter workers --filter web test:integration"
   },
   "devDependencies": {
     "@eslint/js": "^9.39.0",

@@ -6,9 +6,9 @@ import {
 } from "@trendtrack/db";
 import Link from "next/link";
 import { getLocale, getTranslations } from "next-intl/server";
-import { toggleTrackAction } from "@/app/app/actions";
 import { EstimateRange } from "@/components/app/estimate";
 import { EventList } from "@/components/app/event-list";
+import { FollowButton } from "@/components/app/follow-button";
 import { Growth } from "@/components/app/growth";
 import { Button, buttonVariants } from "@/components/ui/button";
 import { EmptyState, PageHeader, ShopAvatar } from "@/components/ui/misc";
@@ -163,15 +163,14 @@ export default async function BrandtrackerPage({
                       {b.daily_digest ? t("digestOn") : t("digestOff")}
                     </Button>
                   </form>
-                  <form action={toggleTrackAction} className="ml-auto">
-                    <input type="hidden" name="shop_id" value={b.shops.id} />
-                    <input type="hidden" name="follow" value="false" />
-                    <input type="hidden" name="path" value="/app/brandtracker" />
-                    <Button type="submit" variant="ghost" size="sm">
-                      {/* zelfde tekst als op de shop-pagina */}
-                      <UnfollowLabel />
-                    </Button>
-                  </form>
+                  <div className="ml-auto">
+                    <FollowButton
+                      shopId={b.shops.id}
+                      tracked
+                      path="/app/brandtracker"
+                      variant="unfollow-ghost"
+                    />
+                  </div>
                 </div>
               </li>
             ))}
@@ -181,11 +180,6 @@ export default async function BrandtrackerPage({
       </div>
     </>
   );
-}
-
-async function UnfollowLabel() {
-  const t = await getTranslations("shop");
-  return <>{t("unfollow")}</>;
 }
 
 /** Groepeert events per kalenderdag (Europe/Amsterdam), nieuwste dag eerst. */

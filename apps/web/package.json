@@ -7,7 +7,9 @@
     "build": "next build",
     "start": "next start",
     "lint": "eslint .",
-    "typecheck": "tsc --noEmit"
+    "typecheck": "tsc --noEmit",
+    "stripe:setup": "tsx --env-file-if-exists=../../.env.local scripts/stripe-setup.ts",
+    "test:integration": "vitest run --config vitest.integration.config.ts"
   },
   "dependencies": {
     "@next/env": "15.5.29",
@@ -24,6 +26,7 @@
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "server-only": "^0.0.1",
+    "stripe": "^19.3.0",
     "tailwind-merge": "^3.3.0",
     "zod": "^4.6.7"
   },
@@ -36,6 +39,7 @@
     "eslint": "^9",
     "eslint-config-next": "15.5.29",
     "tailwindcss": "^4",
+    "tsx": "^4.23.15",
     "tw-animate-css": "^1.3.0",
     "typescript": "^5"
   }

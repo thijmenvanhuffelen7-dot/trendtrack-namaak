@@ -1,4 +1,4 @@
-import { listFolders } from "@trendtrack/db";
+import { checkAndRecordUsage, listFolders } from "@trendtrack/db";
 import { Folder } from "lucide-react";
 import Link from "next/link";
 import { getLocale, getTranslations } from "next-intl/server";
@@ -6,19 +6,34 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge, EmptyState, PageHeader } from "@/components/ui/misc";
 import { formatDate } from "@/lib/format";
+import { LimitNotice } from "@/components/app/limit-notice";
+import { serviceDb } from "@/lib/server/db";
 import { getSession } from "@/lib/server/session";
 import { createFolderAction } from "./actions";
 
-export default async function FoldersPage() {
+export default async function FoldersPage({
+  searchParams,
+}: {
+  searchParams: Promise<{ limit?: string }>;
+}) {
   const { db, workspace } = await getSession();
   const [t, locale, folders] = await Promise.all([
     getTranslations("folders"),
     getLocale(),
     listFolders(db, workspace.id),
   ]);
+  const limit =
+    (await searchParams).limit === "folder"
+      ? await checkAndRecordUsage(serviceDb(), workspace.id, "folder", { record: false })
+      : null;
   return (
     <>
       <PageHeader title={t("title")} description={t("description")} />
+      {limit && !limit.allowed && (
+        <div className="mb-6">
+          <LimitNotice result={limit} />
+        </div>
+      )}
       <form action={createFolderAction} className="mb-6 flex flex-wrap items-center gap-2">
         <label htmlFor="folder-name" className="sr-only">
           {t("name")}
