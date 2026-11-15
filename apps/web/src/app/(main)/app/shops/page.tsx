@@ -125,7 +125,7 @@ export default async function ShopsPage({
             name="revenue_min"
             type="number"
             min={0}
-            step={1000}
+            step="any"
             inputMode="numeric"
             defaultValue={filters.revenue_min ?? ""}
           />
@@ -136,7 +136,7 @@ export default async function ShopsPage({
             name="revenue_max"
             type="number"
             min={0}
-            step={1000}
+            step="any"
             inputMode="numeric"
             defaultValue={filters.revenue_max ?? ""}
           />
@@ -158,7 +158,7 @@ export default async function ShopsPage({
             type="number"
             min={-1}
             max={1}
-            step={0.05}
+            step="any"
             defaultValue={filters.growth_min ?? ""}
           />
         </Field>

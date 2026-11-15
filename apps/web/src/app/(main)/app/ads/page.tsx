@@ -123,7 +123,7 @@ export default async function AdsPage({
             name="min_reach"
             type="number"
             min={0}
-            step={1000}
+            step="any"
             inputMode="numeric"
             defaultValue={filters.min_reach ?? ""}
           />

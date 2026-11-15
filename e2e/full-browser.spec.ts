@@ -406,10 +406,12 @@ test.describe.serial("dashboard", () => {
     expect([...names].sort((a, b) => a.localeCompare(b, "nl"))).toEqual(names);
     // Eerst de sorteer-navigatie laten afronden; anders tekent die het formulier opnieuw en is de invoer weg.
     await page.waitForLoadState("networkidle");
+    // Regressie: met step={1000} weigerde de browser getallen als 999999999 of 12500 stilletjes.
     await page.fill("#f-rev-min", "999999999");
-    await expect(page.locator("#f-rev-min")).toHaveValue("999999999");
+    await page.fill("#f-growth", "0.33");
     await page.click("main form button:has-text('Filteren')");
     await expect(page).toHaveURL(/revenue_min=999999999/);
+    await expect(page).toHaveURL(/growth_min=0.33/);
     await expect(page.locator("main")).toContainText(/Geen|geen/);
   });
 
