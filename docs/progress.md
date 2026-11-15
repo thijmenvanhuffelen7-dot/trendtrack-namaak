@@ -139,4 +139,30 @@ daarom gebruiken we `/meta.json` voor detectie.
 - `cta` is leeg: de API geeft het CTA-type niet terug.
 - De Graph API-versie staat op v23.0 (`META_API_VERSION`); controleer bij livegang de nieuwste versie.
 
-## Volgende: Prompt 6 — e-mail library via seed-inboxen
+## Prompt 6: e-mail library via seed-inboxen — klaar (2026-11-15)
+
+- Migratie `20261115020000_email_library.sql`: `seed_inboxes` (uniek adres per shop, `subscribed_at`),
+  extra kolommen op `emails` (seed_inbox_id, to_address, message_id uniek per shop, text_preview),
+  `inbound_rejects`, privé storage-bucket `emails`
+- `packages/core`:
+  - `email-address.ts`: onraadbaar seed-adres (`<slug>-<6 tekens>@<domein>`), adressen uit headers
+  - `email-sanitize.ts`: sanitizer (sanitize-html, allowlist) + tracking-pixels, afmeldlinks en
+    seed-adres weg; `extractPreheader()`
+  - `email-classify.ts`: welcome / flow / campaign + `flow_step`
+  - `email-inbound.ts`: Postmark- en Mailgun-payloads, Basic-auth- en HMAC-handtekeningcheck
+- `packages/db/email-ingest.ts`: gedeelde verwerking (koppelen, dedupe, opschonen, Storage, insert,
+  herclassificeren) + seed-inbox beheer
+- `apps/web`: `POST /api/inbound/postmark` en `/api/inbound/mailgun` (401 bij foute auth, 400 bij
+  rommel, 200 bij onbekend adres zodat de provider niet blijft proberen). Next laadt nu de root-`.env.local`.
+- `apps/workers`: IMAP-poller (`EMAIL_INBOUND_MODE=imap`), CLI `pnpm workers inbox ...`
+- `docs/emails.md`: opzet, DNS, classificatie, tonen in sandboxed iframe, privacy
+- Getest: unit tests (o.a. XSS-varianten), integratietest naar database + storage, en end-to-end:
+  curl naar de draaiende web-app => mail in 3,8 s bij de juiste shop als `welcome`, stap 1
+
+### Open
+
+- Admin-pagina voor seed-inboxen: nu alleen CLI. Komt bij de admin-omgeving (Prompt 7/8, er is nog geen login).
+- Niet getest met een echte provider/DNS (geen domein in de cloud-sessie). Het Postmark-formaat is
+  nagebootst volgens hun docs.
+
+## Volgende: Prompt 7 — job scheduler en monitoring

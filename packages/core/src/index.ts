@@ -9,3 +9,7 @@ export * from "./reviews";
 export * from "./snapshot-diff";
 export * from "./cpm";
 export * from "./meta-ad-library";
+export * from "./email-address";
+export * from "./email-classify";
+export * from "./email-sanitize";
+export * from "./email-inbound";

@@ -91,17 +91,23 @@ isOneToOne: false
                   ]
                 },"emails": {
                   Row: {
-                    "created_at": string,"flow_step": number | null,"from_address": string,"html_storage_path": string | null,"id": string,"preheader": string | null,"received_at": string,"shop_id": string,"subject": string | null,"type": Database["public"]['Enums']["email_type"]
+                    "created_at": string,"flow_step": number | null,"from_address": string,"html_storage_path": string | null,"id": string,"message_id": string | null,"preheader": string | null,"received_at": string,"seed_inbox_id": string | null,"shop_id": string,"subject": string | null,"text_preview": string | null,"to_address": string | null,"type": Database["public"]['Enums']["email_type"]
                   }
                   ComputedFields: never
                   Insert: {
-                    "created_at"?: string,"flow_step"?: number | null,"from_address": string,"html_storage_path"?: string | null,"id"?: string,"preheader"?: string | null,"received_at": string,"shop_id": string,"subject"?: string | null,"type"?: Database["public"]['Enums']["email_type"]
+                    "created_at"?: string,"flow_step"?: number | null,"from_address": string,"html_storage_path"?: string | null,"id"?: string,"message_id"?: string | null,"preheader"?: string | null,"received_at": string,"seed_inbox_id"?: string | null,"shop_id": string,"subject"?: string | null,"text_preview"?: string | null,"to_address"?: string | null,"type"?: Database["public"]['Enums']["email_type"]
                   }
                   Update: {
-                    "created_at"?: string,"flow_step"?: number | null,"from_address"?: string,"html_storage_path"?: string | null,"id"?: string,"preheader"?: string | null,"received_at"?: string,"shop_id"?: string,"subject"?: string | null,"type"?: Database["public"]['Enums']["email_type"]
+                    "created_at"?: string,"flow_step"?: number | null,"from_address"?: string,"html_storage_path"?: string | null,"id"?: string,"message_id"?: string | null,"preheader"?: string | null,"received_at"?: string,"seed_inbox_id"?: string | null,"shop_id"?: string,"subject"?: string | null,"text_preview"?: string | null,"to_address"?: string | null,"type"?: Database["public"]['Enums']["email_type"]
                   }
                   Relationships: [
                     {
+      foreignKeyName: "emails_seed_inbox_id_fkey"
+      columns: ["seed_inbox_id"]
+isOneToOne: false
+      referencedRelation: "seed_inboxes"
+      referencedColumns: ["id"]
+    },{
       foreignKeyName: "emails_shop_id_fkey"
       columns: ["shop_id"]
 isOneToOne: false
@@ -148,6 +154,20 @@ isOneToOne: false
       referencedRelation: "workspaces"
       referencedColumns: ["id"]
     }
+                  ]
+                },"inbound_rejects": {
+                  Row: {
+                    "from_address": string | null,"id": number,"reason": string,"received_at": string,"subject": string | null,"to_addresses": (string)[]
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "from_address"?: string | null,"id"?: never,"reason": string,"received_at"?: string,"subject"?: string | null,"to_addresses": (string)[]
+                  }
+                  Update: {
+                    "from_address"?: string | null,"id"?: never,"reason"?: string,"received_at"?: string,"subject"?: string | null,"to_addresses"?: (string)[]
+                  }
+                  Relationships: [
+                    
                   ]
                 },"plans": {
                   Row: {
@@ -216,6 +236,26 @@ isOneToOne: false
                   }
                   Relationships: [
                     
+                  ]
+                },"seed_inboxes": {
+                  Row: {
+                    "address": string,"created_at": string,"id": string,"notes": string | null,"shop_id": string,"subscribed_at": string | null
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "address": string,"created_at"?: string,"id"?: string,"notes"?: string | null,"shop_id": string,"subscribed_at"?: string | null
+                  }
+                  Update: {
+                    "address"?: string,"created_at"?: string,"id"?: string,"notes"?: string | null,"shop_id"?: string,"subscribed_at"?: string | null
+                  }
+                  Relationships: [
+                    {
+      foreignKeyName: "seed_inboxes_shop_id_fkey"
+      columns: ["shop_id"]
+isOneToOne: true
+      referencedRelation: "shops"
+      referencedColumns: ["id"]
+    }
                   ]
                 },"shop_snapshots": {
                   Row: {

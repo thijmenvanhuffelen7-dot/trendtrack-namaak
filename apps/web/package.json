@@ -10,6 +10,7 @@
     "typecheck": "tsc --noEmit"
   },
   "dependencies": {
+    "@next/env": "15.5.29",
     "@radix-ui/react-slot": "^1.2.0",
     "@trendtrack/core": "workspace:*",
     "@trendtrack/db": "workspace:*",
@@ -19,6 +20,7 @@
     "next": "15.5.29",
     "react": "19.1.0",
     "react-dom": "19.1.0",
+    "server-only": "^0.0.1",
     "tailwind-merge": "^3.3.0"
   },
   "devDependencies": {

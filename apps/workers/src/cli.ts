@@ -10,7 +10,14 @@ import { snapshotShop } from "./snapshot/snapshot-shop";
 import { discoverAds, syncAdvertiser } from "./ads/ingest";
 import { createMetaClient, readMetaEnv } from "./ads/meta-env";
 import { SupabaseAdsRepo } from "./repo/ads-repo";
-import { createServiceClient } from "@trendtrack/db";
+import {
+  createServiceClient,
+  getOrCreateSeedInbox,
+  ingestInboundEmail,
+  listSeedInboxes,
+  markSubscribed,
+  readEmailEnv,
+} from "@trendtrack/db";
 
 const HELP = `Gebruik: pnpm workers <command> [opties]
 
@@ -20,6 +27,12 @@ const HELP = `Gebruik: pnpm workers <command> [opties]
   ads --page-id=<id>        alle ads van een Facebook-pagina ophalen (Meta Ad Library API)
   ads --keyword=<woord> [--country=NL]
                             actieve ads zoeken op zoekwoord (nieuwe adverteerders vinden)
+  inbox --domain=<domein>   seed-adres voor deze shop maken/tonen (om je mee in te schrijven)
+  inbox --domain=<domein> --subscribed [--at=<ISO-datum>]
+                            vastleggen dat je je hebt ingeschreven (standaard: nu)
+  inbox --list              alle seed-inboxen
+  inbox --domain=<domein> --test-mail [--hours=1]
+                            nep-mail verwerken alsof hij <hours> uur na inschrijven binnenkwam
   discover [--limit=500]    nieuwe domeinen uit ads en data/seed-domains.txt in de wachtrij
 `;
 
@@ -33,6 +46,11 @@ async function main() {
       "page-id": { type: "string" },
       keyword: { type: "string" },
       country: { type: "string" },
+      subscribed: { type: "boolean" },
+      at: { type: "string" },
+      list: { type: "boolean" },
+      "test-mail": { type: "boolean" },
+      hours: { type: "string" },
     },
   });
   const [command] = positionals;
@@ -100,6 +118,50 @@ async function main() {
       });
       if (r.unknownDomains.length)
         console.log("Tip: `pnpm workers crawl --domain=<domein>` voor de onbekende domeinen.");
+      return;
+    }
+    case "inbox": {
+      const db = createServiceClient();
+      const { EMAIL_INBOX_DOMAIN } = readEmailEnv();
+      if (values.list) {
+        for (const i of await listSeedInboxes(db)) {
+          console.log(
+            `${i.shops.domain.padEnd(30)} ${i.address.padEnd(50)} ingeschreven: ${i.subscribed_at ?? "nee"}`,
+          );
+        }
+        return;
+      }
+      if (!values.domain) throw new Error("--domain is verplicht");
+      if (values.subscribed) {
+        const at = values.at ? new Date(values.at) : new Date();
+        if (Number.isNaN(at.getTime())) throw new Error("--at is geen geldige datum");
+        const inbox = await markSubscribed(db, values.domain, at);
+        console.log(`Ingeschreven vastgelegd: ${inbox.address} op ${inbox.subscribed_at}`);
+        return;
+      }
+      const inbox = await getOrCreateSeedInbox(db, values.domain, EMAIL_INBOX_DOMAIN);
+      if (values["test-mail"]) {
+        const hours = Number(values.hours ?? "1");
+        const base = inbox.subscribed_at ? Date.parse(inbox.subscribed_at) : Date.now();
+        const r = await ingestInboundEmail(
+          db,
+          {
+            to: [inbox.address],
+            from: `test@${values.domain}`,
+            subject: `Testmail (+${hours}u)`,
+            html: `<div style="display:none">Testpreheader</div><p>Dit is een testmail voor ${inbox.address}</p>`,
+            text: null,
+            messageId: `<test-${Date.now()}@trendtrack.local>`,
+            receivedAt: new Date(base + hours * 3_600_000).toISOString(),
+          },
+          EMAIL_INBOX_DOMAIN,
+        );
+        console.log(r);
+        return;
+      }
+      console.log(inbox.created ? "Nieuw seed-adres:" : "Bestaand seed-adres:", inbox.address);
+      console.log(`Schrijf je hiermee in op de nieuwsbrief van ${values.domain} en draai daarna:`);
+      console.log(`  pnpm workers inbox --domain=${values.domain} --subscribed`);
       return;
     }
     case "discover": {
