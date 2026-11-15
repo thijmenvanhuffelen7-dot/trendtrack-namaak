@@ -35,7 +35,10 @@ export function SiteHeader() {
             >
               Inloggen
             </Link>
-            <Link href="/login" className="s-btn !min-h-10 !rounded-xl !px-4 !text-[14px]">
+            <Link
+              href="/login?mode=signup"
+              className="s-btn !min-h-10 !rounded-xl !px-4 !text-[14px]"
+            >
               Gratis account
               <ArrowRight className="s-arrow size-4" aria-hidden />
             </Link>

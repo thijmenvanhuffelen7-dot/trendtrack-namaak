@@ -40,16 +40,52 @@
   },
   "login": {
     "title": "Sign in",
-    "subtitle": "Enter your email address. You will get a link that signs you in, no password needed.",
+    "titleSignUp": "Create your free account",
+    "subtitle": "Seven days of everything in Pro, no credit card. Then continue for free or pick a plan.",
+    "method": "Sign-in method",
+    "tabPassword": "Password",
+    "tabLink": "Magic link",
     "email": "Email address",
+    "password": "Password",
+    "passwordHint": "At least 8 characters.",
+    "showPassword": "Show password",
+    "hidePassword": "Hide password",
+    "forgot": "Forgot password?",
+    "signIn": "Sign in",
+    "signUp": "Create account",
+    "noAccount": "No account yet?",
+    "toSignUp": "Create one for free",
+    "haveAccount": "Already have an account?",
+    "toSignIn": "Sign in",
+    "linkIntro": "Rather not use a password? We'll email you a link that signs you in.",
     "submit": "Send sign-in link",
-    "sending": "Sending…",
+    "sending": "Working…",
     "google": "Continue with Google",
     "sentTitle": "Check your email",
-    "sentBody": "We sent a sign-in link to {email}. The link is valid for one hour.",
-    "error": "That did not work. Check the address and try again.",
+    "sentBody": "We sent a sign-in link to {email}. It is valid for one hour.",
+    "confirmTitle": "Confirm your email",
+    "confirmBody": "We sent a confirmation link to {email}. Click it and you're in.",
+    "resetIntro": "Enter your email address. You'll get a link to choose a new password.",
+    "resetSubmit": "Send reset link",
+    "resetSentTitle": "Check your email",
+    "resetSentBody": "If an account exists for {email}, there is now a link in your inbox to choose a new password.",
+    "back": "Back to sign in",
+    "terms": "By continuing you agree to the",
+    "termsLink": "terms",
+    "error": "That didn't work. Check the address and try again.",
     "errorLink": "This link has expired or was already used. Request a new one.",
-    "errorOauth": "Signing in with Google failed. Please try again."
+    "errorOauth": "Sign-in failed. Please try again.",
+    "errors": {
+      "invalidEmail": "Enter a valid email address.",
+      "passwordShort": "Your password needs at least 8 characters.",
+      "passwordWeak": "Choose a stronger password.",
+      "wrongPassword": "That email address or password is incorrect.",
+      "notConfirmed": "Confirm your email address first via the link in your inbox.",
+      "exists": "An account with this address already exists. Sign in or use 'Forgot password'.",
+      "rateLimit": "Too many attempts. Wait a few minutes and try again.",
+      "mailDown": "We couldn't send an email. Sign in with a password or try again later.",
+      "generic": "That didn't work. Please try again."
+    }
   },
   "shops": {
     "title": "Shops",
@@ -380,7 +416,9 @@
     "billing": "Subscription and usage",
     "billingHint": "Plan, usage, upgrades and invoices.",
     "affiliate": "Affiliate",
-    "affiliateHint": "30% recurring on every subscription through your link"
+    "affiliateHint": "30% recurring on every subscription through your link",
+    "password": "Password",
+    "passwordHint": "Sign in with email and password"
   },
   "api": {
     "title": "API & MCP",
@@ -420,5 +458,20 @@
     "create": "Create my link",
     "errorTaken": "That code is taken. Choose another.",
     "errorInvalid": "Only lowercase letters, digits, - and _ (3 to 40 characters)."
+  },
+  "password": {
+    "title": "Password",
+    "description": "Choose a (new) password for {email}.",
+    "new": "New password",
+    "confirm": "Repeat the password",
+    "hint": "At least 8 characters.",
+    "save": "Save",
+    "saving": "Saving…",
+    "saved": "Your password has been saved.",
+    "errors": {
+      "short": "At least 8 characters.",
+      "mismatch": "The two passwords don't match.",
+      "generic": "Saving failed. Please try again."
+    }
   }
 }

@@ -367,7 +367,7 @@ export default async function Home() {
             Zeven dagen alles van Pro, zonder creditcard. Daarna gratis door, of kies een plan.
           </p>
           <div className="mt-9 flex flex-wrap gap-3">
-            <Link href="/login" className="s-btn">
+            <Link href="/login?mode=signup" className="s-btn">
               Maak een gratis account
               <ArrowRight className="s-arrow size-4" aria-hidden />
             </Link>

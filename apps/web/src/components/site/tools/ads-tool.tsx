@@ -120,7 +120,7 @@ export function AdsTool() {
             </ol>
             <p className="mt-4 text-[15px]">
               {r.total > r.ads.length ? `${r.total - r.ads.length} ads meer gevonden. ` : ""}
-              <Link href="/login" className="s-link">
+              <Link href="/login?mode=signup" className="s-link">
                 Zie alles met een gratis account
               </Link>
               .

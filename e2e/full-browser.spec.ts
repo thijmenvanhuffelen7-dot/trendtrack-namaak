@@ -65,8 +65,9 @@ async function magicLinkLogin(
 ) {
   const page = await browser.newPage({ viewport });
   await page.goto("/login");
-  await page.fill("input[name=email]", email);
-  await page.click("form button[type=submit] >> nth=0");
+  await page.getByRole("tab", { name: "Inloglink" }).click();
+  await page.fill("#link-email", email);
+  await page.click("button:has-text('Stuur inloglink')");
   await expect(page.getByText(email)).toBeVisible();
   let link: string | undefined;
   for (let i = 0; i < 40 && !link; i++) {
@@ -318,6 +319,95 @@ test.describe("afscherming", () => {
     });
     expect(mcp.status()).toBe(401);
     expect(mcp.headers()["www-authenticate"]).toContain("resource_metadata");
+  });
+});
+
+// ---------------------------------------------------------------------------------------------
+// Inloggen met wachtwoord (werkt zonder mailserver), wachtwoord vergeten
+// ---------------------------------------------------------------------------------------------
+
+test.describe.serial("inloggen met wachtwoord", () => {
+  const email = `pw-${Date.now()}@test.local`;
+  const password = "Geheim-12345";
+
+  test("account maken vanaf de site en meteen in het dashboard", async ({ page }) => {
+    const g = guard(page);
+    await page.goto("/");
+    await page.locator("header a[href='/login?mode=signup']").click();
+    await expect(page.locator("h1")).toHaveText("Maak je gratis account");
+    await page.fill("#email", email);
+    await page.fill("#password", password);
+    await page.click("button[type=submit]:has-text('Account maken')");
+    await page.waitForURL(/\/app/);
+    const [profile] = await rest(`profiles?email=eq.${encodeURIComponent(email)}&select=id`);
+    expect(profile.id).toMatch(/^[0-9a-f-]{36}$/);
+    // Nieuw account krijgt een eigen workspace met 7 dagen Pro.
+    const [member] = await rest(`workspace_members?user_id=eq.${profile.id}&select=workspace_id`);
+    const [sub] = await rest(
+      `subscriptions?workspace_id=eq.${member.workspace_id}&select=plan_id,status`,
+    );
+    expect(sub).toEqual({ plan_id: "pro", status: "trialing" });
+    g.clean();
+  });
+
+  test("fout wachtwoord, goed wachtwoord, bestaand adres", async ({ browser }) => {
+    const page = await browser.newPage();
+    const g = guard(page);
+    await page.goto("/login");
+    await page.fill("#email", email);
+    await page.fill("#password", "FoutWachtwoord1");
+    await page.click("button[type=submit]:has-text('Inloggen')");
+    await expect(page.locator("form [role=alert]")).toHaveText(
+      "Dat e-mailadres of wachtwoord klopt niet.",
+    );
+    await page.fill("#password", password);
+    await page.click("button[type=submit]:has-text('Inloggen')");
+    await page.waitForURL(/\/app/);
+    const other = await browser.newPage();
+    await other.goto("/login?mode=signup");
+    await other.fill("#email", email);
+    await other.fill("#password", password);
+    await other.click("button[type=submit]:has-text('Account maken')");
+    await expect(other.locator("form [role=alert]")).toContainText("bestaat al een account");
+    g.clean();
+  });
+
+  test("wachtwoord vergeten: mail, nieuw wachtwoord, inloggen", async ({ browser }) => {
+    const page = await browser.newPage();
+    await page.goto("/login");
+    await page.click("button:has-text('Wachtwoord vergeten?')");
+    await page.fill("#reset-email", email);
+    await page.click("button:has-text('Stuur resetlink')");
+    await expect(page.getByRole("status")).toContainText("Check je mail");
+    let link: string | undefined;
+    for (let i = 0; i < 40 && !link; i++) {
+      const s = await fetch(
+        `${process.env.MAILPIT_URL}/api/v1/search?query=${encodeURIComponent(`to:${email}`)}`,
+      ).then((r) => r.json());
+      const id = s.messages?.[0]?.ID;
+      if (id) {
+        const msg = await fetch(`${process.env.MAILPIT_URL}/api/v1/message/${id}`).then((r) =>
+          r.json(),
+        );
+        link = String(msg.Text).match(
+          /https?:\/\/[^\s"<>)]+(?:verify|confirm|callback)[^\s"<>)]*/,
+        )?.[0];
+      }
+      if (!link) await page.waitForTimeout(300);
+    }
+    expect(link).toBeTruthy();
+    await page.goto(link!);
+    await page.waitForURL(/\/app\/settings\/password/);
+    await page.fill("#pw-new", "Nieuw-wachtwoord-9");
+    await page.fill("#pw-confirm", "Nieuw-wachtwoord-9");
+    await page.click("button:has-text('Opslaan')");
+    await expect(page.getByRole("status")).toHaveText("Je wachtwoord is opgeslagen.");
+    const fresh = await (await browser.newContext()).newPage();
+    await fresh.goto("/login");
+    await fresh.fill("#email", email);
+    await fresh.fill("#password", "Nieuw-wachtwoord-9");
+    await fresh.click("button[type=submit]:has-text('Inloggen')");
+    await fresh.waitForURL(/\/app/);
   });
 });
 

@@ -39,8 +39,9 @@ test.describe.serial("golden path", () => {
 
   test("aanmelden met een magic link", async () => {
     await page.goto("/login");
-    await page.fill("input[name=email]", email);
-    await page.click("form button[type=submit] >> nth=0");
+    await page.getByRole("tab", { name: "Inloglink" }).click();
+    await page.fill("#link-email", email);
+    await page.click("button:has-text('Stuur inloglink')");
     await expect(page.getByText(email)).toBeVisible();
     await page.goto(await magicLink(email));
     await page.waitForURL(/\/app/);

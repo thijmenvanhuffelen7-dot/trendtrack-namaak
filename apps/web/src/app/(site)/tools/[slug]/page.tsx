@@ -141,7 +141,7 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
                   Met een gratis account zie je van elke webshop de geschatte omzet, de ads en de
                   nieuwsbrieven.
                 </p>
-                <Link href="/login" className="s-btn mt-8">
+                <Link href="/login?mode=signup" className="s-btn mt-8">
                   Maak een gratis account
                 </Link>
               </div>

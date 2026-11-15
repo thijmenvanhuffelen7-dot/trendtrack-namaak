@@ -79,7 +79,7 @@ export function PricingTable({ headingLevel = 2 }: { headingLevel?: 1 | 2 }) {
         })();
   const cta = (id: PlanId) =>
     id === "free"
-      ? "/login"
+      ? "/login?mode=signup"
       : `/login?next=${encodeURIComponent(`/app/settings/billing?interval=${interval}`)}`;
 
   return (

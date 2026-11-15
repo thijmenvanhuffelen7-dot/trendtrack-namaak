@@ -1,31 +1,10 @@
 import type { Metadata } from "next";
-import localFont from "next/font/local";
 import "../globals.css";
 import { Reveal } from "@/components/site/reveal";
 import { SiteFooter } from "@/components/site/footer";
 import { SiteHeader } from "@/components/site/header";
+import { cabinet, satoshi } from "../fonts";
 import { SITE } from "@/lib/site/config";
-
-// Satoshi (tekst) en Cabinet Grotesk (koppen) van Fontshare, gratis ook voor commercieel gebruik.
-// Zelf gehost via next/font: geen externe request bij bezoekers.
-const satoshi = localFont({
-  src: [
-    { path: "../fonts/satoshi-400.woff2", weight: "400" },
-    { path: "../fonts/satoshi-500.woff2", weight: "500" },
-    { path: "../fonts/satoshi-700.woff2", weight: "700" },
-  ],
-  variable: "--font-satoshi",
-  display: "swap",
-});
-const cabinet = localFont({
-  src: [
-    { path: "../fonts/cabinet-grotesk-500.woff2", weight: "500" },
-    { path: "../fonts/cabinet-grotesk-700.woff2", weight: "700" },
-    { path: "../fonts/cabinet-grotesk-800.woff2", weight: "800" },
-  ],
-  variable: "--font-cabinet",
-  display: "swap",
-});
 
 export const metadata: Metadata = {
   metadataBase: new URL(SITE.url),

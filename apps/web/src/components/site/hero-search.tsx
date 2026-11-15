@@ -165,7 +165,7 @@ export function Hero({ initial }: { initial: Estimate }) {
           </div>
 
           <div className="s-rise-4 mt-8 flex flex-wrap gap-3">
-            <Link href="/login" className="s-btn">
+            <Link href="/login?mode=signup" className="s-btn">
               Begin gratis
               <ArrowRight className="s-arrow size-4" aria-hidden />
             </Link>
