@@ -1,7 +1,7 @@
 import { fileURLToPath } from "node:url";
 import { createServiceClient } from "@trendtrack/db";
-import { PoliteFetcher } from "./http/polite-fetcher";
-import { crawlerIdentity } from "./http/user-agent";
+import { PoliteFetcher } from "@trendtrack/core";
+import { crawlerIdentity } from "@trendtrack/core";
 import { SupabaseShopRepo, SupabaseSnapshotRepo } from "./repo/supabase-shop-repo";
 import type { SnapshotDeps } from "./snapshot/snapshot-shop";
 

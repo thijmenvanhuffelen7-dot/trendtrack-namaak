@@ -173,6 +173,7 @@ export function mapSubscription(
       currentPeriodEnd: iso(item.current_period_end ?? legacy.current_period_end),
       cancelAtPeriodEnd: sub.cancel_at_period_end,
       trialEndsAt: iso(sub.trial_end),
+      referral: sub.metadata?.referral ?? null,
     },
   };
 }

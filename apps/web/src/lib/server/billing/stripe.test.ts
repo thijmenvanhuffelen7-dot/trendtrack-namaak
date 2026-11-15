@@ -24,7 +24,16 @@ describe("mapStripeEvent", () => {
         currentPeriodEnd: new Date((1_794_700_000 + 30 * 86_400) * 1000).toISOString(),
         cancelAtPeriodEnd: false,
         trialEndsAt: null,
+        referral: null,
       },
+    });
+  });
+
+  it("neemt de affiliate-code uit de metadata mee", () => {
+    const sub = stripeSubscription({ workspaceId: "ws_1", items: [{ lookupKey: "pro_month" }] });
+    sub.metadata = { ...sub.metadata, referral: "partner1" };
+    expect(mapStripeEvent(stripeEvent("customer.subscription.created", sub))[0]).toMatchObject({
+      subscription: { referral: "partner1" },
     });
   });
 

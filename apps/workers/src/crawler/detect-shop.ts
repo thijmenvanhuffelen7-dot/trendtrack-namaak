@@ -5,7 +5,7 @@ import {
   type ShopifyPageInfo,
   type ShopStatus,
 } from "@trendtrack/core";
-import { BlockedError, RobotsDisallowedError, UnreachableError } from "../http/errors";
+import { BlockedError, RobotsDisallowedError, UnreachableError } from "@trendtrack/core";
 import { logOf, nowOf, type CrawlerDeps } from "./deps";
 
 export interface DetectResult {

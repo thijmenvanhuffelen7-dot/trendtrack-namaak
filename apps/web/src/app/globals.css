@@ -72,3 +72,237 @@ body {
 .tabular {
   font-variant-numeric: tabular-nums;
 }
+
+/* ------------------------------------------------------------------------------------------------
+   Publieke site (.site): "printed annual" — charcoal met vlakke primaire kleurvelden.
+   Alleen kleur-, type- en ritme-tokens; geen gradients, schaduwen of lijnen (huisregels).
+------------------------------------------------------------------------------------------------ */
+.site {
+  --s-bg: #191919;
+  --s-surface: #242424;
+  --s-ink: #ffffff;
+  --s-muted: #a3a3a3;
+  --s-accent: #0c7866;
+  --s-accent-ink: #ffffff;
+  --s-red: #d71e1e;
+  --s-blue: #1e4bd7;
+  --s-yellow: #ffe927;
+  --s-axis: 34%;
+  --s-margin: clamp(20px, 3vw, 40px);
+  --step-small: clamp(0.8125rem, 0.79rem + 0.1vw, 0.875rem);
+  --step-body: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
+  --step-lead: clamp(1.25rem, 1.1rem + 0.7vw, 1.625rem);
+  --step-head: clamp(2rem, 1.3rem + 3.2vw, 4rem);
+  --step-display: clamp(3.4rem, 9.8vw, 9.4rem);
+  background: var(--s-bg);
+  color: var(--s-ink);
+  font-family: var(--font-site), ui-sans-serif, system-ui, sans-serif;
+  font-size: var(--step-body);
+  line-height: 1.5;
+  letter-spacing: -0.005em;
+  min-height: 100vh;
+}
+.site h1,
+.site h2,
+.site h3 {
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  line-height: 0.95;
+}
+.site a:focus-visible,
+.site button:focus-visible,
+.site input:focus-visible,
+.site select:focus-visible,
+.site summary:focus-visible {
+  outline: 3px solid var(--s-yellow);
+  outline-offset: 3px;
+}
+.site ::selection {
+  background: var(--s-yellow);
+  color: #111;
+}
+.site .s-wrap {
+  padding-inline: var(--s-margin);
+}
+.site .s-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.5rem;
+  min-height: 48px;
+  padding: 0 1.4rem;
+  background: var(--s-accent);
+  color: var(--s-accent-ink);
+  font-weight: 500;
+  border-radius: 0;
+  transition:
+    transform 160ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    background-color 160ms;
+}
+.site .s-btn:hover {
+  background: #0e8a75;
+}
+.site .s-btn:active {
+  transform: translateY(1px) scale(0.99);
+}
+.site .s-btn-ghost {
+  background: transparent;
+  color: var(--s-ink);
+  text-decoration: underline;
+  text-underline-offset: 6px;
+  text-decoration-thickness: 2px;
+}
+.site .s-link {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 1.5px;
+  transition:
+    text-decoration-thickness 120ms,
+    color 120ms;
+}
+.site .s-link:hover {
+  text-decoration-thickness: 3px;
+}
+.site .s-input {
+  min-height: 52px;
+  width: 100%;
+  padding: 0 1rem;
+  background: var(--s-surface);
+  color: var(--s-ink);
+  border-radius: 0;
+  font-size: var(--step-body);
+}
+.site .s-input::placeholder {
+  color: var(--s-muted);
+}
+
+/* Beweging: kop komt per regel van onder zijn eigen basislijn; secties komen gefaseerd binnen. */
+@keyframes s-rise {
+  from {
+    transform: translateY(105%);
+  }
+  to {
+    transform: none;
+  }
+}
+@keyframes s-fade-up {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+.site .s-mask {
+  display: block;
+  overflow: hidden;
+  padding-bottom: 0.06em;
+}
+.site .s-mask > span {
+  display: block;
+  animation: s-rise 900ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.site .s-mask:nth-child(2) > span {
+  animation-delay: 110ms;
+}
+.site .s-after-head {
+  animation: s-fade-up 700ms 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.site [data-reveal] > * {
+  transition:
+    opacity 700ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 700ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+.site.js [data-reveal]:not(.is-in) > * {
+  opacity: 0;
+  transform: translateY(24px);
+}
+.site [data-reveal].is-in > *:nth-child(2) {
+  transition-delay: 70ms;
+}
+.site [data-reveal].is-in > *:nth-child(3) {
+  transition-delay: 140ms;
+}
+.site [data-reveal].is-in > *:nth-child(4) {
+  transition-delay: 210ms;
+}
+.site .s-drift {
+  animation: s-drift 18s ease-in-out infinite alternate;
+}
+@keyframes s-drift {
+  from {
+    transform: scale(1.02) translateY(0);
+  }
+  to {
+    transform: scale(1.06) translateY(-1.5%);
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .site .s-mask > span,
+  .site .s-after-head,
+  .site .s-drift {
+    animation: none;
+  }
+  .site.js [data-reveal]:not(.is-in) > * {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+/* Lopende tekst op de site: blog en juridische pagina's. */
+.site .s-prose > * + * {
+  margin-top: 1em;
+}
+.site .s-prose h2 {
+  margin-top: 2.2em;
+  font-size: clamp(1.5rem, 1.1rem + 1.2vw, 2rem);
+  line-height: 1.1;
+}
+.site .s-prose h3 {
+  margin-top: 1.8em;
+  font-size: 1.25rem;
+  font-weight: 600;
+}
+.site .s-prose ul {
+  list-style: disc;
+  padding-left: 1.25em;
+}
+.site .s-prose ol {
+  list-style: decimal;
+  padding-left: 1.25em;
+}
+.site .s-prose li + li {
+  margin-top: 0.35em;
+}
+.site .s-prose a {
+  text-decoration: underline;
+  text-underline-offset: 4px;
+  text-decoration-thickness: 2px;
+  text-decoration-color: var(--s-accent);
+}
+.site .s-prose strong {
+  font-weight: 600;
+}
+.site .s-prose table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 16px;
+}
+.site .s-prose th,
+.site .s-prose td {
+  text-align: left;
+  padding: 0.6em 0.75em;
+}
+.site .s-prose thead {
+  color: var(--s-muted);
+}
+.site .s-prose tbody tr:nth-child(odd) {
+  background: var(--s-surface);
+}
+.site .s-note {
+  background: var(--s-yellow);
+  color: #191919;
+  padding: 1rem 1.25rem;
+}

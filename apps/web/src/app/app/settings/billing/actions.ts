@@ -1,6 +1,7 @@
 "use server";
 
 import { INTERVALS, PAID_PLANS, PLANS } from "@trendtrack/core";
+import { validReferral } from "@trendtrack/db";
 import { headers } from "next/headers";
 import { redirect } from "next/navigation";
 import { z } from "zod";
@@ -39,8 +40,11 @@ export async function checkoutAction(form: FormData) {
     } else {
       const seats =
         input.plan === "agency" ? Math.max(PLANS.agency.limits.seats, input.seats ?? 3) : undefined;
-      const referral =
-        (await headers()).get("cookie")?.match(/(?:^|;\s*)ref=([a-z0-9_-]{1,40})/i)?.[1] ?? null;
+      const referral = await validReferral(
+        serviceDb(),
+        (await headers()).get("cookie")?.match(/(?:^|;\s*)ref=([a-z0-9_-]{1,40})/i)?.[1] ?? null,
+        user.id,
+      );
       url = await createCheckoutSession({
         workspaceId: workspace.id,
         userId: user.id,

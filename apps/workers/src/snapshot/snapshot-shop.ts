@@ -16,7 +16,7 @@ import {
 import { crawlBestsellers } from "../crawler/crawl-bestsellers";
 import { fetchAllProducts } from "../crawler/crawl-products";
 import { isoDate, logOf, nowOf, type CrawlerDeps } from "../crawler/deps";
-import { BlockedError, RobotsDisallowedError } from "../http/errors";
+import { BlockedError, RobotsDisallowedError } from "@trendtrack/core";
 import type { ProductSnapshotRow, ShopSnapshotRow, SnapshotRepo } from "../repo/snapshot-repo";
 
 export interface SnapshotDeps extends CrawlerDeps {

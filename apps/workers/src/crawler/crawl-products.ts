@@ -5,8 +5,8 @@ import {
   toProductRecord,
   type ProductRecord,
 } from "@trendtrack/core";
-import { BlockedError } from "../http/errors";
-import type { PoliteFetcher } from "../http/polite-fetcher";
+import { BlockedError } from "@trendtrack/core";
+import type { PoliteFetcher } from "@trendtrack/core";
 import { logOf, nowOf, type CrawlerDeps } from "./deps";
 
 export interface CrawlProductsResult {

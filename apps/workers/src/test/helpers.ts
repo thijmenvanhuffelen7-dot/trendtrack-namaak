@@ -8,7 +8,7 @@ import type {
   SnapshotRepo,
 } from "../repo/snapshot-repo";
 import type { SnapshotDeps } from "../snapshot/snapshot-shop";
-import { PoliteFetcher, type FetchLike } from "../http/polite-fetcher";
+import { PoliteFetcher, type FetchLike } from "@trendtrack/core";
 import type { ShopFields, ShopRepo, ShopRow } from "../repo/shop-repo";
 
 export const fixture = (name: string) =>

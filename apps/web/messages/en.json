@@ -378,7 +378,9 @@
     "language": "Language",
     "languageHint": "The language of the dashboard.",
     "billing": "Subscription and usage",
-    "billingHint": "Plan, usage, upgrades and invoices."
+    "billingHint": "Plan, usage, upgrades and invoices.",
+    "affiliate": "Affiliate",
+    "affiliateHint": "30% recurring on every subscription through your link"
   },
   "api": {
     "title": "API & MCP",
@@ -404,5 +406,19 @@
     "mcpTitle": "MCP server",
     "mcpBody": "Use TrendTrack directly in Claude, ChatGPT or Cursor through the MCP server.",
     "error": "That did not work: {message}"
+  },
+  "affiliate": {
+    "title": "Affiliate",
+    "intro": "Earn 30% of every subscription that starts through your link, for as long as the customer pays.",
+    "yourLink": "Your link",
+    "linkHint": "Anyone who picks a paid plan within 30 days of using this link earns you {pct}% of every payment.",
+    "signups": "Subscriptions via you",
+    "paying": "Currently paying",
+    "payout": "We pay out monthly after receiving an invoice. Your own subscription does not count.",
+    "chooseCode": "Choose your code",
+    "codeHint": "3 to 40 characters: lowercase letters, digits, - and _.",
+    "create": "Create my link",
+    "errorTaken": "That code is taken. Choose another.",
+    "errorInvalid": "Only lowercase letters, digits, - and _ (3 to 40 characters)."
   }
 }

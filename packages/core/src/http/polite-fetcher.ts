@@ -1,5 +1,6 @@
 import { lookup } from "node:dns/promises";
-import { parseRobots, tryNormalizeDomain, type RobotsRules } from "@trendtrack/core";
+import { tryNormalizeDomain } from "../domain";
+import { parseRobots, type RobotsRules } from "../robots";
 import { BlockedError, RobotsDisallowedError, UnreachableError, UnsafeTargetError } from "./errors";
 import { isPrivateIp } from "./ip-guard";
 

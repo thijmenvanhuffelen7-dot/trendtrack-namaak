@@ -75,6 +75,20 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"affiliates": {
+                  Row: {
+                    "active": boolean,"code": string,"commission_pct": number,"created_at": string,"user_id": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "active"?: boolean,"code": string,"commission_pct"?: number,"created_at"?: string,"user_id": string
+                  }
+                  Update: {
+                    "active"?: boolean,"code"?: string,"commission_pct"?: number,"created_at"?: string,"user_id"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
                 },"api_keys": {
                   Row: {
                     "created_at": string,"created_by": string | null,"id": string,"key_hash": string,"last_used_at": string | null,"name": string,"prefix": string,"revoked_at": string | null,"workspace_id": string
@@ -383,6 +397,20 @@ isOneToOne: false
                   Relationships: [
                     
                   ]
+                },"public_rate_counters": {
+                  Row: {
+                    "count": number,"ip_hash": string,"tool": string,"window_start": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "count"?: number,"ip_hash": string,"tool": string,"window_start": string
+                  }
+                  Update: {
+                    "count"?: number,"ip_hash"?: string,"tool"?: string,"window_start"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
                 },"seed_inboxes": {
                   Row: {
                     "address": string,"created_at": string,"id": string,"notes": string | null,"shop_id": string,"subscribed_at": string | null
@@ -459,14 +487,14 @@ isOneToOne: false
                   ]
                 },"subscriptions": {
                   Row: {
-                    "billing_interval": string | null,"cancel_at_period_end": boolean,"created_at": string,"current_period_end": string | null,"current_period_start": string | null,"id": string,"plan_id": string,"provider": string,"provider_customer_id": string | null,"provider_event_at": string | null,"provider_subscription_id": string | null,"seats": number,"status": Database["public"]['Enums']["subscription_status"],"trial_ends_at": string | null,"updated_at": string,"workspace_id": string
+                    "billing_interval": string | null,"cancel_at_period_end": boolean,"created_at": string,"current_period_end": string | null,"current_period_start": string | null,"id": string,"plan_id": string,"provider": string,"provider_customer_id": string | null,"provider_event_at": string | null,"provider_subscription_id": string | null,"referral_code": string | null,"seats": number,"status": Database["public"]['Enums']["subscription_status"],"trial_ends_at": string | null,"updated_at": string,"workspace_id": string
                   }
                   ComputedFields: never
                   Insert: {
-                    "billing_interval"?: string | null,"cancel_at_period_end"?: boolean,"created_at"?: string,"current_period_end"?: string | null,"current_period_start"?: string | null,"id"?: string,"plan_id": string,"provider"?: string,"provider_customer_id"?: string | null,"provider_event_at"?: string | null,"provider_subscription_id"?: string | null,"seats"?: number,"status": Database["public"]['Enums']["subscription_status"],"trial_ends_at"?: string | null,"updated_at"?: string,"workspace_id": string
+                    "billing_interval"?: string | null,"cancel_at_period_end"?: boolean,"created_at"?: string,"current_period_end"?: string | null,"current_period_start"?: string | null,"id"?: string,"plan_id": string,"provider"?: string,"provider_customer_id"?: string | null,"provider_event_at"?: string | null,"provider_subscription_id"?: string | null,"referral_code"?: string | null,"seats"?: number,"status": Database["public"]['Enums']["subscription_status"],"trial_ends_at"?: string | null,"updated_at"?: string,"workspace_id": string
                   }
                   Update: {
-                    "billing_interval"?: string | null,"cancel_at_period_end"?: boolean,"created_at"?: string,"current_period_end"?: string | null,"current_period_start"?: string | null,"id"?: string,"plan_id"?: string,"provider"?: string,"provider_customer_id"?: string | null,"provider_event_at"?: string | null,"provider_subscription_id"?: string | null,"seats"?: number,"status"?: Database["public"]['Enums']["subscription_status"],"trial_ends_at"?: string | null,"updated_at"?: string,"workspace_id"?: string
+                    "billing_interval"?: string | null,"cancel_at_period_end"?: boolean,"created_at"?: string,"current_period_end"?: string | null,"current_period_start"?: string | null,"id"?: string,"plan_id"?: string,"provider"?: string,"provider_customer_id"?: string | null,"provider_event_at"?: string | null,"provider_subscription_id"?: string | null,"referral_code"?: string | null,"seats"?: number,"status"?: Database["public"]['Enums']["subscription_status"],"trial_ends_at"?: string | null,"updated_at"?: string,"workspace_id"?: string
                   }
                   Relationships: [
                     {
@@ -602,6 +630,11 @@ isOneToOne: false
               "jobs": number,"name": string,"state": string
             }[]
                            },
+"affiliate_stats":
+{ Args: { "p_code": string }; Returns: {
+              "paying": number,"signups": number
+            }[]
+                           },
 "api_rate_hit":
 { Args: { "p_key": string,"p_per_day": number,"p_per_second": number }; Returns: {
               "allowed": boolean,"day_count": number,"day_reset": string,"limited_by": string,"second_count": number
@@ -618,6 +651,14 @@ isOneToOne: false
                            },
 "prune_job_runs":
 { Args: { "keep_days"?: number }; Returns: number
+                           },
+"prune_public_rate_counters":
+{ Args: Record<PropertyKey, never>; Returns: number
+                           },
+"public_rate_hit":
+{ Args: { "p_ip_hash": string,"p_per_hour": number,"p_tool": string }; Returns: {
+              "allowed": boolean,"reset_at": string,"used": number
+            }[]
                            },
 "record_usage":
 { Args: { "p_action": string,"p_key"?: string,"p_limit": number,"p_quantity"?: number,"p_record"?: boolean,"p_since": string,"p_source": string,"p_user": string,"p_workspace": string }; Returns: {

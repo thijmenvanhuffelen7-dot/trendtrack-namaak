@@ -1,7 +1,7 @@
 import { describe, expect, it } from "vitest";
 import { fakeNetwork, fixture, testFetcher } from "../test/helpers";
-import { BlockedError, RobotsDisallowedError, UnsafeTargetError } from "./errors";
-import { isPrivateIp } from "./ip-guard";
+import { BlockedError, RobotsDisallowedError, UnsafeTargetError } from "@trendtrack/core";
+import { isPrivateIp } from "@trendtrack/core";
 
 const robots = fixture("shopify-robots.txt");
 

@@ -1,6 +1,7 @@
 import path from "node:path";
 import { loadEnvConfig } from "@next/env";
 import type { NextConfig } from "next";
+import createMDX from "@next/mdx";
 import createNextIntlPlugin from "next-intl/plugin";
 
 // Eén .env.local in de root van de monorepo voor alle apps.
@@ -13,6 +14,7 @@ loadEnvConfig(
 );
 
 const nextConfig: NextConfig = {
+  pageExtensions: ["ts", "tsx", "mdx"],
   // Workspace-packages worden als TypeScript-bron geïmporteerd.
   transpilePackages: ["@trendtrack/core", "@trendtrack/db"],
   // Server-only packages die Node-API's gebruiken niet bundelen.
@@ -21,4 +23,7 @@ const nextConfig: NextConfig = {
   devIndicators: false,
 };
 
-export default createNextIntlPlugin("./src/i18n/request.ts")(nextConfig);
+// Blogposts zijn MDX-bestanden in src/content/blog (zie lib/site/blog.ts).
+const withMDX = createMDX({});
+
+export default createNextIntlPlugin("./src/i18n/request.ts")(withMDX(nextConfig));

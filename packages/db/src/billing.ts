@@ -22,6 +22,8 @@ export type BillingEvent =
         currentPeriodEnd: string | null;
         cancelAtPeriodEnd: boolean;
         trialEndsAt: string | null;
+        /** Affiliate-code uit de metadata (alleen bij de eerste keer bewaard). */
+        referral?: string | null;
       };
     }
   | { type: "payment_failed"; eventAt: string; providerSubscriptionId: string };
@@ -116,6 +118,7 @@ export async function applyBillingEvent(
     cancel_at_period_end: s.cancelAtPeriodEnd,
     trial_ends_at: s.trialEndsAt,
     provider_event_at: e.eventAt,
+    ...(s.referral ? { referral_code: s.referral } : {}),
   };
   const { error } = await serviceDb
     .from("subscriptions")

@@ -1,5 +1,5 @@
 import { extractProductHandles, normalizeDomain, parseProductsPage } from "@trendtrack/core";
-import { BlockedError, RobotsDisallowedError } from "../http/errors";
+import { BlockedError, RobotsDisallowedError } from "@trendtrack/core";
 import { isoDate, logOf, nowOf, type CrawlerDeps } from "./deps";
 
 export type BestsellerSource = "sort_by" | "collection" | "none";

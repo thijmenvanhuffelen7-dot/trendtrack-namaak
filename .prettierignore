@@ -6,3 +6,4 @@ supabase/.temp
 **/*.gen.ts
 **/__fixtures__
 **/test/fixtures
+.taste-skill/

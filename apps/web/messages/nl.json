@@ -378,7 +378,9 @@
     "language": "Taal",
     "languageHint": "De taal van het dashboard.",
     "billing": "Abonnement en verbruik",
-    "billingHint": "Plan, verbruik, upgraden en facturen."
+    "billingHint": "Plan, verbruik, upgraden en facturen.",
+    "affiliate": "Affiliate",
+    "affiliateHint": "30% terugkerend op elk abonnement via jouw link"
   },
   "api": {
     "title": "API & MCP",
@@ -404,5 +406,19 @@
     "mcpTitle": "MCP-server",
     "mcpBody": "Gebruik TrendTrack direct in Claude, ChatGPT of Cursor via de MCP-server.",
     "error": "Dat lukte niet: {message}"
+  },
+  "affiliate": {
+    "title": "Affiliate",
+    "intro": "Verdien 30% van elk abonnement dat via jouw link start, zolang de klant betaalt.",
+    "yourLink": "Jouw link",
+    "linkHint": "Wie via deze link binnen 30 dagen een betaald plan kiest, levert jou {pct}% op van elke betaling.",
+    "signups": "Abonnementen via jou",
+    "paying": "Nu betalend",
+    "payout": "We betalen maandelijks uit na ontvangst van een factuur. Een eigen abonnement telt niet mee.",
+    "chooseCode": "Kies je code",
+    "codeHint": "3 tot 40 tekens: kleine letters, cijfers, - en _.",
+    "create": "Maak mijn link",
+    "errorTaken": "Die code is al bezet. Kies een andere.",
+    "errorInvalid": "Alleen kleine letters, cijfers, - en _ (3 tot 40 tekens)."
   }
 }

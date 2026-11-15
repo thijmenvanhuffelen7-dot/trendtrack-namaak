@@ -328,4 +328,33 @@ daarom gebruiken we `/meta.json` voor detectie.
 - Shops hebben `niche` = meest voorkomende producttype ("Kettingen"), geen brede categorie
   ("sieraden"). De AI vertaalt dat via `list_filters`.
 
-## Volgende: Prompt 13 — gratis tools en landingspagina
+## Prompt 13: publieke site, gratis tools, blog en SEO — klaar (2026-11-15)
+
+- **Landing** (`app/(site)/page.tsx`): live omzetschatting in de hero (`/api/public/estimate`), ads in drie
+  staten, vergelijking, werkwijze, prijstabel, FAQ (FAQPage-schema) en echte dashboardschermen
+  (`public/screens/*.webp`, gemaakt met seeddata). Design via de tasteskill (richting "editorial report"),
+  inspector 0 FAIL op de landing.
+- **7 gratis tools** (`/tools`, `lib/site/tools.ts`): Shopify-thema- en apps-detector, productexporter
+  (CSV, max 250, BOM en bescherming tegen formules), winnende-ads-finder (12 langst lopende, rest achter
+  login), ROAS-break-even-, winstmarge- en CLV-calculator (rekenen in de browser, `lib/site/calculators.ts`
+  met tests). WebApplication-schema per tool.
+- **Limieten zonder account**: per gehasht IP per uur (`public_rate_hit`, salt `RATE_LIMIT_SALT`):
+  detect 20, products 5, ads 20, estimate 30. Detector en exporter gebruiken dezelfde beleefde fetcher als
+  de crawler (verplaatst naar `packages/core/src/http`: robots.txt, SSRF-bescherming, eigen user-agent).
+- **/prijzen**, **/blog** (MDX via `@next/mdx`, 2 posts in `src/content/blog`), **/affiliate**,
+  **/privacy** en **/voorwaarden** (concepten, met de melding dat een jurist ze moet nakijken).
+- **Affiliate**: `?ref=code` → cookie (30 dagen, middleware) → Stripe-metadata → `subscriptions.referral_code`.
+  Codes in `affiliates` (30%), aanmaken onder Instellingen → Affiliate met telling van abonnementen.
+  Geen commissie op je eigen abonnement (`validReferral`). Uitbetalen gebeurt handmatig.
+- **SEO**: `sitemap.ts`, `robots.ts` (geen /app, /admin, /api, /oauth, /share), metadata en canonical per
+  pagina, Organization/WebSite-schema.
+
+Kanttekeningen:
+
+- De detector en exporter konden hier niet tegen echte shops draaien (geen internet in de sandbox); ze zijn
+  getest met fixtures. In de browser geven ze hier netjes "niet bereikbaar".
+- `hallo@trendtrack.nl` en de bedrijfsgegevens in privacy/voorwaarden zijn placeholders.
+- Inspector-waarschuwingen op de subpagina's (weinig foto's, weinig beweging, kleine kop bij lange
+  blogtitels) laat ik staan: het zijn lees- en rekenpagina's.
+
+## Volgende: Prompt 14 — beveiliging, deploy, opt-out en e2e

@@ -1,4 +1,4 @@
-import type { PoliteFetcher } from "../http/polite-fetcher";
+import type { PoliteFetcher } from "@trendtrack/core";
 import type { ShopRepo } from "../repo/shop-repo";
 
 export interface CrawlerDeps {

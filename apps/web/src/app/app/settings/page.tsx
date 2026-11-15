@@ -29,6 +29,15 @@ export default async function SettingsPage() {
             <ChevronRight className="size-4 text-muted-foreground" aria-hidden />
           </Card>
         </Link>
+        <Link href="/app/settings/affiliate" className="block">
+          <Card className="flex items-center gap-3 p-4 transition-colors hover:border-foreground/25">
+            <div className="flex-1">
+              <p className="font-medium">{t("affiliate")}</p>
+              <p className="text-sm text-muted-foreground">{t("affiliateHint")}</p>
+            </div>
+            <ChevronRight className="size-4 text-muted-foreground" aria-hidden />
+          </Card>
+        </Link>
         <Card className="p-4">
           <p className="font-medium">{t("account")}</p>
           <dl className="mt-2 grid grid-cols-[140px_1fr] gap-y-1 text-sm">
