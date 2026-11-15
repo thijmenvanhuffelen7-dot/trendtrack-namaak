@@ -8,6 +8,9 @@ import type { SnapshotDeps } from "./snapshot/snapshot-shop";
 export const SEED_DOMAINS_PATH = fileURLToPath(
   new URL("../../../data/seed-domains.txt", import.meta.url),
 );
+export const KEYWORDS_PATH = fileURLToPath(
+  new URL("../../../data/ad-keywords.nl.txt", import.meta.url),
+);
 
 /** Bouwt de echte afhankelijkheden (netwerk + Supabase) uit env. */
 export function createCrawlerDeps(): SnapshotDeps {

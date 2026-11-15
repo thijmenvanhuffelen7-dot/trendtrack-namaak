@@ -21,4 +21,6 @@ export default function setup() {
   process.env.SUPABASE_URL = vars.API_URL;
   process.env.SUPABASE_ANON_KEY = vars.ANON_KEY;
   process.env.SUPABASE_SERVICE_ROLE_KEY = vars.SERVICE_ROLE_KEY;
+  // Altijd de lokale database: integratietests mogen data wissen.
+  process.env.DATABASE_URL = vars.DB_URL;
 }

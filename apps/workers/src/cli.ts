@@ -33,6 +33,8 @@ const HELP = `Gebruik: pnpm workers <command> [opties]
   inbox --list              alle seed-inboxen
   inbox --domain=<domein> --test-mail [--hours=1]
                             nep-mail verwerken alsof hij <hours> uur na inschrijven binnenkwam
+  enqueue <job> [--domain=<d>]
+                            job handmatig in de wachtrij, bv. scheduler.hourly_shops of shop.snapshot
   discover [--limit=500]    nieuwe domeinen uit ads en data/seed-domains.txt in de wachtrij
 `;
 
@@ -162,6 +164,21 @@ async function main() {
       console.log(inbox.created ? "Nieuw seed-adres:" : "Bestaand seed-adres:", inbox.address);
       console.log(`Schrijf je hiermee in op de nieuwsbrief van ${values.domain} en draai daarna:`);
       console.log(`  pnpm workers inbox --domain=${values.domain} --subscribed`);
+      return;
+    }
+    case "enqueue": {
+      const name = positionals[1];
+      if (!name) throw new Error("Geef een jobnaam, bv. scheduler.hourly_shops");
+      const url = process.env.DATABASE_URL;
+      if (!url) throw new Error("DATABASE_URL ontbreekt");
+      const boss = new PgBoss(url);
+      await boss.start();
+      try {
+        const data = values.domain ? { domain: values.domain } : {};
+        console.log("job-id:", await boss.send(name, data));
+      } finally {
+        await boss.stop({ graceful: false });
+      }
       return;
     }
     case "discover": {

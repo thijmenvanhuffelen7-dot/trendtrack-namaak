@@ -1,0 +1,36 @@
+# Workers op een VPS:  docker compose up -d --build
+# Env staat in .env.production (zelfde variabelen als .env.example; DATABASE_URL naar Supabase).
+services:
+  workers:
+    build:
+      context: .
+      dockerfile: apps/workers/Dockerfile
+    env_file: .env.production
+    restart: unless-stopped
+    ports:
+      - "127.0.0.1:8080:8080" # health alleen lokaal; uptime-check via reverse proxy of tunnel
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 30s
+    logging:
+      driver: json-file
+      options: { max-size: "10m", max-file: "5" }
+
+  # Extra worker zonder scheduler (opschalen: docker compose up -d --scale worker-extra=2)
+  worker-extra:
+    build:
+      context: .
+      dockerfile: apps/workers/Dockerfile
+    env_file: .env.production
+    environment:
+      SCHEDULER_ENABLED: "false"
+    restart: unless-stopped
+    profiles: ["scale"]
+    healthcheck:
+      test: ["CMD", "curl", "-fsS", "http://localhost:8080/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3

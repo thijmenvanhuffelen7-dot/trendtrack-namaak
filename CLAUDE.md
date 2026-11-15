@@ -47,6 +47,7 @@ pnpm db:start                     # lokale Supabase (Docker); toont de keys
 pnpm dev                          # web-app op http://localhost:3000
 pnpm --filter workers dev         # workers (DATABASE_URL nodig)
 pnpm mcp                          # MCP-server op http://localhost:3333/mcp
+docker compose up -d --build      # workers op een VPS (zie docs/workers.md)
 ```
 
 ## Testen en checks

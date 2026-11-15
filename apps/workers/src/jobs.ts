@@ -33,3 +33,12 @@ export const DiscoverAdsPayloadSchema = z.object({
   country: z.string().regex(/^[A-Z]{2}$/),
   maxPages: z.number().int().min(1).max(20).optional(),
 });
+
+/** Interne planner- en monitoringjobs (draaien via pg-boss schedules). */
+export const SYSTEM_JOBS = {
+  hourlyShops: "scheduler.hourly_shops",
+  hourlyAds: "scheduler.hourly_ads",
+  hourlyDiscovery: "scheduler.hourly_discovery",
+  dailyMaintenance: "scheduler.daily_maintenance",
+  monitorFailures: "monitor.failures",
+} as const;

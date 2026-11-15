@@ -1,107 +1,300 @@
 import type PgBoss from "pg-boss";
+import type pg from "pg";
+import { discoverAds, syncAdvertiser, type AdsDeps } from "./ads/ingest";
+import { readKeywords } from "./ads/keywords";
+import { concurrencyFor, type WorkerConfig } from "./config";
 import { crawlBestsellers } from "./crawler/crawl-bestsellers";
 import { crawlProducts } from "./crawler/crawl-products";
-import { snapshotShop, type SnapshotDeps } from "./snapshot/snapshot-shop";
 import { detectShop } from "./crawler/detect-shop";
 import { runDiscovery } from "./crawler/discovery";
-import { discoverAds, syncAdvertiser, type AdsDeps } from "./ads/ingest";
+import { withDomainLock } from "./infra/domain-lock";
+import { tracked, type JobLike } from "./infra/job-runs";
 import {
   DiscoverAdsPayloadSchema,
   DiscoverPayloadSchema,
   DomainPayloadSchema,
   JOBS,
+  SYSTEM_JOBS,
   SyncAdvertiserPayloadSchema,
 } from "./jobs";
+import { checkFailures, webhookNotifier } from "./monitor/failure-alert";
+import { hourIndex, rotatingBatch } from "./scheduler/buckets";
+import { planAdvertiserSyncs, planShopSnapshots } from "./scheduler/plan";
+import {
+  activeShopifyDomains,
+  metaAdvertisers,
+  paidTrackedDomains,
+  recomputeGrowthScores,
+} from "./scheduler/queries";
+import { snapshotShop, type SnapshotDeps } from "./snapshot/snapshot-shop";
 
-const SHOP_QUEUES = [
-  JOBS.shopDetect,
-  JOBS.shopCrawlProducts,
-  JOBS.shopCrawlBestsellers,
-  JOBS.shopSnapshot,
-] as const;
-
-/** Maakt de queues aan en registreert de shop-handlers. */
-export async function registerShopJobs(boss: PgBoss, deps: SnapshotDeps, seedFilePath: string) {
-  // policy "short": per singletonKey (domein) maximaal één job in de wachtrij.
-  for (const name of SHOP_QUEUES) await boss.createQueue(name, { name, policy: "short" });
-  await boss.createQueue(JOBS.shopDiscover, { name: JOBS.shopDiscover, policy: "singleton" });
-
-  await boss.work(JOBS.shopDetect, { batchSize: 1 }, async ([job]) => {
-    const { domain } = DomainPayloadSchema.parse(job!.data);
-    const result = await detectShop(domain, deps);
-    if (result.status === "active" && result.isShopify) {
-      await boss.send(
-        JOBS.shopCrawlProducts,
-        { domain: result.domain },
-        { singletonKey: result.domain },
-      );
-    }
-    return { status: result.status, isShopify: result.isShopify, linkedAds: result.linkedAds };
-  });
-
-  await boss.work(JOBS.shopCrawlProducts, { batchSize: 1 }, async ([job]) => {
-    const { domain } = DomainPayloadSchema.parse(job!.data);
-    const result = await crawlProducts(domain, deps);
-    // Bestsellers pas na producten, zodat de handles te koppelen zijn.
-    if (!result.blocked && result.products > 0) {
-      await boss.send(
-        JOBS.shopCrawlBestsellers,
-        { domain: result.domain },
-        { singletonKey: result.domain },
-      );
-    }
-    return result;
-  });
-
-  await boss.work(JOBS.shopCrawlBestsellers, { batchSize: 1 }, async ([job]) => {
-    const { domain } = DomainPayloadSchema.parse(job!.data);
-    return crawlBestsellers(domain, deps);
-  });
-
-  await boss.work(JOBS.shopSnapshot, { batchSize: 1 }, async ([job]) => {
-    const { domain } = DomainPayloadSchema.parse(job!.data);
-    const r = await snapshotShop(domain, deps);
-    return {
-      skipped: r.skipped,
-      products: r.products,
-      estimate: r.estimate,
-      growthScore: r.growthScore,
-    };
-  });
-
-  await boss.work(JOBS.shopDiscover, { batchSize: 1 }, async ([job]) => {
-    const { limit } = DiscoverPayloadSchema.parse(job!.data ?? {});
-    return runDiscovery({ repo: deps.repo, queue: boss, seedFilePath }, limit);
-  });
+export interface RegisterDeps {
+  boss: PgBoss;
+  pool: pg.Pool;
+  config: WorkerConfig;
+  shop: SnapshotDeps;
+  /** Null als er geen Meta-token is: dan geen ads-jobs. */
+  ads: Omit<AdsDeps, "queue"> | null;
+  metaCountries: string[];
+  seedFilePath: string;
+  keywordsPath: string;
 }
 
-/** Ads-jobs. Alleen registreren als er een Meta-token is. */
-export async function registerAdsJobs(
-  boss: PgBoss,
-  deps: Omit<AdsDeps, "queue">,
-  defaultCountries: string[],
+type Handler = (job: JobLike) => Promise<unknown>;
+
+/** Registreert `n` parallelle workers voor een queue, met job_runs-registratie. */
+async function work(
+  d: RegisterDeps,
+  name: string,
+  n: number,
+  keyOf: (job: JobLike) => string | null,
+  handler: Handler,
 ) {
-  await boss.createQueue(JOBS.adsSyncAdvertiser, { name: JOBS.adsSyncAdvertiser, policy: "short" });
-  await boss.createQueue(JOBS.adsDiscover, { name: JOBS.adsDiscover, policy: "short" });
-  const withQueue: AdsDeps = { ...deps, queue: boss };
+  const wrapped = tracked(d.pool, keyOf, handler);
+  for (let i = 0; i < Math.max(1, n); i++) {
+    await d.boss.work(name, { batchSize: 1 }, (jobs) => wrapped(jobs as JobLike[]));
+  }
+}
 
-  await boss.work(JOBS.adsSyncAdvertiser, { batchSize: 1 }, async ([job]) => {
-    const { page_id, countries } = SyncAdvertiserPayloadSchema.parse(job!.data);
-    const r = await syncAdvertiser(page_id, countries ?? defaultCountries, withQueue);
-    return {
-      saved: r.saved,
-      linkedToShop: r.linkedToShop,
-      unknownDomains: r.unknownDomains.length,
-    };
-  });
+const domainKey = (job: JobLike) => DomainPayloadSchema.safeParse(job.data).data?.domain ?? null;
 
-  await boss.work(JOBS.adsDiscover, { batchSize: 1 }, async ([job]) => {
-    const { keyword, country, maxPages } = DiscoverAdsPayloadSchema.parse(job!.data);
-    const r = await discoverAds(keyword, country, withQueue, maxPages);
-    return {
-      saved: r.saved,
-      newAdvertisers: r.newAdvertisers.length,
-      unknownDomains: r.unknownDomains.length,
-    };
-  });
+/** Domein-jobs: max één tegelijk per domein (ook over servers heen). */
+const domainJob =
+  (d: RegisterDeps, fn: (domain: string) => Promise<unknown>): Handler =>
+  async (job) => {
+    const { domain } = DomainPayloadSchema.parse(job.data);
+    return withDomainLock(d.pool, domain, () => fn(domain));
+  };
+
+// Bij "bezig" of tijdelijke fouten later opnieuw proberen.
+const RETRY = { retryLimit: 5, retryDelay: 120, retryBackoff: true } as const;
+
+export async function registerAll(d: RegisterDeps) {
+  const { boss } = d;
+  const conc = concurrencyFor(d.config);
+
+  // --- Shop-jobs ------------------------------------------------------------
+  for (const name of [
+    JOBS.shopDetect,
+    JOBS.shopCrawlProducts,
+    JOBS.shopCrawlBestsellers,
+    JOBS.shopSnapshot,
+  ]) {
+    await boss.createQueue(name, { name, policy: "short", ...RETRY });
+  }
+  await boss.createQueue(JOBS.shopDiscover, { name: JOBS.shopDiscover, policy: "singleton" });
+
+  await work(
+    d,
+    JOBS.shopDetect,
+    conc[JOBS.shopDetect]!,
+    domainKey,
+    domainJob(d, async (domain) => {
+      const r = await detectShop(domain, d.shop);
+      if (r.status === "active" && r.isShopify) {
+        await boss.send(JOBS.shopCrawlProducts, { domain: r.domain }, { singletonKey: r.domain });
+      }
+      return { status: r.status, isShopify: r.isShopify, linkedAds: r.linkedAds };
+    }),
+  );
+
+  await work(
+    d,
+    JOBS.shopCrawlProducts,
+    conc[JOBS.shopCrawlProducts]!,
+    domainKey,
+    domainJob(d, async (domain) => {
+      const r = await crawlProducts(domain, d.shop);
+      if (!r.blocked && r.products > 0) {
+        await boss.send(
+          JOBS.shopCrawlBestsellers,
+          { domain: r.domain },
+          { singletonKey: r.domain },
+        );
+      }
+      return r;
+    }),
+  );
+
+  await work(
+    d,
+    JOBS.shopCrawlBestsellers,
+    conc[JOBS.shopCrawlBestsellers]!,
+    domainKey,
+    domainJob(d, async (domain) => {
+      const r = await crawlBestsellers(domain, d.shop);
+      return { source: r.source, saved: r.saved };
+    }),
+  );
+
+  await work(
+    d,
+    JOBS.shopSnapshot,
+    conc[JOBS.shopSnapshot]!,
+    domainKey,
+    domainJob(d, async (domain) => {
+      const r = await snapshotShop(domain, d.shop);
+      return {
+        skipped: r.skipped,
+        products: r.products,
+        estimate: r.estimate,
+        growthScore: r.growthScore,
+      };
+    }),
+  );
+
+  await work(
+    d,
+    JOBS.shopDiscover,
+    1,
+    () => null,
+    async (job) => {
+      const { limit } = DiscoverPayloadSchema.parse(job.data ?? {});
+      return runDiscovery({ repo: d.shop.repo, queue: boss, seedFilePath: d.seedFilePath }, limit);
+    },
+  );
+
+  // --- Ads-jobs ---------------------------------------------------------------
+  if (d.ads) {
+    const ads: AdsDeps = { ...d.ads, queue: boss };
+    await boss.createQueue(JOBS.adsSyncAdvertiser, {
+      name: JOBS.adsSyncAdvertiser,
+      policy: "short",
+      ...RETRY,
+    });
+    await boss.createQueue(JOBS.adsDiscover, { name: JOBS.adsDiscover, policy: "short", ...RETRY });
+
+    await work(
+      d,
+      JOBS.adsSyncAdvertiser,
+      conc[JOBS.adsSyncAdvertiser]!,
+      (j) => SyncAdvertiserPayloadSchema.safeParse(j.data).data?.page_id ?? null,
+      async (job) => {
+        const { page_id, countries } = SyncAdvertiserPayloadSchema.parse(job.data);
+        const r = await syncAdvertiser(page_id, countries ?? d.metaCountries, ads);
+        return {
+          saved: r.saved,
+          linkedToShop: r.linkedToShop,
+          unknownDomains: r.unknownDomains.length,
+        };
+      },
+    );
+
+    await work(
+      d,
+      JOBS.adsDiscover,
+      conc[JOBS.adsDiscover]!,
+      (j) => {
+        const p = DiscoverAdsPayloadSchema.safeParse(j.data).data;
+        return p ? `${p.country}:${p.keyword}` : null;
+      },
+      async (job) => {
+        const { keyword, country, maxPages } = DiscoverAdsPayloadSchema.parse(job.data);
+        const r = await discoverAds(keyword, country, ads, maxPages);
+        return {
+          saved: r.saved,
+          newAdvertisers: r.newAdvertisers.length,
+          unknownDomains: r.unknownDomains.length,
+        };
+      },
+    );
+  }
+
+  // --- Planner & monitoring ---------------------------------------------------
+  for (const name of Object.values(SYSTEM_JOBS))
+    await boss.createQueue(name, { name, policy: "singleton" });
+
+  await work(
+    d,
+    SYSTEM_JOBS.hourlyShops,
+    1,
+    () => null,
+    async () => {
+      const hour = new Date().getUTCHours();
+      const plan = planShopSnapshots(
+        await activeShopifyDomains(d.pool),
+        await paidTrackedDomains(d.pool),
+        hour,
+      );
+      for (const j of plan)
+        await boss.send(
+          JOBS.shopSnapshot,
+          { domain: j.key },
+          { singletonKey: j.key, priority: j.priority },
+        );
+      return { queued: plan.length, tracked: plan.filter((j) => j.priority > 0).length };
+    },
+  );
+
+  await work(
+    d,
+    SYSTEM_JOBS.hourlyAds,
+    1,
+    () => null,
+    async () => {
+      if (!d.ads) return { skipped: "geen META_ACCESS_TOKEN" };
+      const { all, tracked: trackedIds } = await metaAdvertisers(d.pool);
+      const plan = planAdvertiserSyncs(all, trackedIds, new Date().getUTCHours());
+      for (const j of plan)
+        await boss.send(
+          JOBS.adsSyncAdvertiser,
+          { page_id: j.key },
+          { singletonKey: j.key, priority: j.priority },
+        );
+      return { queued: plan.length };
+    },
+  );
+
+  await work(
+    d,
+    SYSTEM_JOBS.hourlyDiscovery,
+    1,
+    () => null,
+    async () => {
+      await boss.send(JOBS.shopDiscover, { limit: 500 });
+      if (!d.ads) return { ads: "uit (geen META_ACCESS_TOKEN)" };
+      const keywords = rotatingBatch(
+        await readKeywords(d.keywordsPath),
+        hourIndex(new Date()),
+        d.config.KEYWORDS_PER_HOUR,
+      );
+      for (const keyword of keywords) {
+        for (const country of d.metaCountries) {
+          await boss.send(
+            JOBS.adsDiscover,
+            { keyword, country },
+            { singletonKey: `${country}:${keyword}` },
+          );
+        }
+      }
+      return { keywords };
+    },
+  );
+
+  await work(
+    d,
+    SYSTEM_JOBS.dailyMaintenance,
+    1,
+    () => null,
+    async () => {
+      const growth = await recomputeGrowthScores(d.pool);
+      const { rows } = await d.pool.query<{ n: string }>("select public.prune_job_runs(30) as n");
+      return { growthUpdated: growth, prunedRuns: Number(rows[0]?.n ?? 0) };
+    },
+  );
+
+  const notify = d.config.ALERT_WEBHOOK_URL ? webhookNotifier(d.config.ALERT_WEBHOOK_URL) : null;
+  // Monitoring zelf niet via tracked(): anders telt een kapotte monitor mee in zijn eigen statistiek.
+  await boss.work(SYSTEM_JOBS.monitorFailures, { batchSize: 1 }, async () =>
+    checkFailures(d.pool, notify),
+  );
+
+  if (d.config.SCHEDULER_ENABLED) {
+    const tz = d.config.SCHEDULER_TZ;
+    await boss.schedule(SYSTEM_JOBS.hourlyShops, "5 * * * *", {}, { tz });
+    await boss.schedule(SYSTEM_JOBS.hourlyAds, "15 * * * *", {}, { tz });
+    await boss.schedule(SYSTEM_JOBS.hourlyDiscovery, "25 * * * *", {}, { tz });
+    await boss.schedule(SYSTEM_JOBS.dailyMaintenance, "30 3 * * *", {}, { tz });
+    await boss.schedule(SYSTEM_JOBS.monitorFailures, "*/10 * * * *", {}, { tz });
+  }
 }

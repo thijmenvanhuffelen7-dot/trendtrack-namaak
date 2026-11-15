@@ -169,6 +169,20 @@ isOneToOne: false
                   Relationships: [
                     
                   ]
+                },"job_runs": {
+                  Row: {
+                    "attempt": number,"duration_ms": number | null,"error": string | null,"finished_at": string | null,"id": number,"job_id": string | null,"job_key": string | null,"job_name": string,"result": Json | null,"started_at": string,"status": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "attempt"?: number,"duration_ms"?: number | null,"error"?: string | null,"finished_at"?: string | null,"id"?: never,"job_id"?: string | null,"job_key"?: string | null,"job_name": string,"result"?: Json | null,"started_at"?: string,"status": string
+                  }
+                  Update: {
+                    "attempt"?: number,"duration_ms"?: number | null,"error"?: string | null,"finished_at"?: string | null,"id"?: never,"job_id"?: string | null,"job_key"?: string | null,"job_name"?: string,"result"?: Json | null,"started_at"?: string,"status"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
                 },"plans": {
                   Row: {
                     "id": string,"is_public": boolean,"limits": NonNullable<Json>,"monthly_price_cents": number,"name": string,"sort_order": number
@@ -317,6 +331,20 @@ isOneToOne: false
       referencedColumns: ["id"]
     }
                   ]
+                },"system_alerts": {
+                  Row: {
+                    "key": string,"last_payload": Json | null,"last_sent_at": string
+                  }
+                  ComputedFields: never
+                  Insert: {
+                    "key": string,"last_payload"?: Json | null,"last_sent_at": string
+                  }
+                  Update: {
+                    "key"?: string,"last_payload"?: Json | null,"last_sent_at"?: string
+                  }
+                  Relationships: [
+                    
+                  ]
                 },"tracked_brands": {
                   Row: {
                     "added_by": string | null,"created_at": string,"daily_digest": boolean,"id": string,"shop_id": string,"workspace_id": string
@@ -403,8 +431,19 @@ isOneToOne: false
             [_ in never]: never
           }
           Functions: {
-            "is_workspace_member":
+            "admin_queue_stats":
+{ Args: Record<PropertyKey, never>; Returns: {
+              "jobs": number,"name": string,"state": string
+            }[]
+                           },
+"is_admin":
+{ Args: Record<PropertyKey, never>; Returns: boolean
+                           },
+"is_workspace_member":
 { Args: { "ws": string }; Returns: boolean
+                           },
+"prune_job_runs":
+{ Args: { "keep_days"?: number }; Returns: number
                            }
           }
           Enums: {

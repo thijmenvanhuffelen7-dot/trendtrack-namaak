@@ -16,12 +16,14 @@
     "@trendtrack/db": "workspace:*",
     "imapflow": "^1.7.8",
     "mailparser": "^3.14.3",
+    "pg": "^8.23.1",
     "pg-boss": "^10.3.0",
     "zod": "^4.1.0"
   },
   "devDependencies": {
     "@types/mailparser": "^3.9.0",
     "@types/node": "^22.18.0",
+    "@types/pg": "^8.23.1",
     "tsx": "^4.20.0"
   }
 }

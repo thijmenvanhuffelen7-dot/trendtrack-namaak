@@ -165,4 +165,30 @@ daarom gebruiken we `/meta.json` voor detectie.
 - Niet getest met een echte provider/DNS (geen domein in de cloud-sessie). Het Postmark-formaat is
   nagebootst volgens hun docs.
 
-## Volgende: Prompt 7 — job scheduler en monitoring
+## Prompt 7: job scheduler en monitoring — klaar (2026-11-15), Docker-image niet gebouwd
+
+- Planning via pg-boss schedules (zie `docs/workers.md`): snapshots en adverteerder-syncs gespreid
+  over 24 uur (hash per shop/pagina), gevolgde shops van betalende workspaces 2× per dag met
+  voorrang, elk uur discovery + roterende zoekwoorden, dagelijks growth_score + opruimen
+- Concurrency per jobtype (`CONCURRENCY_*`), max 1 job per domein via Postgres advisory lock,
+  retries met backoff
+- Migratie `20261115030000_job_monitoring.sql`: `job_runs`, `system_alerts`, `is_admin()`,
+  `admin_queue_stats()` (pg-boss wachtrij), `prune_job_runs()`
+- Alert als > 20% faalt (min. 10 jobs, cooldown 1 uur) naar `ALERT_WEBHOOK_URL` (n8n)
+- Health-endpoint `:8080/health`
+- Web: `/admin/jobs` en `/admin/inboxes` (seed-inboxen beheren, was nog open uit Prompt 6),
+  tijdelijk achter Basic auth (`ADMIN_PASSWORD`, middleware)
+- `apps/workers/Dockerfile`, `docker-compose.yml` (+ profiel `scale`), `.dockerignore`
+- CLI: `pnpm workers enqueue <job> [--domain=x]`
+- Getest: planner, buckets, alertlogica (unit); advisory lock, job_runs en alert + cooldown tegen
+  Postgres (integratie); workers lokaal gestart: health 200, planner-jobs draaien en verschijnen in
+  `/admin/jobs` (screenshot gecheckt); compose-file geldig
+
+### Open
+
+- `docker compose up` niet echt gedraaid: Docker Hub (429) en de AWS-mirror zijn geblokkeerd in de
+  cloud-sessie. De Dockerfile-stappen (gefilterde install + `node --import tsx`) zijn in een lege map
+  nagespeeld en werken; bouw het image op je VPS of lokaal.
+- `/admin` gaat in Prompt 8 over op Supabase Auth + `profiles.is_admin`.
+
+## Volgende: Prompt 8 — dashboard-basis, shops en shop-detail
