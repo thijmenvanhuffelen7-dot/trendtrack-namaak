@@ -4,7 +4,14 @@ import { crawlProducts } from "./crawler/crawl-products";
 import { snapshotShop, type SnapshotDeps } from "./snapshot/snapshot-shop";
 import { detectShop } from "./crawler/detect-shop";
 import { runDiscovery } from "./crawler/discovery";
-import { DiscoverPayloadSchema, DomainPayloadSchema, JOBS } from "./jobs";
+import { discoverAds, syncAdvertiser, type AdsDeps } from "./ads/ingest";
+import {
+  DiscoverAdsPayloadSchema,
+  DiscoverPayloadSchema,
+  DomainPayloadSchema,
+  JOBS,
+  SyncAdvertiserPayloadSchema,
+} from "./jobs";
 
 const SHOP_QUEUES = [
   JOBS.shopDetect,
@@ -65,5 +72,36 @@ export async function registerShopJobs(boss: PgBoss, deps: SnapshotDeps, seedFil
   await boss.work(JOBS.shopDiscover, { batchSize: 1 }, async ([job]) => {
     const { limit } = DiscoverPayloadSchema.parse(job!.data ?? {});
     return runDiscovery({ repo: deps.repo, queue: boss, seedFilePath }, limit);
+  });
+}
+
+/** Ads-jobs. Alleen registreren als er een Meta-token is. */
+export async function registerAdsJobs(
+  boss: PgBoss,
+  deps: Omit<AdsDeps, "queue">,
+  defaultCountries: string[],
+) {
+  await boss.createQueue(JOBS.adsSyncAdvertiser, { name: JOBS.adsSyncAdvertiser, policy: "short" });
+  await boss.createQueue(JOBS.adsDiscover, { name: JOBS.adsDiscover, policy: "short" });
+  const withQueue: AdsDeps = { ...deps, queue: boss };
+
+  await boss.work(JOBS.adsSyncAdvertiser, { batchSize: 1 }, async ([job]) => {
+    const { page_id, countries } = SyncAdvertiserPayloadSchema.parse(job!.data);
+    const r = await syncAdvertiser(page_id, countries ?? defaultCountries, withQueue);
+    return {
+      saved: r.saved,
+      linkedToShop: r.linkedToShop,
+      unknownDomains: r.unknownDomains.length,
+    };
+  });
+
+  await boss.work(JOBS.adsDiscover, { batchSize: 1 }, async ([job]) => {
+    const { keyword, country, maxPages } = DiscoverAdsPayloadSchema.parse(job!.data);
+    const r = await discoverAds(keyword, country, withQueue, maxPages);
+    return {
+      saved: r.saved,
+      newAdvertisers: r.newAdvertisers.length,
+      unknownDomains: r.unknownDomains.length,
+    };
   });
 }

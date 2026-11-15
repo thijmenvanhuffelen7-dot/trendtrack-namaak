@@ -108,4 +108,35 @@ daarom gebruiken we `/meta.json` voor detectie.
 - De dagelijkse planning (alle shops, gespreid) komt in Prompt 7.
 - Aannames (ROAS, factoren) zijn niet gekalibreerd. Zie "Bekende zwaktes" in docs/estimation.md.
 
-## Volgende: Prompt 5 — Meta Ad Library ingest (Meta-token nodig)
+## Prompt 5: Meta Ad Library ingest — gebouwd (2026-11-15), nog niet met echte API getest
+
+- `packages/core/meta-ad-library.ts`: client voor de officiële `ads_archive`-endpoint
+  (ad_type=ALL, ad_reached_countries, search_page_ids/search_terms, alle EU-velden),
+  paginering via `after`-cursor, usage-headers (`x-app-usage`, `x-business-use-case-usage`) =>
+  wachten boven 90%, rate-limit-codes (4/17/32/613/80004, 429, 5xx) => retry met backoff of
+  `estimated_time_to_regain_access`, code 190 => `MetaTokenError` (geen retry)
+- `mapMetaAd()`: landingsdomein uit link caption (of domein in de tekst; social/linkdiensten genegeerd),
+  is_active = geen stopdatum of stopdatum in de toekomst, spend-schatting, landen
+- **`ad_snapshot_url` bevat het access token** en wordt daarom niet opgeslagen; we slaan
+  `https://www.facebook.com/ads/library/?id=<id>` op (publieke link). Ook niet in `raw`.
+- `packages/core/cpm.ts`: CPM-band per land (NL €6–12) × frequentie 1,2–2,5 (bereik ≠ impressies)
+- `apps/workers`:
+  - `ads/ingest.ts`: `ingestAds` (adverteerders + ads upsert, landen samenvoegen, koppelen aan shops,
+    adverteerder aan shop koppelen, onbekende domeinen => `shop.detect`), `syncAdvertiser`
+    (job `ads.sync_advertiser`), `discoverAds` (job `ads.discover`, nieuwe adverteerders => sync)
+  - `data/ad-keywords.nl.txt`: 21 zoekwoorden (NL/EN/FR)
+  - CLI: `pnpm workers ads --page-id=<id>` en `pnpm workers ads --keyword=<woord> --country=NL`
+  - Ads-jobs registreren alleen als `META_ACCESS_TOKEN` gezet is
+- Tests: client (paginering, parameters, token-fout, rate limit, preventief wachten, token niet in fouten),
+  mapping, CPM, ingest (in-memory) en integratietest met de echte client + opgeslagen responses naar Supabase
+
+### Open
+
+- Niet getest tegen de echte API: geen token, en `graph.facebook.com` is niet bereikbaar vanuit de
+  cloud-sessie. Lokaal: token in `.env.local`, dan `pnpm workers ads --page-id=<page id>`.
+- `media_type` is altijd `unknown`: de API geeft geen mediatype of thumbnails terug. Creatives tonen
+  we via de Ad Library-link; echte thumbnails vragen om een aparte oplossing (niet scrapen).
+- `cta` is leeg: de API geeft het CTA-type niet terug.
+- De Graph API-versie staat op v23.0 (`META_API_VERSION`); controleer bij livegang de nieuwste versie.
+
+## Volgende: Prompt 6 — e-mail library via seed-inboxen

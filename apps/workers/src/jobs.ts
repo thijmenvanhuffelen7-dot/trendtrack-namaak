@@ -23,3 +23,13 @@ export const DiscoverPayloadSchema = z.object({
 /** Waarom een domein in de wachtrij komt; bepaalt de prioriteit. */
 export type DomainSource = "ads" | "seed" | "user";
 export const PRIORITY: Record<DomainSource, number> = { user: 10, ads: 5, seed: 1 };
+
+export const SyncAdvertiserPayloadSchema = z.object({
+  page_id: z.string().regex(/^\d{5,25}$/),
+  countries: z.array(z.string().regex(/^[A-Z]{2}$/)).optional(),
+});
+export const DiscoverAdsPayloadSchema = z.object({
+  keyword: z.string().min(2).max(100),
+  country: z.string().regex(/^[A-Z]{2}$/),
+  maxPages: z.number().int().min(1).max(20).optional(),
+});

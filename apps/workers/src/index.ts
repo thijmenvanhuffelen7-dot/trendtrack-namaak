@@ -1,6 +1,9 @@
 import PgBoss from "pg-boss";
 import { createCrawlerDeps, SEED_DOMAINS_PATH } from "./context";
-import { registerShopJobs } from "./register";
+import { createMetaClient, readMetaEnv } from "./ads/meta-env";
+import { createServiceClient } from "@trendtrack/db";
+import { SupabaseAdsRepo } from "./repo/ads-repo";
+import { registerAdsJobs, registerShopJobs } from "./register";
 
 async function main() {
   const connectionString = process.env.DATABASE_URL;
@@ -10,6 +13,16 @@ async function main() {
   boss.on("error", (err) => console.error("[pg-boss]", err));
   await boss.start();
   await registerShopJobs(boss, createCrawlerDeps(), SEED_DOMAINS_PATH);
+  if (process.env.META_ACCESS_TOKEN) {
+    const { META_COUNTRIES } = readMetaEnv();
+    await registerAdsJobs(
+      boss,
+      { client: createMetaClient(), ads: new SupabaseAdsRepo(createServiceClient()) },
+      META_COUNTRIES,
+    );
+  } else {
+    console.warn("META_ACCESS_TOKEN ontbreekt: ads-jobs staan uit");
+  }
   console.log("workers gestart");
 
   const stop = async () => {

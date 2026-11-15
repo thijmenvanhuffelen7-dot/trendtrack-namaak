@@ -1,0 +1,38 @@
+{
+  "data": [
+    {
+      "id": "1200000000000001",
+      "page_id": "100000000000001",
+      "page_name": "Zilverzand Sieraden",
+      "ad_creative_bodies": ["Gratis verzending op alle zilveren kettingen! Bestel nu."],
+      "ad_creative_link_titles": ["Schakelketting zilver"],
+      "ad_creative_link_captions": ["ZILVERZAND.NL"],
+      "ad_creative_link_descriptions": ["Voor 22:00 besteld, morgen in huis"],
+      "ad_snapshot_url": "https://www.facebook.com/ads/archive/render_ad/?id=1200000000000001&access_token=GEHEIM_TOKEN",
+      "ad_delivery_start_time": "2026-09-10",
+      "publisher_platforms": ["facebook", "instagram"],
+      "languages": ["nl"],
+      "eu_total_reach": 412000,
+      "target_ages": ["18", "65+"],
+      "target_gender": "Women",
+      "target_locations": [{ "name": "Netherlands", "type": "countries", "excluded": false }],
+      "beneficiary_payers": [{ "payer": "Zilverzand B.V.", "beneficiary": "Zilverzand B.V." }]
+    },
+    {
+      "id": "1200000000000002",
+      "page_id": "100000000000001",
+      "page_name": "Zilverzand Sieraden",
+      "ad_creative_bodies": ["Black Friday: 30% korting. Shop via https://www.zilverzand.nl/sale"],
+      "ad_creative_link_captions": ["instagram.com"],
+      "ad_snapshot_url": "https://www.facebook.com/ads/archive/render_ad/?id=1200000000000002&access_token=GEHEIM_TOKEN",
+      "ad_delivery_start_time": "2026-10-01",
+      "ad_delivery_stop_time": "2026-10-20",
+      "languages": ["nl"],
+      "eu_total_reach": "18000"
+    }
+  ],
+  "paging": {
+    "cursors": { "before": "AAA", "after": "CURSOR_2" },
+    "next": "https://graph.facebook.com/v23.0/ads_archive?after=CURSOR_2&access_token=GEHEIM_TOKEN"
+  }
+}

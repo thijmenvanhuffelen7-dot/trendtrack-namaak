@@ -1,3 +1,4 @@
+import { z } from "zod";
 import { parseArgs } from "node:util";
 import PgBoss from "pg-boss";
 import { crawlBestsellers } from "./crawler/crawl-bestsellers";
@@ -6,19 +7,33 @@ import { detectShop } from "./crawler/detect-shop";
 import { runDiscovery } from "./crawler/discovery";
 import { createCrawlerDeps, SEED_DOMAINS_PATH } from "./context";
 import { snapshotShop } from "./snapshot/snapshot-shop";
+import { discoverAds, syncAdvertiser } from "./ads/ingest";
+import { createMetaClient, readMetaEnv } from "./ads/meta-env";
+import { SupabaseAdsRepo } from "./repo/ads-repo";
+import { createServiceClient } from "@trendtrack/db";
 
 const HELP = `Gebruik: pnpm workers <command> [opties]
 
   crawl --domain=<domein>   detect + producten + bestsellers, direct (zonder wachtrij)
   snapshot --domain=<domein> | --all [--limit=50]
                             dagelijkse snapshot + omzetschatting + growth_score
+  ads --page-id=<id>        alle ads van een Facebook-pagina ophalen (Meta Ad Library API)
+  ads --keyword=<woord> [--country=NL]
+                            actieve ads zoeken op zoekwoord (nieuwe adverteerders vinden)
   discover [--limit=500]    nieuwe domeinen uit ads en data/seed-domains.txt in de wachtrij
 `;
 
 async function main() {
   const { positionals, values } = parseArgs({
     allowPositionals: true,
-    options: { domain: { type: "string" }, limit: { type: "string" }, all: { type: "boolean" } },
+    options: {
+      domain: { type: "string" },
+      limit: { type: "string" },
+      all: { type: "boolean" },
+      "page-id": { type: "string" },
+      keyword: { type: "string" },
+      country: { type: "string" },
+    },
   });
   const [command] = positionals;
 
@@ -66,6 +81,27 @@ async function main() {
       }
       return;
     }
+    case "ads": {
+      const { META_COUNTRIES } = readMetaEnv();
+      const deps = { client: createMetaClient(), ads: new SupabaseAdsRepo(createServiceClient()) };
+      const pageId = values["page-id"];
+      const r = pageId
+        ? await syncAdvertiser(pageId, META_COUNTRIES, deps)
+        : values.keyword
+          ? await discoverAds(values.keyword, (values.country ?? "NL").toUpperCase(), deps)
+          : null;
+      if (!r) throw new Error("Geef --page-id=<id> of --keyword=<woord>");
+      console.log({
+        opgeslagen: r.saved,
+        gekoppeld_aan_shop: r.linkedToShop,
+        nieuwe_adverteerders: r.newAdvertisers.length,
+        onbekende_domeinen: r.unknownDomains,
+        spend_schatting_eur: r.spend,
+      });
+      if (r.unknownDomains.length)
+        console.log("Tip: `pnpm workers crawl --domain=<domein>` voor de onbekende domeinen.");
+      return;
+    }
     case "discover": {
       const url = process.env.DATABASE_URL;
       if (!url) throw new Error("DATABASE_URL ontbreekt");
@@ -92,6 +128,10 @@ async function main() {
 }
 
 main().catch((err) => {
+  if (err instanceof z.ZodError) {
+    for (const issue of err.issues) console.error(issue.message);
+    process.exit(1);
+  }
   console.error(err instanceof Error ? err.message : err);
   process.exit(1);
 });

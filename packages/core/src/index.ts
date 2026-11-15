@@ -7,3 +7,5 @@ export * from "./types";
 export * from "./estimation";
 export * from "./reviews";
 export * from "./snapshot-diff";
+export * from "./cpm";
+export * from "./meta-ad-library";

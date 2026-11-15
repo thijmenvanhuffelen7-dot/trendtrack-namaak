@@ -14,8 +14,12 @@ komen drie signalen. Elk signaal geeft een eigen bandbreedte en een eigen betrou
 ### 1. Advertenties (betrouwbaarheid 0,35)
 
 - Uit de Meta Ad Library weten we hoeveel mensen in de EU een ad zag (`eu_total_reach`).
-  Meta geeft **geen** spend voor commerciële ads. We schatten spend als bereik / 1000 × CPM
-  (zie `packages/core/cpm.ts`, Prompt 5).
+  Meta geeft **geen** spend voor commerciële ads. We schatten spend per ad als
+  bereik × frequentie / 1000 × CPM (`packages/core/cpm.ts`):
+  - CPM per land (EUR): NL 6–12, BE 5–10, DE 7–13, FR 5–10, anders 5–12. Gemiddelde over de landen
+    waarin we de ad vonden.
+  - Frequentie 1,2 (laag) – 2,5 (hoog): bereik telt unieke personen, maar iemand ziet een ad vaker.
+    Zonder frequentie zou de spend structureel te laag uitvallen.
 - Per actieve ad: geschatte spend / dagen actief × 30 = spend per maand (minimaal 7 dagen,
   zodat een ad van één dag niet tot een maandbedrag wordt opgeblazen).
 - Omzet = spend × ROAS. Aanname ROAS: **1,5 (laag) – 2,5 (midden) – 4 (hoog)**.

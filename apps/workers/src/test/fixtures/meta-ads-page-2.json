@@ -1,0 +1,16 @@
+{
+  "data": [
+    {
+      "id": "1200000000000003",
+      "page_id": "100000000000002",
+      "page_name": "Onbekende Winkel",
+      "ad_creative_bodies": ["Nieuwe collectie online"],
+      "ad_creative_link_captions": ["nieuwewinkel.be"],
+      "ad_snapshot_url": "https://www.facebook.com/ads/archive/render_ad/?id=1200000000000003&access_token=GEHEIM_TOKEN",
+      "ad_delivery_start_time": "2026-11-10T08:00:00+0000",
+      "ad_delivery_stop_time": "2026-12-31T23:00:00+0000",
+      "languages": ["nl", "fr"]
+    }
+  ],
+  "paging": { "cursors": { "before": "BBB" } }
+}
