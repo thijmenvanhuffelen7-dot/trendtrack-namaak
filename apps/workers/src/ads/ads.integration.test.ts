@@ -12,7 +12,7 @@ describe("Meta-ingest naar Supabase", () => {
   const ids = ["1200000000000001", "1200000000000002", "1200000000000003"];
   afterAll(async () => {
     await db.from("ads").delete().in("external_id", ids);
-    await db.from("advertisers").delete().eq("page_id", "100000000000002");
+    await db.from("advertisers").delete().eq("page_id", "100000000000777");
   });
 
   it("slaat ads op, koppelt aan de seed-shop en schat spend", async () => {

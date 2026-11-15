@@ -188,10 +188,10 @@ describe("discoverAds", () => {
       searchTerms: "gratis verzending",
       activeStatus: "ACTIVE",
     });
-    expect(r.newAdvertisers.sort()).toEqual(["100000000000001", "100000000000002"]);
+    expect(r.newAdvertisers.sort()).toEqual(["100000000000001", "100000000000777"]);
     expect(sent.filter((s) => s.name === JOBS.adsSyncAdvertiser).map((s) => s.data)).toEqual([
       { page_id: "100000000000001" },
-      { page_id: "100000000000002" },
+      { page_id: "100000000000777" },
     ]);
   });
 });
