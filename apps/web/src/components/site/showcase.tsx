@@ -1,5 +1,7 @@
 "use client";
 
+import { ArrowRight, Check } from "lucide-react";
+import Link from "next/link";
 import { useState } from "react";
 
 export interface ShowcaseAd {
@@ -13,73 +15,104 @@ export interface ShowcaseAd {
 }
 
 /**
- * Eén ad-rij uit het product, drie keer: zoals hij binnenkomt, met de muis erop, en gevolgd.
- * De middelste is echt: de knop zet hem in de derde stand.
+ * Een echte ad uit de database, zoals hij in het product staat. De knop werkt: volg het merk en de
+ * kaart laat zien wat er dan gebeurt.
  */
 export function Showcase({ ad }: { ad: ShowcaseAd }) {
   const [followed, setFollowed] = useState(false);
-  const row = (state: "new" | "hover" | "done") => (
-    <div
-      data-ui
-      className={`w-full max-w-[640px] bg-white p-4 text-[#111] ${state === "hover" ? "ring-2 ring-[#1e4bd7]" : ""}`}
-    >
-      <div className="flex items-start justify-between gap-3">
-        <div className="min-w-0">
-          <p className="text-[15px] font-semibold">{ad.advertiser}</p>
-          <p className="text-[13px] text-[#555]">{ad.domain}</p>
-        </div>
-        <span
-          className={`rounded-sm px-1.5 py-0.5 text-[13px] font-medium ${state === "new" ? "bg-[#eef2ff] text-[#1e4bd7]" : "bg-[#e6f4f1] text-[#0c7866]"}`}
-        >
-          {state === "new" ? "Nieuw" : ad.days >= 30 ? "Lang lopend" : "Actief"}
-        </span>
-      </div>
-      <p className="mt-2 text-[15px] font-medium">{ad.title}</p>
-      <p className="text-[15px] text-[#444]">{ad.body}</p>
-      <div className="mt-3 flex flex-wrap items-center gap-x-5 gap-y-1 text-[13px] text-[#555]">
-        <span>Loopt {state === "new" ? "1 dag" : `${ad.days} dagen`}</span>
-        <span>EU-bereik {ad.reach}</span>
-        <span>Spend {ad.spend} (schatting)</span>
-        {state === "hover" && (
-          <button
-            type="button"
-            onClick={() => setFollowed(true)}
-            className="ml-auto bg-[#0c7866] px-3 py-1.5 text-[13px] font-medium text-white transition-colors hover:bg-[#0e8a75]"
-          >
-            {followed ? "Gevolgd ✓" : "Volg dit merk"}
-          </button>
-        )}
-        {state === "done" && (
-          <span className="ml-auto font-medium text-[#0c7866]">In je Brandtracker</span>
-        )}
-      </div>
-    </div>
-  );
-  const items: [string, React.ReactNode][] = [
-    ["Gevonden", row("new")],
-    ["Bekeken", row("hover")],
-    [followed ? "Gevolgd, net nu" : "Gevolgd", row("done")],
-  ];
   return (
-    <section aria-labelledby="showcase-title" className="s-wrap py-[clamp(72px,8vw,120px)]">
-      <div data-reveal className="grid gap-y-10 md:grid-cols-12">
-        <h2
-          id="showcase-title"
-          className="md:col-span-8 md:col-start-4"
-          style={{ fontSize: "clamp(1.75rem, 1.2rem + 1.6vw, 2.25rem)" }}
-        >
-          Een ad wordt een winnaar
-        </h2>
-        <ol className="space-y-14 md:col-span-9 md:col-start-1">
-          {items.map(([label, node]) => (
-            <li key={label} className="grid items-center gap-3 md:grid-cols-9">
-              <span className="order-2 text-[var(--step-lead)] text-[var(--s-muted)] md:order-1 md:col-span-3 md:pr-8 md:text-right">
-                {label}
-              </span>
-              <div className="order-1 md:order-2 md:col-span-6">{node}</div>
-            </li>
-          ))}
-        </ol>
+    <section aria-labelledby="showcase-title" className="s-section relative overflow-x-clip">
+      <div className="s-wrap grid items-center gap-14 lg:grid-cols-2">
+        <div data-reveal>
+          <h2 id="showcase-title" style={{ fontSize: "var(--step-head)" }}>
+            Elke ad, met <span className="s-accent-text">wat hij kost.</span>
+          </h2>
+          <p className="mt-5 max-w-xl text-[var(--step-lead)] leading-relaxed text-[#c4c4cc]">
+            Meta laat in de EU zien hoeveel mensen een ad bereikt. Wij rekenen dat om naar wat hij
+            ongeveer kost, en tellen hoe lang hij al loopt. Wat maanden draait, verdient zijn geld
+            terug.
+          </p>
+          <dl className="mt-10 grid max-w-xl grid-cols-[auto_auto_1fr] gap-x-10 gap-y-6">
+            {[
+              [`${ad.days}`, "dagen live"],
+              [ad.reach, "EU-bereik"],
+              [ad.spend.replace(/ /g, " "), "geschatte spend"],
+            ].map(([v, l]) => (
+              <div key={l}>
+                <dt className="sr-only">{l}</dt>
+                <dd className="font-[family-name:var(--font-display)] text-[clamp(1.2rem,1.9vw,1.7rem)] leading-none font-bold tracking-[-0.03em] whitespace-nowrap">
+                  {v}
+                </dd>
+                <dd className="mt-2 text-[14px] text-[var(--s-muted)]">{l}</dd>
+              </div>
+            ))}
+          </dl>
+          <Link href="/tools/winnende-ads-finder" className="s-btn mt-10">
+            Zoek winnende ads
+            <ArrowRight className="s-arrow size-4" aria-hidden />
+          </Link>
+        </div>
+
+        <div data-reveal className="relative">
+          <div className="pointer-events-none absolute -inset-10 -z-10 rounded-full bg-[radial-gradient(closest-side,rgb(12_120_102/0.25),transparent)] blur-2xl" />
+          <div className="s-frame">
+            <p className="s-label px-3 pt-2 pb-2.5">Ad · {ad.domain}</p>
+            <article className="s-card p-6">
+              <div className="flex items-start justify-between gap-3">
+                <div className="flex min-w-0 items-center gap-3">
+                  <span className="grid size-10 shrink-0 place-items-center rounded-xl bg-gradient-to-br from-[#2ad1ae] to-[#075245] font-[family-name:var(--font-display)] font-bold">
+                    {ad.advertiser.slice(0, 1)}
+                  </span>
+                  <div className="min-w-0">
+                    <p className="truncate font-medium">{ad.advertiser}</p>
+                    <p className="text-[13px] text-[var(--s-muted)]">Gesponsord · {ad.domain}</p>
+                  </div>
+                </div>
+                <span className="s-tag bg-[var(--s-accent)]/20 text-[#5fe3c5]">
+                  {ad.days >= 30 ? "Lang lopend" : "Actief"}
+                </span>
+              </div>
+              <p className="mt-5 text-[18px] font-medium">{ad.title}</p>
+              <p className="mt-1 text-[15px] text-[#c4c4cc]">{ad.body}</p>
+              <div className="mt-5 grid grid-cols-3 gap-px overflow-hidden rounded-xl border border-[var(--s-line)] bg-[var(--s-line)] text-[13px]">
+                {[
+                  ["Loopt", `${ad.days} dagen`],
+                  ["Bereik", ad.reach],
+                  ["Spend", ad.spend],
+                ].map(([l, v]) => (
+                  <div key={l} className="bg-[#0f0f10] px-3 py-2.5">
+                    <p className="text-[var(--s-faint)]">{l}</p>
+                    <p className="mt-0.5 font-medium text-[var(--s-ink)]">{v}</p>
+                  </div>
+                ))}
+              </div>
+              <div className="mt-5 flex items-center justify-between gap-3">
+                <p className="text-[13px] text-[var(--s-faint)]">
+                  Spend is een schatting uit bereik
+                </p>
+                <button
+                  type="button"
+                  onClick={() => setFollowed((f) => !f)}
+                  aria-pressed={followed}
+                  className={followed ? "s-btn-ghost !min-h-10 !px-4" : "s-btn !min-h-10 !px-4"}
+                >
+                  {followed ? (
+                    <>
+                      <Check className="size-4 text-[#5fe3c5]" aria-hidden /> In je Brandtracker
+                    </>
+                  ) : (
+                    "Volg dit merk"
+                  )}
+                </button>
+              </div>
+            </article>
+          </div>
+          <p className="mt-3 text-center text-[13px] text-[var(--s-faint)]" aria-live="polite">
+            {followed
+              ? "Vanaf nu zie je elke nieuwe ad en prijswijziging van dit merk in je feed."
+              : "Probeer het: klik op Volg dit merk."}
+          </p>
+        </div>
       </div>
     </section>
   );

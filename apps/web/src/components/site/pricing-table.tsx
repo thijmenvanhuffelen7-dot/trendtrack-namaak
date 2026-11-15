@@ -83,148 +83,94 @@ export function PricingTable({ headingLevel = 2 }: { headingLevel?: 1 | 2 }) {
       : `/login?next=${encodeURIComponent(`/app/settings/billing?interval=${interval}`)}`;
 
   return (
-    <section aria-labelledby="pricing-title" className="s-wrap py-[clamp(72px,8vw,120px)]">
-      <div data-reveal className="flex flex-wrap items-end justify-between gap-6">
-        <H
-          id="pricing-title"
-          style={
-            headingLevel === 1
-              ? { fontSize: "clamp(3rem, 8vw, 7.5rem)", lineHeight: 0.9 }
-              : { fontSize: "var(--step-head)" }
-          }
-        >
-          Wat het kost
-        </H>
-        <div
-          role="radiogroup"
-          aria-label="Betaalperiode"
-          className="inline-flex bg-[var(--s-surface)] p-1"
-        >
-          {INTERVALS.map((i) => (
-            <button
-              key={i}
-              type="button"
-              role="radio"
-              aria-checked={interval === i}
-              onClick={() => setInterval(i)}
-              className={`px-3 py-2 text-[15px] transition-colors ${interval === i ? "bg-[var(--s-ink)] text-[var(--s-bg)]" : "text-[var(--s-muted)] hover:text-[var(--s-ink)]"}`}
+    <section aria-labelledby="pricing-title" className="s-section s-glow relative">
+      <div className="s-wrap">
+        <div data-reveal className="flex flex-wrap items-end justify-between gap-6">
+          <div>
+            <H
+              id="pricing-title"
+              style={{ fontSize: headingLevel === 1 ? "var(--step-display)" : "var(--step-head)" }}
             >
-              {i === "month" ? "Maand" : i === "quarter" ? "Kwartaal" : "Jaar"}
-              {INTERVAL_DISCOUNT[i] > 0 && (
-                <span className="ml-1">−{INTERVAL_DISCOUNT[i] * 100}%</span>
-              )}
-            </button>
-          ))}
-        </div>
-      </div>
-
-      {/* Desktop: één grote tabel */}
-      <table className="mt-12 hidden w-full table-fixed border-collapse text-left md:table">
-        <caption className="sr-only">Plannen en wat erin zit</caption>
-        <thead>
-          <tr>
-            <th
-              scope="col"
-              className="w-[26%] p-5 align-bottom text-[var(--s-muted)] font-normal text-[15px]"
-            >
-              Prijzen inclusief btw
-            </th>
-            {ORDER.map((id) => {
-              const p = price(id);
-              return (
-                <th
-                  key={id}
-                  scope="col"
-                  className={`p-5 align-bottom ${id === "pro" ? "bg-[var(--s-accent)]" : ""}`}
-                >
-                  <span
-                    className="block font-semibold tracking-[-0.03em]"
-                    style={{ fontSize: "clamp(1.5rem, 2.6vw, 2.6rem)" }}
-                  >
-                    {PLANS[id].name}
-                  </span>
-                  <span
-                    className="block font-normal tracking-[-0.03em] tabular-nums"
-                    style={{ fontSize: "clamp(1.5rem, 2.6vw, 2.6rem)" }}
-                  >
-                    {p.main}
-                  </span>
-                  <span className="block text-[15px] font-normal">{p.sub}</span>
-                </th>
-              );
-            })}
-          </tr>
-        </thead>
-        <tbody>
-          {ROWS.map(([label, val], i) => (
-            <tr key={label} className={i % 2 === 0 ? "bg-[var(--s-surface)]" : ""}>
-              <th scope="row" className="p-5 text-[clamp(1.05rem,1.4vw,1.375rem)] font-normal">
-                {label}
-              </th>
-              {ORDER.map((id) => (
-                <td
-                  key={id}
-                  className={`p-5 text-[clamp(1rem,1.3vw,1.25rem)] ${id === "pro" ? "bg-[var(--s-accent)]" : ""}`}
-                >
-                  {val(id)}
-                </td>
-              ))}
-            </tr>
-          ))}
-          <tr>
-            <td className="p-5" />
-            {ORDER.map((id) => (
-              <td key={id} className={`p-5 ${id === "pro" ? "bg-[var(--s-accent)]" : ""}`}>
-                <Link
-                  href={cta(id)}
-                  className={id === "pro" ? "s-btn !bg-white !text-[#0c7866]" : "s-btn"}
-                >
-                  {id === "free" ? "Gratis beginnen" : `Kies ${PLANS[id].name}`}
-                </Link>
-              </td>
-            ))}
-          </tr>
-        </tbody>
-      </table>
-
-      {/* Telefoon: één blok per plan */}
-      <div className="mt-10 space-y-12 md:hidden">
-        {ORDER.map((id) => {
-          const p = price(id);
-          return (
-            <div
-              key={id}
-              className={`p-5 ${id === "pro" ? "bg-[var(--s-accent)]" : "bg-[var(--s-surface)]"}`}
-            >
-              <Sub className="text-[9vw] leading-none font-semibold tracking-[-0.04em]">
-                {PLANS[id].name}
-              </Sub>
-              <p className="mt-1 text-[9vw] leading-none tracking-[-0.04em] tabular-nums">
-                {p.main}
-              </p>
-              <p className="mt-1 text-[15px]">{p.sub}</p>
-              <dl className="mt-5 space-y-3 text-[17px]">
-                {ROWS.map(([label, val]) => (
-                  <div key={label}>
-                    <dt className="font-medium">{label}</dt>
-                    <dd>{val(id)}</dd>
-                  </div>
-                ))}
-              </dl>
-              <Link
-                href={cta(id)}
-                className={`mt-6 w-full ${id === "pro" ? "s-btn !bg-white !text-[#0c7866]" : "s-btn"}`}
+              Wat het <span className="s-accent-text">kost.</span>
+            </H>
+            <p className="mt-4 max-w-xl text-[var(--step-lead)] text-[#c4c4cc]">
+              Gratis beginnen, opschalen wanneer je wilt. Langer vooruit betalen is goedkoper.
+            </p>
+          </div>
+          <div
+            role="radiogroup"
+            aria-label="Betaalperiode"
+            className="inline-flex rounded-2xl border border-[var(--s-line)] bg-[var(--s-bg-2)] p-1"
+          >
+            {INTERVALS.map((i) => (
+              <button
+                key={i}
+                type="button"
+                role="radio"
+                aria-checked={interval === i}
+                onClick={() => setInterval(i)}
+                className={`rounded-xl px-4 py-2 text-[14px] transition-colors ${
+                  interval === i
+                    ? "bg-white/[0.09] text-[var(--s-ink)] shadow-[inset_0_1px_0_rgb(255_255_255/0.08)]"
+                    : "text-[var(--s-muted)] hover:text-[var(--s-ink)]"
+                }`}
               >
-                {id === "free" ? "Gratis beginnen" : `Kies ${PLANS[id].name}`}
-              </Link>
-            </div>
-          );
-        })}
+                {i === "month" ? "Maand" : i === "quarter" ? "Kwartaal" : "Jaar"}
+                {INTERVAL_DISCOUNT[i] > 0 && (
+                  <span className="ml-1.5 text-[#5fe3c5]">−{INTERVAL_DISCOUNT[i] * 100}%</span>
+                )}
+              </button>
+            ))}
+          </div>
+        </div>
+
+        <ul className="mt-12 grid gap-4 md:grid-cols-2 xl:grid-cols-4">
+          {ORDER.map((id) => {
+            const p = price(id);
+            const pro = id === "pro";
+            return (
+              <li
+                key={id}
+                className={`s-frame relative flex ${pro ? "border-[var(--s-accent-hi)]/40 shadow-[0_0_60px_-12px_rgb(25_179_148/0.35)]" : ""}`}
+              >
+                <div className="s-card flex w-full flex-col p-6">
+                  <div className="flex h-7 items-center justify-between">
+                    <Sub className="text-[22px]">{PLANS[id].name}</Sub>
+                    {pro && <span className="s-tag bg-[var(--s-accent)] text-white">Populair</span>}
+                  </div>
+                  <p className="mt-6 font-[family-name:var(--font-display)] text-[44px] leading-none font-bold tracking-[-0.04em] tabular-nums">
+                    {p.main}
+                  </p>
+                  <p className="mt-2 min-h-[2.6em] text-[14px] text-[var(--s-muted)]">{p.sub}</p>
+                  <Link href={cta(id)} className={`mt-5 w-full ${pro ? "s-btn" : "s-btn-ghost"}`}>
+                    {id === "free" ? "Gratis beginnen" : `Kies ${PLANS[id].name}`}
+                  </Link>
+                  <dl className="mt-6 space-y-3 border-t border-[var(--s-line)] pt-6 text-[14px]">
+                    {ROWS.map(([label, val]) => {
+                      const v = val(id);
+                      const off = v === "Niet inbegrepen";
+                      return (
+                        <div key={label} className="flex items-start justify-between gap-3">
+                          <dt className="text-[var(--s-muted)]">{label}</dt>
+                          <dd
+                            className={`text-right ${off ? "text-[var(--s-faint)]" : "text-[var(--s-ink)]"}`}
+                          >
+                            {v}
+                          </dd>
+                        </div>
+                      );
+                    })}
+                  </dl>
+                </div>
+              </li>
+            );
+          })}
+        </ul>
+        <p className="mt-6 max-w-2xl text-[14px] text-[var(--s-muted)]">
+          Prijzen inclusief btw. Nieuwe accounts krijgen 7 dagen Pro, zonder creditcard. Betalen met
+          iDEAL, Bancontact of creditcard; maandelijks opzegbaar.
+        </p>
       </div>
-      <p className="mt-6 max-w-2xl text-[15px] text-[var(--s-muted)]">
-        Nieuwe accounts krijgen 7 dagen Pro, zonder creditcard. Betalen met iDEAL, Bancontact of
-        creditcard; maandelijks opzegbaar.
-      </p>
     </section>
   );
 }

@@ -41,29 +41,31 @@ export default async function PostPage({ params }: { params: Promise<{ slug: str
     publisher: { "@id": `${SITE.url}/#org` },
   };
   return (
-    <article className="s-wrap pt-10 pb-[clamp(72px,8vw,120px)]">
-      <script
-        type="application/ld+json"
-        dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
-      />
-      <PageTitle
-        size="md"
-        title={p.title}
-        aside={
-          <>
-            <Link href="/blog" className="s-link">
-              Blog
-            </Link>
-            <br />
-            <time dateTime={p.date}>{formatDate(p.date)}</time>
-          </>
-        }
-      />
-      <Column>
-        <Prose>
-          <Body />
-        </Prose>
-      </Column>
+    <article className="s-glow relative">
+      <div className="s-wrap pt-16 pb-[clamp(80px,9vw,140px)] md:pt-24">
+        <script
+          type="application/ld+json"
+          dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
+        />
+        <PageTitle
+          size="md"
+          title={p.title}
+          aside={
+            <>
+              <Link href="/blog" className="s-link text-[var(--s-ink)]">
+                Blog
+              </Link>
+              <span className="mx-2 text-[var(--s-faint)]">/</span>
+              <time dateTime={p.date}>{formatDate(p.date)}</time>
+            </>
+          }
+        />
+        <Column>
+          <Prose>
+            <Body />
+          </Prose>
+        </Column>
+      </div>
     </article>
   );
 }

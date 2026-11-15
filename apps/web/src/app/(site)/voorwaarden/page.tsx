@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { Column, PageTitle, Prose } from "@/components/site/prose";
+import { Column, PageShell, PageTitle, Prose } from "@/components/site/prose";
 import { SITE } from "@/lib/site/config";
 
 export const metadata: Metadata = {
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 export default function Terms() {
   return (
-    <div className="s-wrap pt-10 pb-[clamp(72px,8vw,120px)]">
+    <PageShell>
       <PageTitle title="Voorwaarden" aside="Versie 15 november 2026" />
       <Column>
         <Prose>
@@ -37,7 +37,7 @@ export default function Terms() {
             <li>
               Er is een gratis plan en betaalde plannen per maand, kwartaal of jaar. De actuele
               prijzen en limieten staan op <Link href="/prijzen">prijzen</Link>; bedragen zijn
-              exclusief btw.
+              inclusief btw.
             </li>
             <li>
               Een proefperiode van Pro duurt 7 dagen en stopt vanzelf; daarna val je terug naar het
@@ -95,6 +95,6 @@ export default function Terms() {
           </p>
         </Prose>
       </Column>
-    </div>
+    </PageShell>
   );
 }

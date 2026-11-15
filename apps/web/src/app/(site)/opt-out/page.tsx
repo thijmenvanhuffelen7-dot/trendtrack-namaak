@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Column, PageTitle, Prose } from "@/components/site/prose";
+import { Column, PageShell, PageTitle, Prose } from "@/components/site/prose";
 import { SITE } from "@/lib/site/config";
 import { OptoutForm } from "./form";
 
@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 
 export default function OptoutPage() {
   return (
-    <div className="s-wrap pt-10 pb-[clamp(72px,8vw,120px)]">
+    <PageShell>
       <PageTitle
         title="Shop laten verwijderen"
         lead="Wil je niet dat we je webshop volgen? Dan verwijderen we de gegevens en slaan we je domein voortaan over."
@@ -47,6 +47,6 @@ export default function OptoutPage() {
           </Prose>
         </div>
       </Column>
-    </div>
+    </PageShell>
   );
 }

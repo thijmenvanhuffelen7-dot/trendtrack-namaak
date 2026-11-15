@@ -74,196 +74,412 @@ body {
 }
 
 /* ------------------------------------------------------------------------------------------------
-   Publieke site (.site): "printed annual" — charcoal met vlakke primaire kleurvelden.
-   Alleen kleur-, type- en ritme-tokens; geen gradients, schaduwen of lijnen (huisregels).
+   Publieke site (.site). Donker, glanzend en precies: diepe zwarttinten met zachte gloed, kaarten
+   met een dubbele rand, koppen in Cabinet Grotesk en tekst in Satoshi. Accent is TrendTrack-teal;
+   rood, blauw en geel blijven als signaalkleuren.
 ------------------------------------------------------------------------------------------------ */
 .site {
-  --s-bg: #191919;
-  --s-surface: #242424;
-  --s-ink: #ffffff;
-  --s-muted: #a3a3a3;
+  --s-bg: #0d0d0e;
+  --s-bg-2: #111112;
+  --s-surface: #161617;
+  --s-surface-2: #1c1c1e;
+  --s-line: rgb(255 255 255 / 0.075);
+  --s-line-2: rgb(255 255 255 / 0.12);
+  --s-ink: #f5f5f6;
+  --s-muted: #a1a1aa;
+  --s-faint: #8b8b94;
   --s-accent: #0c7866;
+  --s-accent-hi: #19b394;
+  --s-accent-lo: #075245;
   --s-accent-ink: #ffffff;
-  --s-red: #d71e1e;
-  --s-blue: #1e4bd7;
+  --s-red: #e5484d;
+  --s-blue: #3e63dd;
   --s-yellow: #ffe927;
+  --s-radius: 14px;
   --s-axis: 34%;
   --s-margin: clamp(20px, 3vw, 40px);
+  --s-max: 1240px;
   --step-small: clamp(0.8125rem, 0.79rem + 0.1vw, 0.875rem);
-  --step-body: clamp(1.0625rem, 1rem + 0.25vw, 1.1875rem);
-  --step-lead: clamp(1.25rem, 1.1rem + 0.7vw, 1.625rem);
-  --step-head: clamp(2rem, 1.3rem + 3.2vw, 4rem);
-  --step-display: clamp(3.4rem, 9.8vw, 9.4rem);
+  --step-body: clamp(1rem, 0.96rem + 0.2vw, 1.0625rem);
+  --step-lead: clamp(1.0625rem, 1rem + 0.35vw, 1.25rem);
+  --step-head: clamp(2.2rem, 1.4rem + 2.6vw, 3.4rem);
+  --step-display: clamp(2.7rem, 1.6rem + 3.6vw, 4.4rem);
+  --font-display: var(--font-cabinet), var(--font-satoshi), ui-sans-serif, system-ui, sans-serif;
   background: var(--s-bg);
   color: var(--s-ink);
-  font-family: var(--font-site), ui-sans-serif, system-ui, sans-serif;
+  font-family: var(--font-satoshi), ui-sans-serif, system-ui, sans-serif;
   font-size: var(--step-body);
-  line-height: 1.5;
-  letter-spacing: -0.005em;
+  line-height: 1.6;
   min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
 }
 .site h1,
 .site h2,
 .site h3 {
-  font-weight: 600;
-  letter-spacing: -0.04em;
-  line-height: 0.95;
+  font-family: var(--font-display);
+  font-weight: 800;
+  letter-spacing: -0.035em;
+  line-height: 1.05;
+  text-wrap: balance;
+}
+.site h1 {
+  font-weight: 700;
+  /* Wit dat naar beneden toe iets grijzer wordt. */
+  background: linear-gradient(180deg, #ffffff 0%, #ffffff 45%, #a1a1aa 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+.site h3 {
+  font-weight: 700;
+  letter-spacing: -0.02em;
+}
+.site p {
+  text-wrap: pretty;
 }
 .site a:focus-visible,
 .site button:focus-visible,
 .site input:focus-visible,
 .site select:focus-visible,
+.site textarea:focus-visible,
 .site summary:focus-visible {
-  outline: 3px solid var(--s-yellow);
+  outline: 2px solid var(--s-accent-hi);
   outline-offset: 3px;
 }
 .site ::selection {
-  background: var(--s-yellow);
-  color: #111;
+  background: var(--s-accent);
+  color: #fff;
 }
 .site .s-wrap {
+  width: 100%;
+  max-width: calc(var(--s-max) + 2 * var(--s-margin));
+  margin-inline: auto;
   padding-inline: var(--s-margin);
 }
-.site .s-btn {
+.site .s-section {
+  padding-block: clamp(80px, 9vw, 140px);
+}
+
+/* Accentwoorden in een kop: teal-verloop als tekstkleur. */
+.site .s-accent-text {
+  background: linear-gradient(
+    to right bottom,
+    #7ff0d6 0%,
+    var(--s-accent-hi) 40%,
+    var(--s-accent) 75%,
+    var(--s-accent-lo) 100%
+  );
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+}
+
+/* Knoppen. Primair: glanzend teal met binnenrand en hoogtelicht. Secundair: donker met rand. */
+.site .s-btn,
+.site .s-btn-ghost {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 0.5rem;
+  gap: 0.55rem;
   min-height: 48px;
   padding: 0 1.4rem;
-  background: var(--s-accent);
-  color: var(--s-accent-ink);
+  border-radius: var(--s-radius);
   font-weight: 500;
-  border-radius: 0;
+  font-size: 15px;
+  white-space: nowrap;
   transition:
-    transform 160ms cubic-bezier(0.2, 0.8, 0.2, 1),
-    background-color 160ms;
+    transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    filter 180ms,
+    background-color 180ms,
+    box-shadow 180ms;
+}
+.site .s-btn {
+  color: #fff;
+  background:
+    radial-gradient(80% 90% at 50% 0%, rgb(255 255 255 / 0.16), transparent 70%),
+    radial-gradient(130% 150% at 50% -10%, #2ad1ae 0%, var(--s-accent) 50%, #0a6556 100%),
+    linear-gradient(#0a6556, #08594c);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.25),
+    inset 0 0 0 1px rgb(42 209 174 / 0.28),
+    0 0 0 1px rgb(0 0 0 / 0.5),
+    0 2px 6px rgb(0 0 0 / 0.35),
+    0 14px 24px -14px rgb(0 0 0 / 0.7);
 }
 .site .s-btn:hover {
-  background: #0e8a75;
-}
-.site .s-btn:active {
-  transform: translateY(1px) scale(0.99);
+  filter: brightness(1.08);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.3),
+    inset 0 0 0 1px rgb(42 209 174 / 0.35),
+    0 0 0 1px rgb(0 0 0 / 0.5),
+    0 8px 28px -6px rgb(25 179 148 / 0.45);
 }
 .site .s-btn-ghost {
-  background: transparent;
   color: var(--s-ink);
-  text-decoration: underline;
-  text-underline-offset: 6px;
-  text-decoration-thickness: 2px;
+  background: linear-gradient(180deg, #1b1b1d, #121213);
+  box-shadow:
+    inset 0 1px 0 rgb(255 255 255 / 0.06),
+    0 0 0 1px var(--s-line-2);
+}
+.site .s-btn-ghost:hover {
+  background: linear-gradient(180deg, #222225, #161618);
+}
+.site .s-btn:active,
+.site .s-btn-ghost:active {
+  transform: translateY(1px) scale(0.985);
+}
+.site .s-btn[disabled] {
+  opacity: 0.6;
+}
+.site .s-btn .s-arrow {
+  transition: transform 180ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+.site .s-btn:hover .s-arrow {
+  transform: translateX(3px);
 }
 .site .s-link {
   text-decoration: underline;
+  text-decoration-color: var(--s-accent-hi);
   text-underline-offset: 4px;
   text-decoration-thickness: 1.5px;
-  transition:
-    text-decoration-thickness 120ms,
-    color 120ms;
+  transition: color 150ms;
 }
 .site .s-link:hover {
-  text-decoration-thickness: 3px;
-}
-.site .s-input {
-  min-height: 52px;
-  width: 100%;
-  padding: 0 1rem;
-  background: var(--s-surface);
-  color: var(--s-ink);
-  border-radius: 0;
-  font-size: var(--step-body);
-}
-.site .s-input::placeholder {
-  color: var(--s-muted);
+  color: #fff;
+  text-decoration-thickness: 2px;
 }
 
-/* Beweging: kop komt per regel van onder zijn eigen basislijn; secties komen gefaseerd binnen. */
-@keyframes s-rise {
-  from {
-    transform: translateY(105%);
-  }
-  to {
-    transform: none;
+/* Invoervelden. */
+.site .s-input {
+  min-height: 48px;
+  width: 100%;
+  padding: 0 1rem;
+  background: #0a0a0b;
+  color: var(--s-ink);
+  border-radius: 12px;
+  border: 1px solid var(--s-line-2);
+  font-size: 15px;
+  transition:
+    border-color 150ms,
+    box-shadow 150ms;
+}
+.site .s-input:hover {
+  border-color: rgb(255 255 255 / 0.18);
+}
+.site .s-input:focus {
+  border-color: var(--s-accent-hi);
+  box-shadow: 0 0 0 4px rgb(25 179 148 / 0.15);
+  outline: none;
+}
+.site .s-input::placeholder {
+  color: var(--s-faint);
+}
+
+/* Kaart met dubbele rand: een donkere lijst om een iets lichter paneel. */
+.site .s-frame {
+  border-radius: 22px;
+  border: 1px solid var(--s-line);
+  background: #070708;
+  padding: 3px;
+}
+.site .s-card {
+  border-radius: 19px;
+  border: 1px solid var(--s-line);
+  background: linear-gradient(180deg, var(--s-surface) 0%, #0f0f10 100%);
+  box-shadow: inset 0 1px 0 rgb(255 255 255 / 0.04);
+}
+.site .s-panel {
+  border-radius: 16px;
+  border: 1px solid var(--s-line);
+  background: var(--s-surface);
+}
+.site .s-label {
+  font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+  font-size: 13px;
+  color: var(--s-faint);
+  letter-spacing: 0.01em;
+}
+
+/* Pil voor aankondigingen en filters. */
+.site .s-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  border-radius: 999px;
+  border: 1px solid var(--s-line-2);
+  background: rgb(255 255 255 / 0.03);
+  padding: 0.3rem 0.9rem 0.3rem 0.3rem;
+  font-size: 14px;
+  color: #d4d4d8;
+  transition:
+    background-color 150ms,
+    border-color 150ms;
+}
+.site .s-pill:hover {
+  background: rgb(255 255 255 / 0.06);
+  border-color: rgb(255 255 255 / 0.2);
+}
+.site .s-tag {
+  display: inline-flex;
+  align-items: center;
+  border-radius: 999px;
+  padding: 0.15rem 0.6rem;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+/* Achtergrondgloed: zachte teal lichtvlek bovenaan secties. */
+.site .s-glow {
+  position: relative;
+  isolation: isolate;
+}
+.site .s-glow::before {
+  content: "";
+  position: absolute;
+  inset: -10% 10% auto;
+  height: 520px;
+  z-index: -1;
+  pointer-events: none;
+  background: radial-gradient(50% 50% at 50% 50%, rgb(12 120 102 / 0.22), transparent 70%);
+  filter: blur(20px);
+}
+.site .s-grain::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  pointer-events: none;
+  opacity: 0.05;
+  background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.9' numOctaves='2' stitchTiles='stitch'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+}
+/* Vervagen naar de achtergrond aan de randen van een scrollende kolom. */
+.site .s-fade-y {
+  mask-image: linear-gradient(to bottom, transparent, #000 12%, #000 88%, transparent);
+}
+@media (max-width: 767px) {
+  .site .s-fade-x-sm {
+    mask-image: linear-gradient(to right, #000 85%, transparent);
   }
 }
+.site .s-fade-x {
+  mask-image: linear-gradient(to right, transparent, #000 6%, #000 94%, transparent);
+}
+
+/* Beweging. */
 @keyframes s-fade-up {
   from {
     opacity: 0;
-    transform: translateY(20px);
+    transform: translateY(16px);
+    filter: blur(6px);
   }
   to {
     opacity: 1;
     transform: none;
+    filter: none;
   }
 }
-.site .s-mask {
-  display: block;
-  overflow: hidden;
-  padding-bottom: 0.06em;
+@keyframes s-marquee-y {
+  from {
+    transform: translateY(0);
+  }
+  to {
+    transform: translateY(-50%);
+  }
 }
-.site .s-mask > span {
-  display: block;
-  animation: s-rise 900ms cubic-bezier(0.16, 1, 0.3, 1) both;
+@keyframes s-marquee-y-rev {
+  from {
+    transform: translateY(-50%);
+  }
+  to {
+    transform: translateY(0);
+  }
 }
-.site .s-mask:nth-child(2) > span {
-  animation-delay: 110ms;
+.site .s-rise {
+  animation: s-fade-up 800ms cubic-bezier(0.16, 1, 0.3, 1) both;
 }
-.site .s-after-head {
-  animation: s-fade-up 700ms 420ms cubic-bezier(0.16, 1, 0.3, 1) both;
+.site .s-rise-2 {
+  animation: s-fade-up 800ms 120ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.site .s-rise-3 {
+  animation: s-fade-up 800ms 240ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.site .s-rise-4 {
+  animation: s-fade-up 800ms 360ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+.site .s-marquee {
+  animation: s-marquee-y 60s linear infinite;
+}
+.site .s-marquee-rev {
+  animation: s-marquee-y-rev 70s linear infinite;
+}
+.site .s-marquee-wrap:hover .s-marquee,
+.site .s-marquee-wrap:hover .s-marquee-rev {
+  animation-play-state: paused;
 }
 .site [data-reveal] > * {
   transition:
-    opacity 700ms cubic-bezier(0.16, 1, 0.3, 1),
-    transform 700ms cubic-bezier(0.16, 1, 0.3, 1);
+    opacity 800ms cubic-bezier(0.16, 1, 0.3, 1),
+    transform 800ms cubic-bezier(0.16, 1, 0.3, 1),
+    filter 800ms cubic-bezier(0.16, 1, 0.3, 1);
 }
 .site.js [data-reveal]:not(.is-in) > * {
   opacity: 0;
-  transform: translateY(24px);
+  transform: translateY(20px);
+  filter: blur(6px);
 }
 .site [data-reveal].is-in > *:nth-child(2) {
-  transition-delay: 70ms;
+  transition-delay: 80ms;
 }
 .site [data-reveal].is-in > *:nth-child(3) {
-  transition-delay: 140ms;
+  transition-delay: 160ms;
 }
 .site [data-reveal].is-in > *:nth-child(4) {
-  transition-delay: 210ms;
+  transition-delay: 240ms;
 }
-.site .s-drift {
-  animation: s-drift 18s ease-in-out infinite alternate;
+.site .s-lift {
+  transition:
+    transform 300ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    border-color 300ms;
 }
-@keyframes s-drift {
-  from {
-    transform: scale(1.02) translateY(0);
-  }
-  to {
-    transform: scale(1.06) translateY(-1.5%);
-  }
+.site .s-lift:hover {
+  transform: translateY(-4px);
+  border-color: rgb(255 255 255 / 0.16);
 }
 @media (prefers-reduced-motion: reduce) {
-  .site .s-mask > span,
-  .site .s-after-head,
-  .site .s-drift {
+  .site .s-rise,
+  .site .s-rise-2,
+  .site .s-rise-3,
+  .site .s-rise-4,
+  .site .s-marquee,
+  .site .s-marquee-rev {
     animation: none;
   }
   .site.js [data-reveal]:not(.is-in) > * {
     opacity: 1;
     transform: none;
+    filter: none;
+  }
+  .site .s-lift:hover {
+    transform: none;
   }
 }
 
 /* Lopende tekst op de site: blog en juridische pagina's. */
+.site .s-prose {
+  color: #d4d4d8;
+}
 .site .s-prose > * + * {
-  margin-top: 1em;
+  margin-top: 1.1em;
 }
 .site .s-prose h2 {
   margin-top: 2.2em;
-  font-size: clamp(1.5rem, 1.1rem + 1.2vw, 2rem);
-  line-height: 1.1;
+  font-size: clamp(1.6rem, 1.2rem + 1.2vw, 2.1rem);
+  color: var(--s-ink);
 }
 .site .s-prose h3 {
   margin-top: 1.8em;
-  font-size: 1.25rem;
-  font-weight: 600;
+  font-size: 1.3rem;
+  color: var(--s-ink);
 }
 .site .s-prose ul {
   list-style: disc;
@@ -273,17 +489,27 @@ body {
   list-style: decimal;
   padding-left: 1.25em;
 }
+.site .s-prose li::marker {
+  color: var(--s-accent-hi);
+}
 .site .s-prose li + li {
-  margin-top: 0.35em;
+  margin-top: 0.4em;
 }
 .site .s-prose a {
+  color: var(--s-ink);
   text-decoration: underline;
   text-underline-offset: 4px;
-  text-decoration-thickness: 2px;
-  text-decoration-color: var(--s-accent);
+  text-decoration-thickness: 1.5px;
+  text-decoration-color: var(--s-accent-hi);
 }
 .site .s-prose strong {
-  font-weight: 600;
+  font-weight: 700;
+  color: var(--s-ink);
+}
+.site .s-prose em {
+  font-style: normal;
+  font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+  font-size: 0.9em;
 }
 .site .s-prose table {
   /* Brede tabellen scrollen binnen hun eigen vak, niet de hele pagina (mobiel). */
@@ -291,21 +517,26 @@ body {
   max-width: 100%;
   overflow-x: auto;
   border-collapse: collapse;
-  font-size: 16px;
+  font-size: 15px;
+  border: 1px solid var(--s-line);
+  border-radius: 14px;
 }
 .site .s-prose th,
 .site .s-prose td {
   text-align: left;
-  padding: 0.6em 0.75em;
+  padding: 0.7em 0.9em;
 }
 .site .s-prose thead {
   color: var(--s-muted);
-}
-.site .s-prose tbody tr:nth-child(odd) {
   background: var(--s-surface);
 }
+.site .s-prose tbody tr + tr {
+  border-top: 1px solid var(--s-line);
+}
 .site .s-note {
-  background: var(--s-yellow);
-  color: #191919;
-  padding: 1rem 1.25rem;
+  border-radius: 14px;
+  border: 1px solid rgb(255 233 39 / 0.3);
+  background: rgb(255 233 39 / 0.08);
+  color: #fff3a3;
+  padding: 0.9rem 1.1rem;
 }

@@ -2,14 +2,17 @@ import { PLANS } from "@trendtrack/core";
 import { getShopByDomain, listAds, type Db } from "@trendtrack/db";
 import { AdFiltersSchema, parseFilters } from "@trendtrack/core";
 import type { Metadata } from "next";
-import Image from "next/image";
+import { ArrowRight, Check, Minus } from "lucide-react";
 import Link from "next/link";
+import { FeatureTabs } from "@/components/site/feature-tabs";
 import { Hero, type Estimate } from "@/components/site/hero-search";
 import { PricingTable } from "@/components/site/pricing-table";
 import { Showcase, type ShowcaseAd } from "@/components/site/showcase";
+import { ToolArt } from "@/components/site/tool-art";
 import { serviceDb } from "@/lib/server/db";
 import { FAQ } from "@/lib/site/faq";
 import { SITE } from "@/lib/site/config";
+import { TOOLS } from "@/lib/site/tools";
 
 export const metadata: Metadata = { alternates: { canonical: "/" } };
 // Elk uur opnieuw, met echte cijfers uit de database.
@@ -100,37 +103,6 @@ const COMPARE: [string, string, string][] = [
   ["Vragen in Claude of ChatGPT", "Via onze MCP-server", "Niet mogelijk"],
 ];
 
-const STAGES = [
-  {
-    time: "Twee minuten",
-    text: "Eerst maak je een gratis account, zonder creditcard.",
-    grow: 1,
-    color: "var(--s-yellow)",
-    ink: "#111",
-  },
-  {
-    time: "Binnen een minuut",
-    text: "Dan zoek je een webshop op; kennen we hem niet, dan halen we hem op.",
-    grow: 1,
-    color: "var(--s-blue)",
-    ink: "#fff",
-  },
-  {
-    time: "Na drie dagen",
-    text: "Daarna volgt de eerste omzetschatting uit dagelijkse metingen.",
-    grow: 3,
-    color: "var(--s-accent)",
-    ink: "#fff",
-  },
-  {
-    time: "Na een week",
-    text: "Ten slotte zie je de groei: meer ads, nieuwe producten, stijgende omzet.",
-    grow: 6,
-    color: "var(--s-red)",
-    ink: "#fff",
-  },
-];
-
 export default async function Home() {
   const { estimate, ad } = await sample();
   const jsonLd = [
@@ -167,171 +139,241 @@ export default async function Home() {
       />
       <Hero initial={estimate} />
 
+      <FeatureTabs />
+
       <Showcase ad={ad} />
 
-      <section
-        aria-labelledby="compare-title"
-        className="bg-[var(--s-surface)] py-[clamp(72px,8vw,120px)]"
-      >
-        <div className="s-wrap" data-reveal>
-          <h2 id="compare-title" className="mb-12" style={{ fontSize: "var(--step-head)" }}>
-            Wat je ziet
-          </h2>
-          <div
-            className="hidden md:block"
-            role="table"
-            aria-label="TrendTrack vergeleken met zelf uitzoeken"
-          >
-            <div role="row" className="grid grid-cols-12 text-[17px] font-semibold">
-              <span role="columnheader" className="col-span-5 py-4" />
-              <span role="columnheader" className="col-span-4 bg-[var(--s-accent)] px-5 pt-6 pb-4">
-                TrendTrack
-              </span>
-              <span role="columnheader" className="col-span-3 px-5 pt-6 pb-4 text-[var(--s-muted)]">
-                Zelf uitzoeken
-              </span>
+      <section aria-labelledby="tools-title" className="s-section border-t border-white/[0.06]">
+        <div className="s-wrap">
+          <div data-reveal className="flex flex-wrap items-end justify-between gap-6">
+            <div>
+              <h2 id="tools-title" style={{ fontSize: "var(--step-head)" }}>
+                Gratis tools, <span className="s-accent-text">geen account.</span>
+              </h2>
+              <p className="mt-4 max-w-xl text-[var(--step-lead)] text-[#c4c4cc]">
+                Herken het thema en de apps van een Shopify-store, exporteer producten of reken je
+                break-even ROAS uit.
+              </p>
             </div>
-            {COMPARE.map(([cap, us, them], i) => (
-              <div
-                role="row"
-                key={cap}
-                className={`grid min-h-[68px] grid-cols-12 items-center ${i % 2 === 0 ? "bg-[var(--s-bg)]" : ""}`}
-              >
-                <span
-                  role="rowheader"
-                  className="col-span-5 px-5 text-[clamp(1.1rem,1.6vw,1.5rem)] font-medium"
-                >
-                  {cap}
-                </span>
-                <span
-                  role="cell"
-                  className="col-span-4 flex h-full items-center bg-[var(--s-accent)] px-5 text-[17px]"
-                >
-                  {us}
-                </span>
-                <span role="cell" className="col-span-3 px-5 text-[17px] text-[var(--s-muted)]">
-                  {them}
-                </span>
-              </div>
-            ))}
+            <Link
+              href="/tools"
+              className="inline-flex items-center gap-2 text-[15px] text-[var(--s-ink)] hover:text-[#5fe3c5]"
+            >
+              Alle {TOOLS.length} tools <ArrowRight className="size-4" aria-hidden />
+            </Link>
           </div>
-          <dl className="space-y-3 md:hidden">
-            {COMPARE.map(([cap, us, them], i) => (
-              <div key={cap} className={`p-4 ${i % 2 === 0 ? "bg-[var(--s-bg)]" : ""}`}>
-                <dt className="text-xl font-semibold">{cap}</dt>
-                <dd className="mt-2 bg-[var(--s-accent)] px-3 py-2 text-[16px]">
-                  TrendTrack: {us}
-                </dd>
-                <dd className="mt-1 px-3 text-[16px] text-[var(--s-muted)]">Zelf: {them}</dd>
-              </div>
+          <ul className="mt-12 grid gap-4 sm:grid-cols-2 lg:grid-cols-4">
+            {TOOLS.slice(0, 4).map((t) => (
+              <li key={t.slug} className="s-frame s-lift">
+                <Link href={`/tools/${t.slug}`} className="s-card group flex h-full flex-col p-2">
+                  <ToolArt kind={t.kind} className="h-36" />
+                  <div className="flex flex-1 flex-col px-3 pt-4 pb-3">
+                    <h3 className="text-[20px]">{t.title}</h3>
+                    <p className="mt-2 flex-1 text-[14px] leading-relaxed text-[var(--s-muted)]">
+                      {t.description}
+                    </p>
+                    <p className="mt-4 text-[13px] text-[var(--s-faint)] group-hover:text-[#5fe3c5]">
+                      Gratis, zonder account
+                    </p>
+                  </div>
+                </Link>
+              </li>
             ))}
-          </dl>
+          </ul>
         </div>
       </section>
 
-      <section aria-labelledby="how-title" className="s-wrap py-[clamp(72px,8vw,120px)]">
-        <div data-reveal>
-          <h2 id="how-title" className="mb-16" style={{ fontSize: "clamp(2.6rem, 6.4vw, 6.5rem)" }}>
-            Van domein naar trend
-          </h2>
-          <div data-ui className="flex flex-col gap-1.5 md:h-[22vh] md:min-h-[180px] md:flex-row">
-            {STAGES.map((s) => (
-              <div
-                key={s.time}
-                className="min-h-[72px] p-5 md:min-w-[12%]"
-                style={{ flexGrow: s.grow, flexBasis: 0, background: s.color, color: s.ink }}
-              >
-                <p className="text-[clamp(1.25rem,2vw,1.9rem)] leading-tight font-semibold tracking-[-0.03em]">
-                  {s.time}
+      <section
+        id="mcp"
+        aria-labelledby="mcp-title"
+        className="s-section s-glow relative border-t border-white/[0.06]"
+      >
+        <div className="s-wrap grid items-center gap-14 lg:grid-cols-2">
+          <div data-reveal>
+            <h2 id="mcp-title" style={{ fontSize: "var(--step-head)" }}>
+              Vraag het gewoon <span className="s-accent-text">aan Claude.</span>
+            </h2>
+            <p className="mt-5 max-w-xl text-[var(--step-lead)] leading-relaxed text-[#c4c4cc]">
+              Koppel TrendTrack als connector in Claude of ChatGPT en stel je vragen in gewone taal.
+              De assistent zoekt zelf in de shops, ads en nieuwsbrieven. Liever zelf bouwen? Er is
+              ook een REST API.
+            </p>
+            <dl className="mt-10 grid max-w-md grid-cols-3 gap-6">
+              {[
+                ["12", "tools voor AI"],
+                ["OAuth", "veilig inloggen"],
+                ["Pro", "en Agency"],
+              ].map(([v, l]) => (
+                <div key={l}>
+                  <dt className="sr-only">{l}</dt>
+                  <dd className="font-[family-name:var(--font-display)] text-[28px] leading-none font-bold tracking-[-0.03em]">
+                    {v}
+                  </dd>
+                  <dd className="mt-2 text-[14px] text-[var(--s-muted)]">{l}</dd>
+                </div>
+              ))}
+            </dl>
+            <ul className="mt-8 flex flex-wrap gap-2">
+              {["Claude", "ChatGPT", "Cursor", "Eigen scripts via de API"].map((c) => (
+                <li
+                  key={c}
+                  className="rounded-full border border-[var(--s-line-2)] bg-white/[0.03] px-3 py-1 text-[14px] text-[#d4d4d8]"
+                >
+                  {c}
+                </li>
+              ))}
+            </ul>
+            <div className="mt-10 flex flex-wrap gap-3">
+              <Link href="/login?next=/app/mcp" className="s-btn">
+                Koppel de MCP-server
+                <ArrowRight className="s-arrow size-4" aria-hidden />
+              </Link>
+              <Link href="/docs/api" className="s-btn-ghost">
+                API-documentatie
+              </Link>
+            </div>
+          </div>
+
+          <div data-reveal className="s-frame">
+            <p className="s-label px-3 pt-2 pb-2.5">Gesprek in Claude</p>
+            <div className="s-card space-y-4 p-6 text-[15px]">
+              <p className="ml-auto w-fit max-w-[85%] rounded-2xl rounded-br-md bg-white/[0.07] px-4 py-2.5">
+                Hoeveel omzet doet {estimate.domain} ongeveer, en welke ad loopt het langst?
+              </p>
+              <p className="w-fit rounded-lg border border-[var(--s-line)] bg-black/40 px-3 py-1.5 font-mono text-[12px] text-[#5fe3c5]">
+                trendtrack · get_shop · search_ads
+              </p>
+              <div className="max-w-[92%] space-y-2 text-[#d4d4d8]">
+                <p>
+                  <strong className="text-[var(--s-ink)]">
+                    {estimate.name ?? estimate.domain}
+                  </strong>{" "}
+                  doet naar schatting{" "}
+                  <strong className="text-[var(--s-ink)]">
+                    {estimate.monthly_revenue
+                      ? `€ ${compact(estimate.monthly_revenue.low)} – € ${compact(estimate.monthly_revenue.high)}`
+                      : "nog onbekend"}
+                  </strong>{" "}
+                  per maand. Dat is een bandbreedte, geen exact getal.
+                </p>
+                <p>
+                  De langst lopende ad is “{ad.title}”: {ad.days} dagen live, {ad.reach} bereik in
+                  de EU en een geschatte spend van {ad.spend}.
                 </p>
               </div>
-            ))}
+            </div>
           </div>
-          <ol className="mt-5 grid gap-4 md:flex md:gap-1.5">
-            {STAGES.map((s) => (
-              <li
-                key={s.time}
-                className="text-[17px] md:max-w-[22ch] md:min-w-[12%]"
-                style={{ flexGrow: s.grow, flexBasis: 0 }}
-              >
-                {s.text}
-              </li>
-            ))}
-          </ol>
+        </div>
+      </section>
+
+      <section aria-labelledby="compare-title" className="s-section border-t border-white/[0.06]">
+        <div className="s-wrap" data-reveal>
+          <h2 id="compare-title" style={{ fontSize: "var(--step-head)" }}>
+            Wat je ziet, <span className="s-accent-text">zonder zoekwerk.</span>
+          </h2>
+          <div className="s-frame mt-12">
+            <div className="s-card overflow-hidden">
+              <table className="w-full text-left text-[15px]">
+                <caption className="sr-only">TrendTrack vergeleken met zelf uitzoeken</caption>
+                <thead>
+                  <tr className="border-b border-[var(--s-line)] text-[14px]">
+                    <th scope="col" className="px-6 py-4 font-normal text-[var(--s-muted)]">
+                      <span className="sr-only">Onderdeel</span>
+                    </th>
+                    <th scope="col" className="px-6 py-4 font-medium text-[#5fe3c5]">
+                      TrendTrack
+                    </th>
+                    <th
+                      scope="col"
+                      className="hidden px-6 py-4 font-normal text-[var(--s-muted)] md:table-cell"
+                    >
+                      Zelf uitzoeken
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {COMPARE.map(([cap, us, them]) => (
+                    <tr key={cap} className="border-b border-[var(--s-line)] last:border-0">
+                      <th scope="row" className="px-6 py-4 font-medium">
+                        {cap}
+                      </th>
+                      <td className="px-6 py-4">
+                        <span className="flex items-start gap-2">
+                          <Check className="mt-0.5 size-4 shrink-0 text-[#5fe3c5]" aria-hidden />
+                          {us}
+                        </span>
+                      </td>
+                      <td className="hidden px-6 py-4 text-[var(--s-faint)] md:table-cell">
+                        <span className="flex items-start gap-2">
+                          <Minus className="mt-0.5 size-4 shrink-0" aria-hidden />
+                          {them}
+                        </span>
+                      </td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
       </section>
 
       <PricingTable />
 
-      <section
-        aria-labelledby="faq-title"
-        className="bg-[var(--s-surface)] py-[clamp(72px,8vw,120px)]"
-      >
-        <div className="s-wrap grid gap-10 md:grid-cols-12" data-reveal>
-          <h2
-            id="faq-title"
-            className="md:col-span-3"
-            style={{ fontSize: "clamp(1.75rem, 1.2rem + 1.6vw, 2.25rem)" }}
-          >
-            Eerlijke antwoorden
-          </h2>
-          <div className="md:col-span-8 md:col-start-5 md:columns-2 md:gap-14">
-            {FAQ.map(([q, a]) => (
-              <p key={q} className="mb-5 break-inside-avoid text-[17px] leading-[1.55]">
-                <strong className="font-medium">{q}</strong>{" "}
-                <span className="text-[#d4d4d4]">{a}</span>
-              </p>
-            ))}
+      <section aria-labelledby="faq-title" className="s-section border-t border-white/[0.06]">
+        <div className="s-wrap grid gap-12 lg:grid-cols-[1fr_1.6fr]">
+          <div data-reveal>
+            <h2 id="faq-title" style={{ fontSize: "var(--step-head)" }}>
+              Eerlijke <span className="s-accent-text">antwoorden.</span>
+            </h2>
+            <p className="mt-4 max-w-sm text-[var(--step-lead)] text-[#c4c4cc]">
+              Staat je vraag er niet bij? Mail{" "}
+              <a href={`mailto:${SITE.email}`} className="s-link text-[var(--s-ink)]">
+                {SITE.email}
+              </a>
+              .
+            </p>
+          </div>
+          <div className="s-frame">
+            <div className="s-card divide-y divide-[var(--s-line)]">
+              {FAQ.map(([q, a]) => (
+                <details
+                  key={q}
+                  className="group px-6 py-5 [&_summary::-webkit-details-marker]:hidden"
+                >
+                  <summary className="flex cursor-pointer list-none items-center justify-between gap-4 text-[17px] font-medium">
+                    {q}
+                    <span className="grid size-7 shrink-0 place-items-center rounded-lg border border-[var(--s-line-2)] text-[var(--s-muted)] transition-transform duration-200 group-open:rotate-45">
+                      +
+                    </span>
+                  </summary>
+                  <p className="mt-3 text-[15px] leading-relaxed text-[var(--s-muted)]">{a}</p>
+                </details>
+              ))}
+            </div>
           </div>
         </div>
       </section>
 
-      <section aria-labelledby="cta-title">
-        <div className="grid grid-cols-2 md:grid-cols-3">
-          {[
-            ["ads", "Ads van een shop, gesorteerd op looptijd, in het dashboard"],
-            ["brandtracker", "De Brandtracker met veranderingen per dag"],
-            ["emails", "De e-mail library met welkomstmails en campagnes"],
-          ].map(([src, alt], i) => (
-            <div
-              key={src}
-              className={`relative h-[40svh] min-h-[220px] overflow-hidden ${i === 0 ? "col-span-2 md:col-span-1" : ""}`}
-            >
-              <Image
-                src={`/screens/${src}.webp`}
-                alt={alt}
-                fill
-                sizes="(min-width: 768px) 33vw, 50vw"
-                className="object-cover object-left-top"
-              />
-            </div>
-          ))}
-        </div>
-        <div className="bg-[var(--s-blue)] py-16 md:min-h-[44svh]">
-          <div className="s-wrap" data-reveal>
-            <h2
-              id="cta-title"
-              className="max-w-[28ch] text-[clamp(1.4rem,2.2vw,1.9rem)] leading-[1.25] font-medium tracking-[-0.02em]"
-            >
-              Zoek je eerste concurrent op en{" "}
-              <Link
-                href="/login"
-                className="underline decoration-4 underline-offset-[6px] transition-opacity hover:opacity-85"
-              >
-                maak een gratis account
-              </Link>{" "}
-              in twee minuten.
-            </h2>
-            <p className="mt-8 max-w-xl text-[16px]">
-              Zeven dagen alles van Pro, zonder creditcard. Daarna gratis door, of kies een plan.
-            </p>
-            <p className="text-[16px]">
-              Liever eerst iets proberen?{" "}
-              <Link href="/tools" className="s-link">
-                Bekijk de gratis tools
-              </Link>
-              .
-            </p>
+      <section
+        aria-labelledby="cta-title"
+        className="s-section s-glow relative border-t border-white/[0.06]"
+      >
+        <div className="s-wrap" data-reveal>
+          <h2 id="cta-title" className="max-w-4xl" style={{ fontSize: "var(--step-display)" }}>
+            Zie wie er groeit. <span className="s-accent-text">Vandaag nog.</span>
+          </h2>
+          <p className="mt-5 max-w-xl text-[var(--step-lead)] text-[#c4c4cc]">
+            Zeven dagen alles van Pro, zonder creditcard. Daarna gratis door, of kies een plan.
+          </p>
+          <div className="mt-9 flex flex-wrap gap-3">
+            <Link href="/login" className="s-btn">
+              Maak een gratis account
+              <ArrowRight className="s-arrow size-4" aria-hidden />
+            </Link>
+            <Link href="/tools" className="s-btn-ghost">
+              Eerst de gratis tools
+            </Link>
           </div>
         </div>
       </section>

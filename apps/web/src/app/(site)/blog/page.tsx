@@ -1,6 +1,6 @@
 import type { Metadata } from "next";
 import Link from "next/link";
-import { PageTitle } from "@/components/site/prose";
+import { PageShell, PageTitle } from "@/components/site/prose";
 import { formatDate, POSTS } from "@/lib/site/blog";
 
 export const metadata: Metadata = {
@@ -12,31 +12,29 @@ export const metadata: Metadata = {
 
 export default function BlogIndex() {
   return (
-    <div className="s-wrap pt-10 pb-[clamp(72px,8vw,120px)]">
+    <PageShell>
       <PageTitle
         title="Blog"
         lead="Over webshops in Nederland en België: wat ze verkopen, hoe ze adverteren en hoe je dat onderzoekt."
       />
-      <ul className="mt-16">
-        {POSTS.map((p, i) => (
-          <li key={p.slug} className={i % 2 === 0 ? "bg-[var(--s-surface)]" : ""}>
-            <Link
-              href={`/blog/${p.slug}`}
-              className="group grid gap-2 px-5 py-6 md:grid-cols-[var(--s-axis)_1fr] md:items-baseline"
-            >
-              <time dateTime={p.date} className="text-[15px] text-[var(--s-muted)]">
+      <ul className="mt-14 grid gap-4 md:grid-cols-2">
+        {POSTS.map((p) => (
+          <li key={p.slug} className="s-frame s-lift">
+            <Link href={`/blog/${p.slug}`} className="s-card group flex h-full flex-col p-7">
+              <time dateTime={p.date} className="s-label">
                 {formatDate(p.date)}
               </time>
-              <div>
-                <h2 className="text-[clamp(1.5rem,2.6vw,2.4rem)] transition-transform duration-200 group-hover:translate-x-1">
-                  {p.title}
-                </h2>
-                <p className="mt-2 max-w-2xl text-[var(--s-muted)]">{p.description}</p>
-              </div>
+              <h2 className="mt-4 text-[clamp(1.5rem,2.2vw,2rem)]">{p.title}</h2>
+              <p className="mt-3 flex-1 text-[15px] leading-relaxed text-[var(--s-muted)]">
+                {p.description}
+              </p>
+              <p className="mt-6 text-[14px] text-[var(--s-faint)] transition-colors group-hover:text-[#5fe3c5]">
+                Lees verder →
+              </p>
             </Link>
           </li>
         ))}
       </ul>
-    </div>
+    </PageShell>
   );
 }

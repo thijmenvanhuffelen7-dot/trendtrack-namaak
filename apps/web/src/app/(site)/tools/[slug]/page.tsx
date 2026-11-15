@@ -62,90 +62,105 @@ export default async function ToolPage({ params }: { params: Promise<{ slug: str
         type="application/ld+json"
         dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }}
       />
-      <section aria-labelledby="tool-title" className="s-wrap pt-10 pb-[clamp(72px,8vw,120px)]">
-        <div className="grid gap-6 md:grid-cols-[var(--s-axis)_1fr]">
-          <p className="order-2 text-[15px] md:order-none md:pt-3">
-            <Link href="/tools" className="s-link text-[var(--s-muted)]">
-              Gratis tools
-            </Link>
-          </p>
-          <div>
-            <h1
-              id="tool-title"
-              style={{ fontSize: "clamp(2.6rem, 6.4vw, 6rem)", lineHeight: 0.92 }}
-            >
+      <div className="s-glow relative">
+        <section
+          aria-labelledby="tool-title"
+          className="s-wrap pt-16 pb-[clamp(80px,9vw,120px)] md:pt-24"
+        >
+          <div className="max-w-4xl">
+            <p className="s-rise mb-6 text-[14px]">
+              <Link href="/tools" className="s-link text-[var(--s-muted)]">
+                Gratis tools
+              </Link>
+            </p>
+            <h1 id="tool-title" className="s-rise-2" style={{ fontSize: "var(--step-display)" }}>
               {t.h1}
             </h1>
-            <p className="mt-6 max-w-[48ch] text-[var(--step-lead)] leading-[1.35]">{t.intro}</p>
-          </div>
-        </div>
-        <div className="mt-12">
-          {t.kind === "theme" || t.kind === "apps" ? <DetectTool mode={t.kind} /> : null}
-          {t.kind === "export" && <ExportTool />}
-          {t.kind === "ads" && <AdsTool />}
-          {t.kind === "roas" && <RoasCalculator />}
-          {t.kind === "margin" && <MarginCalculator />}
-          {t.kind === "clv" && <ClvCalculator />}
-        </div>
-      </section>
-
-      <section
-        aria-labelledby="how-title"
-        className="bg-[var(--s-surface)] py-[clamp(72px,8vw,120px)]"
-      >
-        <div className="s-wrap grid gap-8 md:grid-cols-[var(--s-axis)_1fr]" data-reveal>
-          <h2 id="how-title" style={{ fontSize: "clamp(1.75rem, 1.2rem + 1.6vw, 2.25rem)" }}>
-            Zo werkt het
-          </h2>
-          <div className="max-w-[60ch] space-y-4">
-            {t.how.map((h) => (
-              <p key={h}>{h}</p>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section
-        aria-labelledby="more-title"
-        className="bg-[var(--s-blue)] py-[clamp(72px,8vw,120px)]"
-      >
-        <div className="s-wrap grid gap-8 md:grid-cols-[var(--s-axis)_1fr]" data-reveal>
-          <h2 id="more-title" style={{ fontSize: "clamp(1.75rem, 1.2rem + 1.6vw, 2.25rem)" }}>
-            Meer dan één shop?
-          </h2>
-          <div>
-            <p className="max-w-[44ch] text-[var(--step-lead)] leading-[1.35]">
-              Met een gratis account zie je van elke webshop de geschatte omzet, de ads en de
-              nieuwsbrieven.{" "}
-              <Link href="/login" className="underline decoration-4 underline-offset-[6px]">
-                Maak een gratis account
-              </Link>
-              .
+            <p className="s-rise-3 mt-6 max-w-[42rem] text-[var(--step-lead)] leading-relaxed text-[#c4c4cc]">
+              {t.intro}
             </p>
-            <ul className="mt-8 space-y-1">
-              {others.map((o) => (
-                <li key={o.slug}>
-                  <Link href={`/tools/${o.slug}`} className="s-link">
-                    {o.h1}
-                  </Link>
+          </div>
+          <div className="s-frame s-rise-4 mt-12">
+            <div className="s-card p-5 md:p-8">
+              {t.kind === "theme" || t.kind === "apps" ? <DetectTool mode={t.kind} /> : null}
+              {t.kind === "export" && <ExportTool />}
+              {t.kind === "ads" && <AdsTool />}
+              {t.kind === "roas" && <RoasCalculator />}
+              {t.kind === "margin" && <MarginCalculator />}
+              {t.kind === "clv" && <ClvCalculator />}
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <section aria-labelledby="how-title" className="s-section border-t border-white/[0.06]">
+        <div className="s-wrap grid gap-12 lg:grid-cols-[1fr_1.2fr]" data-reveal>
+          <div>
+            <h2 id="how-title" style={{ fontSize: "var(--step-head)" }}>
+              Zo <span className="s-accent-text">werkt het.</span>
+            </h2>
+            <ol className="mt-8 space-y-5">
+              {t.how.map((h, i) => (
+                <li key={h} className="flex gap-4">
+                  <span className="grid size-8 shrink-0 place-items-center rounded-lg border border-[var(--s-line-2)] bg-white/[0.04] text-[14px] text-[#5fe3c5]">
+                    {i + 1}
+                  </span>
+                  <p className="pt-1 text-[16px] leading-relaxed text-[#d4d4d8]">{h}</p>
                 </li>
               ))}
-            </ul>
+            </ol>
+          </div>
+          <figure className="s-frame">
+            <figcaption className="s-label px-3 pt-2 pb-2.5">{screen[1]}</figcaption>
+            <div className="overflow-hidden rounded-[18px] border border-[var(--s-line)]">
+              <Image
+                src={`/screens/${screen[0]}.webp`}
+                alt={screen[1]}
+                width={1056}
+                height={800}
+                sizes="(min-width: 1024px) 55vw, 100vw"
+                className="block h-auto w-full"
+              />
+            </div>
+          </figure>
+        </div>
+      </section>
+
+      <section aria-labelledby="more-title" className="s-section pt-0">
+        <div className="s-wrap">
+          <div className="s-frame">
+            <div
+              className="s-card s-glow relative grid gap-8 overflow-hidden p-8 md:grid-cols-[1.2fr_1fr] md:p-12"
+              data-reveal
+            >
+              <div>
+                <h2 id="more-title" style={{ fontSize: "clamp(2rem, 1.4rem + 2vw, 3rem)" }}>
+                  Meer dan <span className="s-accent-text">één shop?</span>
+                </h2>
+                <p className="mt-4 max-w-md text-[17px] text-[#c4c4cc]">
+                  Met een gratis account zie je van elke webshop de geschatte omzet, de ads en de
+                  nieuwsbrieven.
+                </p>
+                <Link href="/login" className="s-btn mt-8">
+                  Maak een gratis account
+                </Link>
+              </div>
+              <ul className="space-y-2 self-center">
+                {others.map((o) => (
+                  <li key={o.slug}>
+                    <Link
+                      href={`/tools/${o.slug}`}
+                      className="flex items-center justify-between rounded-xl border border-[var(--s-line)] bg-white/[0.02] px-4 py-3 text-[15px] transition-colors hover:border-white/20 hover:bg-white/[0.05]"
+                    >
+                      {o.h1}
+                      <span className="text-[var(--s-faint)]">→</span>
+                    </Link>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </div>
         </div>
-        <figure className="s-wrap mt-12 grid gap-8 md:grid-cols-[var(--s-axis)_1fr]" data-reveal>
-          <figcaption className="text-[15px] md:order-2 md:col-start-1 md:row-start-1 md:self-end">
-            {screen[1]}.
-          </figcaption>
-          <Image
-            src={`/screens/${screen[0]}.webp`}
-            alt={screen[1]}
-            width={1056}
-            height={800}
-            sizes="(min-width: 768px) 60vw, 100vw"
-            className="h-auto w-full max-w-[1056px] md:col-start-2"
-          />
-        </figure>
       </section>
     </>
   );

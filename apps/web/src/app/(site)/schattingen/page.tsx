@@ -1,5 +1,6 @@
 import type { Metadata } from "next";
 import { getLocale } from "next-intl/server";
+import { PageShell } from "@/components/site/prose";
 
 export const metadata: Metadata = {
   title: "Hoe we omzet schatten · TrendTrack",
@@ -11,11 +12,11 @@ export const metadata: Metadata = {
 export default async function EstimatesPage() {
   const en = (await getLocale()) === "en";
   return (
-    <div className="mx-auto max-w-2xl px-4 py-12">
-      <h1 className="text-3xl font-semibold tracking-tight">
+    <PageShell>
+      <h1 className="s-rise max-w-4xl" style={{ fontSize: "var(--step-display)" }}>
         {en ? "How we estimate revenue" : "Hoe we omzet schatten"}
       </h1>
-      <div className="mt-6 space-y-5 text-[15px] leading-relaxed">
+      <div className="s-prose s-rise-2 mt-10 max-w-[68ch]">
         {en ? (
           <>
             <p>
@@ -23,7 +24,7 @@ export default async function EstimatesPage() {
               signals and always show a range (low – high) with a confidence label. Never a single
               hard number.
             </p>
-            <h2 className="pt-2 text-lg font-semibold">The three signals</h2>
+            <h2>The three signals</h2>
             <ul className="list-disc space-y-2 pl-5">
               <li>
                 <strong>Ads.</strong> The Meta Ad Library shows how many people in the EU saw an ad,
@@ -39,13 +40,13 @@ export default async function EstimatesPage() {
                 reviews indicates orders: roughly 1 review per 15 – 60 orders.
               </li>
             </ul>
-            <h2 className="pt-2 text-lg font-semibold">Combining and confidence</h2>
+            <h2>Combining and confidence</h2>
             <p>
               Signals are weighted by reliability. If they disagree, the range widens and confidence
               drops. Confidence never exceeds 85%. With no usable signal we show{" "}
               <em>no estimate</em> instead of guessing.
             </p>
-            <h2 className="pt-2 text-lg font-semibold">Known weaknesses</h2>
+            <h2>Known weaknesses</h2>
             <p>
               Shops that earn mostly from SEO, email or repeat customers are underestimated.
               Dropshippers with unlimited stock give no sold-out signal. The assumptions are Benelux
@@ -59,7 +60,7 @@ export default async function EstimatesPage() {
               signalen en tonen altijd een bandbreedte (laag – hoog) met een betrouwbaarheidslabel.
               Nooit één hard getal.
             </p>
-            <h2 className="pt-2 text-lg font-semibold">De drie signalen</h2>
+            <h2>De drie signalen</h2>
             <ul className="list-disc space-y-2 pl-5">
               <li>
                 <strong>Ads.</strong> De Meta Ad Library laat zien hoeveel mensen in de EU een ad
@@ -76,13 +77,13 @@ export default async function EstimatesPage() {
                 groei iets over het aantal bestellingen: ongeveer 1 review per 15 – 60 bestellingen.
               </li>
             </ul>
-            <h2 className="pt-2 text-lg font-semibold">Combineren en betrouwbaarheid</h2>
+            <h2>Combineren en betrouwbaarheid</h2>
             <p>
               De signalen wegen mee naar hun betrouwbaarheid. Spreken ze elkaar tegen, dan wordt de
               band breder en daalt de betrouwbaarheid. Die komt nooit boven 85%. Is er geen
               bruikbaar signaal, dan tonen we <em>geen schatting</em> in plaats van te gokken.
             </p>
-            <h2 className="pt-2 text-lg font-semibold">Bekende zwaktes</h2>
+            <h2>Bekende zwaktes</h2>
             <p>
               Shops die vooral verdienen aan SEO, e-mail of terugkerende klanten onderschatten we.
               Dropshippers met onbeperkte voorraad geven geen uitverkoopsignaal. De aannames zijn
@@ -91,6 +92,6 @@ export default async function EstimatesPage() {
           </>
         )}
       </div>
-    </div>
+    </PageShell>
   );
 }

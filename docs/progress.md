@@ -427,4 +427,25 @@ Gevonden en opgelost:
 Testvolgorde: na `pnpm db:reset` de workers herstarten (de reset wist hun wachtrij-tabellen). De e2e ruimt
 zijn eigen testmails en seed-inbox op, zodat `pnpm test:db` daarna blijft kloppen.
 
+## Nieuw ontwerp publieke site (2026-11-15)
+
+Op verzoek in de stijl van ui.wensity.com, met de eigen kleuren (teal als accent; rood, blauw en geel
+als signaalkleuren). Alleen de stijl is overgenomen: geen logo, teksten of afbeeldingen van die site.
+
+- Bijna-zwart met zachte teal-gloed en korrel, glazen sticky kopbalk met zoekpil (⌘K springt naar het
+  zoekveld), glanzende teal knoppen met binnenrand, kaarten met dubbele rand, koppen met verloop en
+  accentwoorden in teal.
+- Fonts: Satoshi (tekst) en Cabinet Grotesk (koppen) van Fontshare, zelf gehost in `src/app/fonts`
+  (Fontshare-licentie: gratis, ook commercieel).
+- Homepage: hero met live schatting en twee kolommen echte dashboardschermen die langzaam schuiven,
+  tabbalk met de onderdelen (pijltjestoetsen werken), ad met wat hij kost (volgknop werkt), gratis tools,
+  MCP-sectie met een voorbeeldgesprek uit echte data, vergelijking, prijskaarten, FAQ als uitklaplijst,
+  slot-CTA en een footer met kolommen en een groot vervaagd woordmerk.
+- Subpagina's (tools, prijzen, blog, affiliate, privacy, voorwaarden, opt-out, schattingen) in dezelfde stijl.
+- Gecorrigeerd: de voorwaarden zeiden "exclusief btw" terwijl de Stripe-prijzen inclusief btw zijn; de
+  affiliate-voorbeelden rekenen nu 30% over het bedrag zonder btw.
+- Getest: 54 e2e-tests groen tegen de productie-build; Lighthouse desktop 100 en mobiel 95–97 op
+  prestaties, SEO 100, best practices 100. Geen horizontaal scrollen op 390 px.
+- Het dashboard (`/app`) en de loginpagina hebben nog de oude, lichte stijl.
+
 ## Alle 14 prompts gebouwd. Wat de eigenaar nog moet doen: zie docs/deploy.md → "Na de eerste deploy".

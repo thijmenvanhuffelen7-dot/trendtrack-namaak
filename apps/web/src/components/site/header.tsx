@@ -1,52 +1,56 @@
+import { ArrowRight } from "lucide-react";
 import Link from "next/link";
 import { NAV } from "@/lib/site/config";
+import { HeaderSearch } from "./header-search";
+import { Logo } from "./logo";
 
-/** Kale balk: woordmerk links, links op de as, één actie. Geen pill, geen glas. */
+/** Glazen kopbalk die blijft staan: woordmerk, navigatie, zoeken en de twee acties. */
 export function SiteHeader() {
   return (
     <>
-      <header className="s-wrap grid grid-cols-[1fr_auto] items-center gap-4 py-5 md:grid-cols-[var(--s-axis)_1fr]">
-        <Link href="/" className="text-lg font-semibold tracking-tight">
-          TrendTrack
-        </Link>
-        <nav
-          aria-label="Hoofdmenu"
-          className="flex items-center justify-end gap-5 text-[15px] md:justify-between"
-        >
-          <ul className="hidden items-center gap-6 md:flex">
-            {NAV.map((n) => (
-              <li key={n.href}>
-                <Link
-                  href={n.href}
-                  className="text-[var(--s-muted)] transition-colors hover:text-[var(--s-ink)]"
-                >
-                  {n.label}
-                </Link>
-              </li>
-            ))}
-          </ul>
-          <span className="flex items-center gap-5">
+      <header className="sticky top-0 z-40 border-b border-white/[0.06] bg-[#0d0d0e]/70 backdrop-blur-2xl">
+        <div className="s-wrap flex h-16 items-center gap-8">
+          <Link href="/" aria-label="TrendTrack, naar de homepage">
+            <Logo />
+          </Link>
+          <nav aria-label="Hoofdmenu" className="hidden md:block">
+            <ul className="flex items-center gap-1 text-[15px]">
+              {NAV.map((n) => (
+                <li key={n.href}>
+                  <Link
+                    href={n.href}
+                    className="rounded-lg px-3 py-2 text-[var(--s-muted)] transition-colors hover:bg-white/[0.04] hover:text-[var(--s-ink)]"
+                  >
+                    {n.label}
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
+          <div className="ml-auto flex items-center gap-2">
+            <HeaderSearch />
             <Link
               href="/login"
-              className="text-[var(--s-muted)] transition-colors hover:text-[var(--s-ink)]"
+              className="s-btn-ghost !hidden !min-h-10 !rounded-xl !px-4 !text-[14px] sm:!inline-flex"
             >
               Inloggen
             </Link>
-            <Link href="/login" className="s-btn !min-h-10 !px-4 text-[15px]">
+            <Link href="/login" className="s-btn !min-h-10 !rounded-xl !px-4 !text-[14px]">
               Gratis account
+              <ArrowRight className="s-arrow size-4" aria-hidden />
             </Link>
-          </span>
-        </nav>
+          </div>
+        </div>
       </header>
       <nav
         aria-label="Menu"
-        className="s-wrap -mt-1 flex gap-5 overflow-x-auto pb-2 text-[15px] md:hidden"
+        className="s-wrap flex gap-1 overflow-x-auto border-b border-white/[0.06] py-2 text-[15px] md:hidden"
       >
-        {NAV.map((n) => (
+        {[...NAV, { href: "/login", label: "Inloggen" }].map((n) => (
           <Link
             key={n.href}
             href={n.href}
-            className="shrink-0 text-[var(--s-muted)] hover:text-[var(--s-ink)]"
+            className="shrink-0 rounded-lg px-3 py-1.5 text-[var(--s-muted)] hover:bg-white/[0.04] hover:text-[var(--s-ink)]"
           >
             {n.label}
           </Link>

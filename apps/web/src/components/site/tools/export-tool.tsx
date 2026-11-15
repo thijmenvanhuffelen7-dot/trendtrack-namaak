@@ -44,11 +44,15 @@ export function ExportTool() {
         {error && <p className="text-[var(--s-yellow)]">{error}</p>}
         {r && (
           <div>
-            <div className="flex flex-wrap items-center gap-4 bg-[var(--s-accent)] p-6">
+            <div className="flex flex-wrap items-center gap-4 rounded-2xl bg-[linear-gradient(135deg,#19b394,#0c7866_55%,#075245)] shadow-[inset_0_1px_0_rgb(255_255_255/0.2)] p-6">
               <p className="text-[clamp(1.6rem,3vw,2.6rem)] leading-none font-semibold tracking-[-0.04em]">
                 {r.count} producten
               </p>
-              <button type="button" onClick={download} className="s-btn !bg-white !text-[#0c7866]">
+              <button
+                type="button"
+                onClick={download}
+                className="s-btn-ghost !bg-white !text-[#0c7866]"
+              >
                 Download CSV
               </button>
               {r.count >= 250 && (
@@ -57,7 +61,7 @@ export function ExportTool() {
                 </p>
               )}
             </div>
-            <table className="mt-px w-full bg-[var(--s-surface)] text-left text-[16px]">
+            <table className="mt-3 w-full overflow-hidden rounded-2xl border border-[var(--s-line)] text-left text-[15px]">
               <caption className="sr-only">Eerste tien producten</caption>
               <thead className="text-[var(--s-muted)]">
                 <tr>
@@ -74,7 +78,7 @@ export function ExportTool() {
               </thead>
               <tbody>
                 {r.preview.map((p, i) => (
-                  <tr key={i} className={i % 2 ? "" : "bg-[var(--s-bg)]"}>
+                  <tr key={i} className={i % 2 ? "" : "bg-white/[0.02]"}>
                     <td className="p-3">{p.title}</td>
                     <td className="p-3 text-[var(--s-muted)]">{p.type ?? "–"}</td>
                     <td className="p-3 text-right tabular-nums">

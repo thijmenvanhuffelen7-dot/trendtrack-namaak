@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
+import { PageShell, PageTitle } from "@/components/site/prose";
+import { ToolArt } from "@/components/site/tool-art";
 import { TOOLS } from "@/lib/site/tools";
 
 export const metadata: Metadata = {
@@ -11,35 +13,29 @@ export const metadata: Metadata = {
 
 export default function ToolsIndex() {
   return (
-    <div className="s-wrap pt-10 pb-[clamp(72px,8vw,120px)]">
-      <div className="grid gap-8 md:grid-cols-[var(--s-axis)_1fr]">
-        <p className="max-w-[28ch] text-[var(--step-lead)] leading-[1.35] md:order-1 md:pt-4">
-          Zonder account te gebruiken. Wil je meer, dan kan dat met het gratis plan.
-        </p>
-        <h1
-          className="md:order-2"
-          style={{ fontSize: "clamp(3rem, 8vw, 7.5rem)", lineHeight: 0.9 }}
-        >
-          Gratis tools
-        </h1>
-      </div>
-      <ul className="mt-16">
-        {TOOLS.map((t, i) => (
-          <li key={t.slug} className={i % 2 === 0 ? "bg-[var(--s-surface)]" : ""}>
-            <Link
-              href={`/tools/${t.slug}`}
-              className="group grid gap-2 px-5 py-6 md:grid-cols-[var(--s-axis)_1fr] md:items-baseline"
-            >
-              <h2 className="text-[clamp(1.5rem,2.6vw,2.4rem)] transition-transform duration-200 group-hover:translate-x-1">
-                {t.h1}
-              </h2>
-              <p className="max-w-2xl text-[var(--s-muted)] transition-colors group-hover:text-[var(--s-ink)]">
-                {t.description}
-              </p>
+    <PageShell>
+      <PageTitle
+        title="Gratis tools"
+        lead="Zonder account te gebruiken. Wil je meer shops, alle ads of de nieuwsbrieven, dan kan dat met het gratis plan."
+      />
+      <ul className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
+        {TOOLS.map((t) => (
+          <li key={t.slug} className="s-frame s-lift">
+            <Link href={`/tools/${t.slug}`} className="s-card group flex h-full flex-col p-2">
+              <ToolArt kind={t.kind} />
+              <div className="flex flex-1 flex-col px-3 pt-4 pb-3">
+                <h2 className="text-[22px]">{t.h1}</h2>
+                <p className="mt-2 flex-1 text-[15px] leading-relaxed text-[var(--s-muted)]">
+                  {t.description}
+                </p>
+                <p className="mt-4 text-[14px] text-[var(--s-faint)] transition-colors group-hover:text-[#5fe3c5]">
+                  Gratis, zonder account →
+                </p>
+              </div>
             </Link>
           </li>
         ))}
       </ul>
-    </div>
+    </PageShell>
   );
 }

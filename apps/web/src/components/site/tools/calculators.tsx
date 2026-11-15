@@ -7,11 +7,15 @@ import { eur, num, NumField } from "./fields";
 function Out({ items }: { items: [string, string, boolean?][] }) {
   // Het getal eerst, het label eronder: een uitkomst leest als "€ 27,95 winst per verkoop".
   return (
-    <ul className="grid gap-px md:grid-cols-2" aria-live="polite">
+    <ul className="grid gap-3 md:grid-cols-2" aria-live="polite">
       {items.map(([label, value, big]) => (
         <li
           key={label}
-          className={big ? "bg-[var(--s-accent)] p-6 md:col-span-2" : "bg-[var(--s-surface)] p-5"}
+          className={
+            big
+              ? "rounded-2xl bg-[linear-gradient(135deg,#19b394,#0c7866_55%,#075245)] shadow-[inset_0_1px_0_rgb(255_255_255/0.2)] p-6 md:col-span-2"
+              : "rounded-2xl border border-[var(--s-line)] bg-white/[0.02] p-5"
+          }
         >
           <p
             className={
