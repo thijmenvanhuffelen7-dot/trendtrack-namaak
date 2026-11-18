@@ -7,6 +7,7 @@ import {
 } from "@trendtrack/core";
 import { emailHistoryFloor, getShopFacets, listEmails } from "@trendtrack/db";
 import Link from "next/link";
+import { countActiveFilters, FilterToggle } from "@/components/app/filter-toggle";
 import { redirect } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
 import { Pagination } from "@/components/app/pagination";
@@ -57,9 +58,15 @@ export default async function EmailsPage({
           </Link>
         </p>
       )}
+      <FilterToggle
+        id="emails-filters"
+        label={tc("filters")}
+        active={countActiveFilters(filters)}
+        results={tc("results", { count: result.total })}
+      />
       <form
         method="get"
-        className="mb-5 grid grid-cols-2 gap-3 rounded-2xl border border-border bg-card p-4 md:grid-cols-4 xl:grid-cols-6"
+        className="mb-5 hidden peer-checked:grid md:grid grid-cols-2 gap-3 rounded-2xl border border-border bg-card p-4 md:grid-cols-4 xl:grid-cols-6"
       >
         <Field label={t("search")} htmlFor="e-q" className="col-span-2 md:col-span-1 xl:col-span-1">
           <Input id="e-q" name="q" type="search" defaultValue={filters.q ?? ""} />

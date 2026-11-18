@@ -85,7 +85,9 @@ export default async function AdvertisersPage({
                 <th scope="col" className="px-3 py-2 text-right font-medium">
                   {t("spend")} ({tc("estimate")})
                 </th>
-                <th scope="col" className="px-3 py-2" />
+                <th scope="col" className="px-3 py-2">
+                  <span className="sr-only">{t("actions")}</span>
+                </th>
               </tr>
             </thead>
             <tbody>

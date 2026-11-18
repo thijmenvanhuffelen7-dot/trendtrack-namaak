@@ -71,6 +71,8 @@ const nextConfig: NextConfig = {
   serverExternalPackages: ["sanitize-html"],
   // Het dev-icoontje linksonder ligt over de taal- en uitlogknop in de sidebar.
   devIndicators: false,
+  // 404 voor onbekende URLs met eigen opmaak (nodig met twee root-layouts).
+  experimental: { globalNotFound: true },
 };
 
 // Blogposts zijn MDX-bestanden in src/content/blog (zie lib/site/blog.ts).

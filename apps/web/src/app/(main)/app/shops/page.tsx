@@ -8,6 +8,7 @@ import {
 import { getShopFacets, listShops } from "@trendtrack/db";
 import { ArrowDown, ArrowUp } from "lucide-react";
 import Link from "next/link";
+import { countActiveFilters, FilterToggle } from "@/components/app/filter-toggle";
 import { redirect } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
 import { EstimateRange } from "@/components/app/estimate";
@@ -77,9 +78,19 @@ export default async function ShopsPage({
     <>
       <PageHeader title={t("title")} description={t("description")} />
 
+      <FilterToggle
+        id="shops-filters"
+
+        label={tc("filters")}
+
+        active={countActiveFilters(filters)}
+
+        results={tc("results", { count: result.total })}
+      />
+
       <form
         method="get"
-        className="mb-5 grid grid-cols-2 gap-3 rounded-2xl border border-border bg-card p-4 md:grid-cols-4 xl:grid-cols-6"
+        className="mb-5 hidden peer-checked:grid md:grid grid-cols-2 gap-3 rounded-2xl border border-border bg-card p-4 md:grid-cols-4 xl:grid-cols-6"
       >
         {filters.q && <input type="hidden" name="q" value={filters.q} />}
         {filters.sort !== "growth" && <input type="hidden" name="sort" value={filters.sort} />}
@@ -185,61 +196,98 @@ export default async function ShopsPage({
       {result.rows.length === 0 ? (
         <EmptyState title={t("emptyTitle")}>{t("emptyBody")}</EmptyState>
       ) : (
-        <div className="overflow-x-auto rounded-2xl border border-border">
-          <table className="w-full min-w-[820px] text-sm">
-            <thead className="border-b border-border bg-muted/50 text-muted-foreground">
-              <tr>
-                {sortHeader("name", t("shop"))}
-                <th scope="col" className="px-3 py-2 text-left font-medium">
-                  {t("country")}
-                </th>
-                <th scope="col" className="px-3 py-2 text-left font-medium">
-                  {t("niche")}
-                </th>
-                <th scope="col" className="px-3 py-2 text-left font-medium">
-                  {t("theme")}
-                </th>
-                {sortHeader("revenue", t("revenue"), "right")}
-                {sortHeader("ads", t("activeAds"), "right")}
-                {sortHeader("growth", t("growth"), "right")}
-                {sortHeader("newest", t("firstSeen"), "right")}
-              </tr>
-            </thead>
-            <tbody>
-              {result.rows.map((s) => (
-                <tr key={s.id} className="border-b border-border last:border-0 hover:bg-muted/40">
-                  <td className="px-3 py-2.5">
-                    <Link href={`/app/shops/${s.domain}`} className="flex items-center gap-2.5">
-                      <ShopAvatar name={s.name ?? s.domain} size="sm" />
-                      <span className="min-w-0">
-                        <span className="block truncate font-medium">{s.name ?? s.domain}</span>
-                        <span className="block truncate text-xs text-muted-foreground">
-                          {s.domain}
-                        </span>
+        <>
+          {/* Telefoon: kaarten in plaats van een tabel die zijwaarts scrolt. */}
+          <ul className="space-y-2.5 md:hidden">
+            {result.rows.map((s) => (
+              <li key={s.id}>
+                <Link
+                  href={`/app/shops/${s.domain}`}
+                  className="block rounded-2xl border border-border bg-card p-4 transition-colors active:bg-muted/60"
+                >
+                  <span className="flex items-center gap-3">
+                    <ShopAvatar name={s.name ?? s.domain} size="sm" />
+                    <span className="min-w-0 flex-1">
+                      <span className="block truncate font-medium">{s.name ?? s.domain}</span>
+                      <span className="block truncate text-xs text-muted-foreground">
+                        {[s.domain, s.country, s.niche].filter(Boolean).join(" · ")}
                       </span>
-                    </Link>
-                  </td>
-                  <td className="px-3 py-2.5">{s.country ?? "–"}</td>
-                  <td className="px-3 py-2.5">{s.niche ?? "–"}</td>
-                  <td className="px-3 py-2.5">{s.theme_name ?? "–"}</td>
-                  <td className="px-3 py-2.5 text-right">
-                    <EstimateRange
-                      low={s.est_monthly_revenue_low}
-                      high={s.est_monthly_revenue_high}
-                    />
-                  </td>
-                  <td className="px-3 py-2.5 text-right tabular">{s.active_ads_count}</td>
-                  <td className="px-3 py-2.5 text-right">
+                    </span>
                     <Growth score={s.growth_score} locale={locale} />
-                  </td>
-                  <td className="px-3 py-2.5 text-right whitespace-nowrap text-muted-foreground">
-                    {formatDate(s.first_seen_at, locale)}
-                  </td>
+                  </span>
+                  <span className="mt-3 grid grid-cols-2 gap-3 border-t border-border pt-3 text-sm">
+                    <span>
+                      <span className="block text-xs text-muted-foreground">{t("revenue")}</span>
+                      <EstimateRange
+                        low={s.est_monthly_revenue_low}
+                        high={s.est_monthly_revenue_high}
+                      />
+                    </span>
+                    <span>
+                      <span className="block text-xs text-muted-foreground">{t("activeAds")}</span>
+                      <span className="tabular">{s.active_ads_count}</span>
+                    </span>
+                  </span>
+                </Link>
+              </li>
+            ))}
+          </ul>
+          <div className="hidden overflow-x-auto rounded-2xl border border-border bg-card md:block">
+            <table className="w-full min-w-[820px] text-sm">
+              <thead className="border-b border-border bg-muted/50 text-muted-foreground">
+                <tr>
+                  {sortHeader("name", t("shop"))}
+                  <th scope="col" className="px-3 py-2 text-left font-medium">
+                    {t("country")}
+                  </th>
+                  <th scope="col" className="px-3 py-2 text-left font-medium">
+                    {t("niche")}
+                  </th>
+                  <th scope="col" className="px-3 py-2 text-left font-medium">
+                    {t("theme")}
+                  </th>
+                  {sortHeader("revenue", t("revenue"), "right")}
+                  {sortHeader("ads", t("activeAds"), "right")}
+                  {sortHeader("growth", t("growth"), "right")}
+                  {sortHeader("newest", t("firstSeen"), "right")}
                 </tr>
-              ))}
-            </tbody>
-          </table>
-        </div>
+              </thead>
+              <tbody>
+                {result.rows.map((s) => (
+                  <tr key={s.id} className="border-b border-border last:border-0 hover:bg-muted/40">
+                    <td className="px-3 py-2.5">
+                      <Link href={`/app/shops/${s.domain}`} className="flex items-center gap-2.5">
+                        <ShopAvatar name={s.name ?? s.domain} size="sm" />
+                        <span className="min-w-0">
+                          <span className="block truncate font-medium">{s.name ?? s.domain}</span>
+                          <span className="block truncate text-xs text-muted-foreground">
+                            {s.domain}
+                          </span>
+                        </span>
+                      </Link>
+                    </td>
+                    <td className="px-3 py-2.5">{s.country ?? "–"}</td>
+                    <td className="px-3 py-2.5">{s.niche ?? "–"}</td>
+                    <td className="px-3 py-2.5">{s.theme_name ?? "–"}</td>
+                    <td className="px-3 py-2.5 text-right">
+                      <EstimateRange
+                        low={s.est_monthly_revenue_low}
+                        high={s.est_monthly_revenue_high}
+                      />
+                    </td>
+                    <td className="px-3 py-2.5 text-right tabular">{s.active_ads_count}</td>
+                    <td className="px-3 py-2.5 text-right">
+                      <Growth score={s.growth_score} locale={locale} />
+                    </td>
+                    <td className="px-3 py-2.5 text-right whitespace-nowrap text-muted-foreground">
+                      {formatDate(s.first_seen_at, locale)}
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
       )}
       <Pagination
         total={result.total}

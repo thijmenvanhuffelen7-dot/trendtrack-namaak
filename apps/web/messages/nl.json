@@ -23,7 +23,8 @@
     "signOut": "Uitloggen",
     "language": "Taal",
     "comingSoon": "Komt eraan",
-    "comingSoonBody": "Dit onderdeel volgt in een latere stap."
+    "comingSoonBody": "Dit onderdeel volgt in een latere stap.",
+    "filters": "Filters"
   },
   "nav": {
     "shops": "Shops",
@@ -239,7 +240,8 @@
     "sortReach": "Meeste bereik",
     "viewAds": "Bekijk ads",
     "emptyTitle": "Geen adverteerders gevonden",
-    "emptyBody": "Pas je zoekopdracht aan."
+    "emptyBody": "Pas je zoekopdracht aan.",
+    "actions": "Acties"
   },
   "emails": {
     "title": "E-mails",

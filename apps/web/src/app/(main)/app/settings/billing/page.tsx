@@ -142,7 +142,7 @@ export default async function BillingPage({
               >
                 {t(`interval.${i}`)}
                 {INTERVAL_DISCOUNT[i] > 0 && (
-                  <span className="ml-1 text-xs opacity-80">
+                  <span className="ml-1 text-xs font-medium">
                     {t("discount", { percent: INTERVAL_DISCOUNT[i] * 100 })}
                   </span>
                 )}

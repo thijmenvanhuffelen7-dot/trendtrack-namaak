@@ -9,6 +9,7 @@ import {
 } from "@trendtrack/db";
 import { ExternalLink, X } from "lucide-react";
 import Link from "next/link";
+import { countActiveFilters, FilterToggle } from "@/components/app/filter-toggle";
 import { redirect } from "next/navigation";
 import { getLocale, getTranslations } from "next-intl/server";
 import { AdCard } from "@/components/app/ad-card";
@@ -60,9 +61,19 @@ export default async function AdsPage({
     <>
       <PageHeader title={t("title")} description={t("description")} />
 
+      <FilterToggle
+        id="ads-filters"
+
+        label={tc("filters")}
+
+        active={countActiveFilters(filters)}
+
+        results={tc("results", { count: result.total })}
+      />
+
       <form
         method="get"
-        className="mb-5 grid grid-cols-2 gap-3 rounded-2xl border border-border bg-card p-4 md:grid-cols-4 xl:grid-cols-7"
+        className="mb-5 hidden peer-checked:grid md:grid grid-cols-2 gap-3 rounded-2xl border border-border bg-card p-4 md:grid-cols-4 xl:grid-cols-7"
       >
         {filters.domain && <input type="hidden" name="domain" value={filters.domain} />}
         {filters.advertiser_id && (

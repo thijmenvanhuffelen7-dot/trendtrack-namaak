@@ -23,7 +23,8 @@
     "signOut": "Sign out",
     "language": "Language",
     "comingSoon": "Coming soon",
-    "comingSoonBody": "This section follows in a later step."
+    "comingSoonBody": "This section follows in a later step.",
+    "filters": "Filters"
   },
   "nav": {
     "shops": "Shops",
@@ -239,7 +240,8 @@
     "sortReach": "Most reach",
     "viewAds": "View ads",
     "emptyTitle": "No advertisers found",
-    "emptyBody": "Adjust your search."
+    "emptyBody": "Adjust your search.",
+    "actions": "Actions"
   },
   "emails": {
     "title": "Emails",

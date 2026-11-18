@@ -63,7 +63,7 @@ test.describe.serial("golden path", () => {
 
   test("een shop opzoeken", async () => {
     await page.goto("/app/shops?q=zilverzand");
-    await page.locator("a[href='/app/shops/zilverzand.nl']").first().click();
+    await page.locator("a[href='/app/shops/zilverzand.nl']:visible").first().click();
     await page.waitForURL(/\/app\/shops\/zilverzand\.nl/);
     await expect(page.locator("h1").first()).toContainText(/zilverzand/i);
     // Omzet is altijd een schatting met bandbreedte.

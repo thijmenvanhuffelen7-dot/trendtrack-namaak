@@ -480,7 +480,7 @@ test.describe.serial("dashboard", () => {
 
   test("shops: filteren, sorteren, wissen", async () => {
     await page.goto("/app/shops");
-    const rows = page.locator("a[href^='/app/shops/']");
+    const rows = page.locator("a[href^='/app/shops/']:visible");
     const all = await rows.count();
     expect(all).toBeGreaterThan(1);
     await page.selectOption("#f-country", "BE");

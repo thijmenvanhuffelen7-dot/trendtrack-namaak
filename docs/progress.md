@@ -474,4 +474,14 @@ uit is gesneden (echte uitsparing, werkt op licht en donker; op donkere vlakken 
 "trendtrack" in kleine letters met een zacht verloop. Favicon, `icon.svg` en `apple-icon.png` uit hetzelfde
 pad (`MARK_PATH` in `components/site/logo.tsx`).
 
+## Afwerking (2026-11-18)
+
+- Eigen 404 (`global-not-found.tsx`, nodig met twee root-layouts) en foutpagina's in de site-stijl.
+- Deelafbeelding (Open Graph/X) met het nieuwe logo, web-manifest en een 512-px icoon.
+- Mobiel dashboard: shops als kaarten in plaats van een zijwaarts scrollende tabel; filters van shops,
+  ads en e-mails achter een knop "Filters" (CSS-only, opent vanzelf met actieve filters).
+- Toegankelijkheidsscan met axe op 33 pagina's (licht en donker): laatste punten opgelost (contrast in de
+  periodekeuze op de abonnementspagina, lege tabelkop bij adverteerders).
+- 177 unit-, 38 database- en 57 e2e-tests groen.
+
 ## Alle 14 prompts gebouwd. Wat de eigenaar nog moet doen: zie docs/deploy.md → "Na de eerste deploy".
