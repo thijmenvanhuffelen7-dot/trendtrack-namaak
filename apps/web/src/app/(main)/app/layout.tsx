@@ -3,7 +3,7 @@ import { Search } from "lucide-react";
 import Link from "next/link";
 import { getLocale, getTranslations } from "next-intl/server";
 import { AppNav } from "@/components/app/nav";
-import { LogoMark } from "@/components/site/logo";
+import { Logo, LogoMark } from "@/components/site/logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { getPlan, getSession } from "@/lib/server/session";
@@ -29,12 +29,8 @@ export default async function AppLayout({ children }: { children: React.ReactNod
     <div className="flex min-h-screen">
       <aside className="sticky top-0 hidden h-screen w-64 shrink-0 p-2.5 md:block">
         <div className="relative flex h-full flex-col overflow-hidden rounded-[22px] bg-[radial-gradient(90%_60%_at_10%_0%,rgb(42_209_174/0.18),transparent_60%),linear-gradient(170deg,#0f4d41_0%,#0a3a31_50%,#062621_100%)] p-3 text-white">
-          <Link
-            href="/app/shops"
-            className="mb-5 flex items-center gap-2 px-2.5 pt-1.5 text-[17px] font-bold tracking-[-0.03em]"
-          >
-            <LogoMark className="size-6" />
-            TrendTrack
+          <Link href="/app/shops" className="mb-5 flex px-2.5 pt-1.5" aria-label="TrendTrack">
+            <Logo tone="light" className="!text-[21px]" />
           </Link>
           <AppNav isAdmin={isAdmin} orientation="vertical" />
           <div className="mt-auto space-y-3 border-t border-white/10 pt-3 text-xs text-white/65">
@@ -78,13 +74,11 @@ export default async function AppLayout({ children }: { children: React.ReactNod
       <div className="min-w-0 flex-1">
         <header className="sticky top-0 z-20 border-b border-border bg-background/85 backdrop-blur-xl">
           <div className="flex items-center gap-3 px-4 py-3 md:px-8">
-            <Link
-              href="/app/shops"
-              className="flex shrink-0 items-center gap-1.5 text-[15px] font-bold tracking-[-0.03em] md:hidden"
-              aria-label="TrendTrack"
-            >
-              <LogoMark className="size-6" />
-              <span className="hidden sm:inline">TrendTrack</span>
+            <Link href="/app/shops" className="flex shrink-0 md:hidden" aria-label="TrendTrack">
+              <LogoMark className="size-7 sm:hidden" />
+              <span className="hidden sm:block">
+                <Logo className="!text-[18px]" />
+              </span>
             </Link>
             <form action={searchAction} role="search" className="relative w-full max-w-xl">
               <Search

@@ -617,3 +617,25 @@ body {
   color: #5c4a00;
   padding: 0.9rem 1.1rem;
 }
+
+/* Woordmerk "trendtrack": inkt met een zacht verticaal verloop (licht), wit naar mint (donker). */
+.tt-word,
+.tt-word-light {
+  background-clip: text;
+  -webkit-background-clip: text;
+  color: transparent;
+  padding-bottom: 0.08em;
+}
+.tt-word {
+  background-image: linear-gradient(180deg, #4a524e 0%, #0f1412 85%);
+}
+.tt-word-light,
+.s-dark .tt-word {
+  background-image: linear-gradient(180deg, #ffffff 30%, #bfeee0 100%);
+}
+/* Dashboard in donkere modus (de publieke site en login blijven licht). */
+@media (prefers-color-scheme: dark) {
+  body:not(:has(.site)) .tt-word {
+    background-image: linear-gradient(180deg, #ffffff 30%, #bfeee0 100%);
+  }
+}

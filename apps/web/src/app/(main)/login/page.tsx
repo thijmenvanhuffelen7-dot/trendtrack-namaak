@@ -1,7 +1,7 @@
 import type { Metadata } from "next";
 import Link from "next/link";
 import { getTranslations } from "next-intl/server";
-import { LogoMark } from "@/components/site/logo";
+import { Logo } from "@/components/site/logo";
 import { safeNext } from "@/lib/server/session";
 import { cabinet, satoshi } from "../../fonts";
 import { LoginForm } from "./login-form";
@@ -20,12 +20,8 @@ export default async function LoginPage({
     <div className={`site ${satoshi.variable} ${cabinet.variable}`}>
       <main className="s-glow relative flex min-h-screen flex-col items-center justify-center px-4 py-12">
         <div className="w-full max-w-[400px]">
-          <Link
-            href="/"
-            className="mb-8 inline-flex items-center gap-2 font-[family-name:var(--font-display)] text-[19px] font-bold tracking-[-0.03em]"
-          >
-            <LogoMark />
-            TrendTrack
+          <Link href="/" className="mb-8 inline-flex" aria-label="TrendTrack, naar de homepage">
+            <Logo />
           </Link>
           <h1 style={{ fontSize: "clamp(2rem, 1.6rem + 1.4vw, 2.6rem)" }}>
             {mode === "signup" ? t("titleSignUp") : t("title")}

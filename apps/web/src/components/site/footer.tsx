@@ -49,7 +49,7 @@ export function SiteFooter() {
       <div className="s-wrap grid gap-12 pt-16 pb-8 md:grid-cols-[1.2fr_2fr]">
         <div>
           <Link href="/" aria-label="TrendTrack, naar de homepage">
-            <Logo />
+            <Logo tone="light" />
           </Link>
           <p className="mt-5 max-w-sm text-[17px] leading-relaxed text-[var(--s-body)]">
             Zie wat webshops in Nederland en België verkopen, waar ze op adverteren en wat ze

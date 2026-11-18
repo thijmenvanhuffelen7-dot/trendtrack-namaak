@@ -467,4 +467,11 @@ wegviel (gedeelde SVG-id), en de abonnementsmelding die de naam van een env-vari
 dashboardschermen op de publieke site (`public/screens/*.webp`) opnieuw gemaakt in de nieuwe stijl, op 2x.
 177 unit-tests en 57 e2e-tests groen tegen de productie-build.
 
+## Nieuw logo (2026-11-18)
+
+Eigen beeldmerk in de stijl van een massieve tegel met uitsparing: een teal tegel waar een stijgende pijl
+uit is gesneden (echte uitsparing, werkt op licht en donker; op donkere vlakken een witte tegel). Woordmerk
+"trendtrack" in kleine letters met een zacht verloop. Favicon, `icon.svg` en `apple-icon.png` uit hetzelfde
+pad (`MARK_PATH` in `components/site/logo.tsx`).
+
 ## Alle 14 prompts gebouwd. Wat de eigenaar nog moet doen: zie docs/deploy.md → "Na de eerste deploy".
