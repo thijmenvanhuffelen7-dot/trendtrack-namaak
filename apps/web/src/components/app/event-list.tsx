@@ -29,7 +29,7 @@ export async function EventList({
     getLocale(),
   ]);
   return (
-    <ul className="divide-y divide-border rounded-lg border border-border bg-card">
+    <ul className="divide-y divide-border rounded-2xl border border-border bg-card">
       {events.map((e) => {
         const p = (e.payload ?? {}) as Payload;
         const Icon = ICONS[e.type] ?? Tag;

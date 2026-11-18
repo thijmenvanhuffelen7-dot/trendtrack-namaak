@@ -2,40 +2,47 @@
 @import "tw-animate-css";
 
 :root {
-  --radius: 0.5rem;
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.18 0 0);
-  --card: oklch(1 0 0);
-  --muted: oklch(0.968 0.002 250);
-  --muted-foreground: oklch(0.5 0.01 250);
-  --primary: oklch(0.24 0.02 255);
-  --primary-foreground: oklch(0.985 0 0);
-  --border: oklch(0.915 0.004 250);
-  --ring: oklch(0.6 0.08 255);
-  --positive: oklch(0.5 0.13 150);
-  --danger: oklch(0.53 0.19 27);
-  --warning: oklch(0.58 0.13 70);
-  /* Grafieken (dataviz-palet, slot 1) */
-  --series-1: #2a78d6;
-  --chart-grid: oklch(0.93 0.003 250);
+  /* Dashboard: zelfde familie als de publieke site (gebroken wit, inkt, TrendTrack-teal). */
+  --radius: 0.75rem;
+  --background: #f3f3f0;
+  --foreground: #0f1412;
+  --card: #ffffff;
+  --muted: #ecece8;
+  --muted-foreground: #586059;
+  --primary: #0f1412;
+  --primary-foreground: #ffffff;
+  --brand: #0c7866;
+  --brand-soft: #dff5ee;
+  --brand-ink: #0a5c4e;
+  --border: rgb(15 23 20 / 0.1);
+  --ring: #0e8f79;
+  --positive: #0b7a46;
+  --danger: #c2272d;
+  --warning: #9a6200;
+  /* Grafieken: één reeks in de merkkleur (contrast 5,6:1 op wit). */
+  --series-1: #0c7866;
+  --chart-grid: rgb(15 23 20 / 0.07);
 }
 
 @media (prefers-color-scheme: dark) {
   :root {
-    --background: oklch(0.16 0.005 255);
-    --foreground: oklch(0.96 0 0);
-    --card: oklch(0.19 0.006 255);
-    --muted: oklch(0.24 0.008 255);
-    --muted-foreground: oklch(0.72 0.01 250);
-    --primary: oklch(0.93 0 0);
-    --primary-foreground: oklch(0.2 0.01 255);
-    --border: oklch(1 0 0 / 11%);
-    --ring: oklch(0.6 0.08 255);
-    --positive: oklch(0.75 0.15 150);
-    --danger: oklch(0.72 0.17 25);
-    --warning: oklch(0.8 0.13 80);
-    --series-1: #3987e5;
-    --chart-grid: oklch(1 0 0 / 9%);
+    --background: #0b110f;
+    --foreground: #eef2f0;
+    --card: #121a17;
+    --muted: #1b2622;
+    --muted-foreground: #a3ada8;
+    --primary: #eef2f0;
+    --primary-foreground: #0b110f;
+    --brand: #2ad1ae;
+    --brand-soft: rgb(42 209 174 / 0.14);
+    --brand-ink: #7ff0d6;
+    --border: rgb(255 255 255 / 0.1);
+    --ring: #2ad1ae;
+    --positive: #4ade80;
+    --danger: #ff8a8d;
+    --warning: #f2c14e;
+    --series-1: #2ad1ae;
+    --chart-grid: rgb(255 255 255 / 0.08);
   }
 }
 
@@ -47,6 +54,9 @@
   --color-muted-foreground: var(--muted-foreground);
   --color-primary: var(--primary);
   --color-primary-foreground: var(--primary-foreground);
+  --color-brand: var(--brand);
+  --color-brand-soft: var(--brand-soft);
+  --color-brand-ink: var(--brand-ink);
   --color-border: var(--border);
   --color-ring: var(--ring);
   --color-positive: var(--positive);
@@ -54,12 +64,15 @@
   --color-warning: var(--warning);
   --radius-md: var(--radius);
   --radius-lg: calc(var(--radius) + 2px);
+  --radius-xl: calc(var(--radius) + 4px);
+  --radius-2xl: calc(var(--radius) + 8px);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
   font-family:
+    var(--font-satoshi),
     ui-sans-serif,
     system-ui,
     -apple-system,
@@ -67,6 +80,11 @@ body {
     Roboto,
     sans-serif;
   font-feature-settings: "tnum" 0;
+  -webkit-font-smoothing: antialiased;
+}
+::selection {
+  background: #bdeee0;
+  color: #0f1412;
 }
 
 .tabular {

@@ -49,7 +49,7 @@ export default async function EmailsPage({
       {floor && (
         <p
           role="status"
-          className="mb-4 rounded-md border border-border bg-muted px-3 py-2 text-sm"
+          className="mb-4 rounded-xl border border-border bg-muted px-3 py-2 text-sm"
         >
           {tl("emailHistory", { days: PLANS[plan].limits.emailHistoryDays ?? 0 })}{" "}
           <Link href="/app/settings/billing" className="font-medium underline underline-offset-2">
@@ -59,7 +59,7 @@ export default async function EmailsPage({
       )}
       <form
         method="get"
-        className="mb-5 grid grid-cols-2 gap-3 rounded-lg border border-border bg-card p-4 md:grid-cols-4 xl:grid-cols-6"
+        className="mb-5 grid grid-cols-2 gap-3 rounded-2xl border border-border bg-card p-4 md:grid-cols-4 xl:grid-cols-6"
       >
         <Field label={t("search")} htmlFor="e-q" className="col-span-2 md:col-span-1 xl:col-span-1">
           <Input id="e-q" name="q" type="search" defaultValue={filters.q ?? ""} />
@@ -115,7 +115,7 @@ export default async function EmailsPage({
             <li key={e.id}>
               <Link
                 href={`/app/emails/${e.id}`}
-                className="flex h-full flex-col rounded-lg border border-border bg-card p-4 transition-colors hover:border-foreground/25"
+                className="flex h-full flex-col rounded-2xl border border-border bg-card p-4 transition-colors hover:border-foreground/25"
               >
                 <p className="flex flex-wrap items-center gap-2 text-xs text-muted-foreground">
                   <span className="font-medium text-foreground">

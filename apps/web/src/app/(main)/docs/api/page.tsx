@@ -54,7 +54,7 @@ export default async function ApiDocsPage() {
           </Link>{" "}
           en stuur hem mee als Bearer-token. De key zie je één keer; bewaar hem als een wachtwoord.
         </p>
-        <pre className="overflow-x-auto rounded-lg border border-border bg-muted p-4 text-sm">{`curl ${base}/shops?country=NL \\
+        <pre className="overflow-x-auto rounded-2xl border border-border bg-muted p-4 text-sm">{`curl ${base}/shops?country=NL \\
   -H "Authorization: Bearer tt_live_..."`}</pre>
 
         <h2 className="pt-4 text-xl font-semibold">Plannen en limieten</h2>
@@ -168,7 +168,7 @@ export default async function ApiDocsPage() {
                     </tbody>
                   </table>
                 )}
-                <pre className="mt-4 overflow-x-auto rounded-lg border border-border bg-muted p-4 text-sm">
+                <pre className="mt-4 overflow-x-auto rounded-2xl border border-border bg-muted p-4 text-sm">
                   {curl}
                 </pre>
               </article>

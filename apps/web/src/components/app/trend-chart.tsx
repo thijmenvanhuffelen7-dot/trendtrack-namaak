@@ -109,7 +109,7 @@ export function TrendChart({
   };
 
   return (
-    <figure className="rounded-lg border border-border bg-card p-4">
+    <figure className="rounded-2xl border border-border bg-card p-4">
       <figcaption className="flex items-baseline justify-between gap-3">
         <span className="text-sm font-medium">{title}</span>
         <span className="text-sm text-muted-foreground tabular">

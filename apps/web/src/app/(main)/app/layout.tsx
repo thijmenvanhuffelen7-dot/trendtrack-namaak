@@ -3,6 +3,7 @@ import { Search } from "lucide-react";
 import Link from "next/link";
 import { getLocale, getTranslations } from "next-intl/server";
 import { AppNav } from "@/components/app/nav";
+import { LogoMark } from "@/components/site/logo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { getPlan, getSession } from "@/lib/server/session";
@@ -26,52 +27,68 @@ export default async function AppLayout({ children }: { children: React.ReactNod
 
   return (
     <div className="flex min-h-screen">
-      <aside className="sticky top-0 hidden h-screen w-56 shrink-0 flex-col border-r border-border p-3 md:flex">
-        <Link href="/app/shops" className="mb-4 px-2.5 py-1 text-sm font-semibold tracking-tight">
-          TrendTrack
-        </Link>
-        <AppNav isAdmin={isAdmin} orientation="vertical" />
-        <div className="mt-auto space-y-2 border-t border-border pt-3 text-xs text-muted-foreground">
-          <p className="truncate px-2.5" title={user.email}>
-            {user.email}
-          </p>
-          <p className="truncate px-2.5">{workspace.name}</p>
+      <aside className="sticky top-0 hidden h-screen w-64 shrink-0 p-2.5 md:block">
+        <div className="relative flex h-full flex-col overflow-hidden rounded-[22px] bg-[radial-gradient(90%_60%_at_10%_0%,rgb(42_209_174/0.18),transparent_60%),linear-gradient(170deg,#0f4d41_0%,#0a3a31_50%,#062621_100%)] p-3 text-white">
           <Link
-            href="/app/settings/billing"
-            className="mx-2.5 block rounded-md border border-border px-2 py-1 text-foreground hover:bg-muted"
+            href="/app/shops"
+            className="mb-5 flex items-center gap-2 px-2.5 pt-1.5 text-[17px] font-bold tracking-[-0.03em]"
           >
-            {trialDays !== null ? tl("trialBadge", { count: trialDays }) : PLANS[plan.plan].name}
+            <LogoMark className="size-6" />
+            TrendTrack
           </Link>
-          <div className="flex items-center gap-1">
-            <form action={setLocaleAction}>
-              <input type="hidden" name="locale" value={other} />
-              <Button
-                type="submit"
-                variant="ghost"
-                size="sm"
-                aria-label={`${tc("language")}: ${other.toUpperCase()}`}
-              >
-                {other.toUpperCase()}
-              </Button>
-            </form>
-            <form action="/auth/signout" method="post">
-              <Button type="submit" variant="ghost" size="sm">
-                {tc("signOut")}
-              </Button>
-            </form>
+          <AppNav isAdmin={isAdmin} orientation="vertical" />
+          <div className="mt-auto space-y-3 border-t border-white/10 pt-3 text-xs text-white/65">
+            <div className="px-2.5">
+              <p className="truncate text-[13px] font-medium text-white" title={user.email}>
+                {user.email}
+              </p>
+              <p className="truncate">{workspace.name}</p>
+            </div>
+            <Link
+              href="/app/settings/billing"
+              className="mx-2.5 flex items-center justify-between rounded-xl bg-white/10 px-3 py-2 text-[13px] font-medium text-white transition-colors hover:bg-white/15"
+            >
+              {trialDays !== null ? tl("trialBadge", { count: trialDays }) : PLANS[plan.plan].name}
+              <span aria-hidden>→</span>
+            </Link>
+            <div className="flex items-center gap-1 px-1">
+              <form action={setLocaleAction}>
+                <input type="hidden" name="locale" value={other} />
+                <button
+                  type="submit"
+                  className="rounded-lg px-2.5 py-1.5 text-[13px] text-white/70 transition-colors hover:bg-white/10 hover:text-white"
+                  aria-label={`${tc("language")}: ${other.toUpperCase()}`}
+                >
+                  {other.toUpperCase()}
+                </button>
+              </form>
+              <form action="/auth/signout" method="post">
+                <button
+                  type="submit"
+                  className="rounded-lg px-2.5 py-1.5 text-[13px] text-white/70 transition-colors hover:bg-white/10 hover:text-white"
+                >
+                  {tc("signOut")}
+                </button>
+              </form>
+            </div>
           </div>
         </div>
       </aside>
 
       <div className="min-w-0 flex-1">
-        <header className="sticky top-0 z-20 border-b border-border bg-background/95 backdrop-blur">
-          <div className="flex items-center gap-3 px-4 py-2.5 md:px-8">
-            <Link href="/app/shops" className="text-sm font-semibold md:hidden">
-              TrendTrack
+        <header className="sticky top-0 z-20 border-b border-border bg-background/85 backdrop-blur-xl">
+          <div className="flex items-center gap-3 px-4 py-3 md:px-8">
+            <Link
+              href="/app/shops"
+              className="flex shrink-0 items-center gap-1.5 text-[15px] font-bold tracking-[-0.03em] md:hidden"
+              aria-label="TrendTrack"
+            >
+              <LogoMark className="size-6" />
+              <span className="hidden sm:inline">TrendTrack</span>
             </Link>
             <form action={searchAction} role="search" className="relative w-full max-w-xl">
               <Search
-                className="pointer-events-none absolute top-2.5 left-3 size-4 text-muted-foreground"
+                className="pointer-events-none absolute top-3 left-3.5 size-4 text-muted-foreground"
                 aria-hidden
               />
               <Input
@@ -79,7 +96,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
                 type="search"
                 placeholder={t("searchPlaceholder")}
                 aria-label={t("search")}
-                className="pl-9"
+                className="pl-10"
                 autoComplete="off"
               />
             </form>
@@ -104,7 +121,7 @@ export default async function AppLayout({ children }: { children: React.ReactNod
             <AppNav isAdmin={isAdmin} orientation="horizontal" />
           </div>
         </header>
-        <main className="mx-auto w-full max-w-7xl px-4 py-6 md:px-8">{children}</main>
+        <main className="mx-auto w-full max-w-7xl px-4 py-7 md:px-8">{children}</main>
       </div>
     </div>
   );

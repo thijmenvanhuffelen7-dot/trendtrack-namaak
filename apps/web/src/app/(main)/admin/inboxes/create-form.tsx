@@ -13,7 +13,7 @@ export function CreateInboxForm() {
       <input
         name="domain"
         placeholder="zilverzand.nl"
-        className="h-9 rounded-md border border-border bg-background px-3 text-sm"
+        className="h-9 rounded-xl border border-border bg-background px-3 text-sm"
         required
       />
       <Button type="submit" disabled={pending}>

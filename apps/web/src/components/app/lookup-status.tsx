@@ -23,7 +23,7 @@ export function LookupPending({
     <div
       role="status"
       aria-live="polite"
-      className="rounded-lg border border-border bg-card px-6 py-10 text-center"
+      className="rounded-2xl border border-border bg-card px-6 py-10 text-center"
     >
       <Loader2 className="mx-auto size-6 animate-spin text-muted-foreground" aria-hidden />
       <p className="mt-3 font-medium">{title}</p>

@@ -95,7 +95,7 @@ export default async function JobsPage() {
             {(queues.data ?? []).map((q) => (
               <span
                 key={`${q.name}-${q.state}`}
-                className="rounded-md border border-border px-2 py-1 font-mono"
+                className="rounded-xl border border-border px-2 py-1 font-mono"
               >
                 {q.name} · {q.state}: {q.jobs}
               </span>
@@ -111,7 +111,7 @@ export default async function JobsPage() {
         <h2 className="mb-2 font-medium">Recente fouten</h2>
         <ul className="space-y-1 text-sm">
           {(failures.data ?? []).map((f) => (
-            <li key={f.id} className="rounded-md border border-border p-2">
+            <li key={f.id} className="rounded-xl border border-border p-2">
               <span className="font-mono">{f.job_name}</span>{" "}
               {f.job_key && <span className="text-muted-foreground">({f.job_key})</span>}{" "}
               <span className="text-muted-foreground">· {fmtTime(f.started_at)}</span>

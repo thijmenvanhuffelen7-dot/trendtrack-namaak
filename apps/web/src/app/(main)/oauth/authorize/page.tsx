@@ -68,7 +68,7 @@ export default async function AuthorizePage({
           </Button>
         </form>
       ) : (
-        <div className="mt-6 rounded-lg border border-border bg-muted p-4 text-sm">
+        <div className="mt-6 rounded-2xl border border-border bg-muted p-4 text-sm">
           De MCP-server zit in Pro en Agency; je hebt nu {PLANS[plan.plan].name}.{" "}
           <Link href="/app/settings/billing" className={`${buttonVariants({ size: "sm" })} mt-3`}>
             Bekijk plannen

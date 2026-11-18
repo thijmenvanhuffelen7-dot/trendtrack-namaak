@@ -45,7 +45,7 @@ export default async function McpPage() {
       {!hasAccess && (
         <p
           role="status"
-          className="mb-5 rounded-md border border-border bg-muted px-3 py-2 text-sm"
+          className="mb-5 rounded-xl border border-border bg-muted px-3 py-2 text-sm"
         >
           De MCP-server zit in Pro en Agency.{" "}
           <Link href="/app/settings/billing" className="font-medium underline underline-offset-2">
@@ -114,7 +114,7 @@ export default async function McpPage() {
         {clients.length === 0 ? (
           <p className="text-sm text-muted-foreground">Nog geen apps verbonden.</p>
         ) : (
-          <ul className="divide-y divide-border rounded-lg border border-border bg-card">
+          <ul className="divide-y divide-border rounded-2xl border border-border bg-card">
             {clients.map((c) => (
               <li key={c.clientId} className="flex items-center gap-3 px-4 py-3 text-sm">
                 <span className="flex-1">

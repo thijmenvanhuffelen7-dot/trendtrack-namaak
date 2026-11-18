@@ -51,7 +51,7 @@ export async function FolderContents({
         <h2 className="mb-2 font-medium">
           {title} <span className="text-muted-foreground">({rows.length})</span>
         </h2>
-        <ul className="divide-y divide-border rounded-lg border border-border bg-card">{rows}</ul>
+        <ul className="divide-y divide-border rounded-2xl border border-border bg-card">{rows}</ul>
       </section>
     );
 

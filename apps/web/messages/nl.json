@@ -377,7 +377,7 @@
       "noApi": "Geen API of MCP",
       "seats": "{count, plural, one {# gebruiker} other {# gebruikers}}"
     },
-    "notConfigured": "Betalingen zijn nog niet ingesteld (STRIPE_SECRET_KEY ontbreekt). Plannen kun je bekijken, maar nog niet afsluiten.",
+    "notConfigured": "Betalen is nog niet beschikbaar. Je kunt de plannen al bekijken; afsluiten kan binnenkort.",
     "checkoutSuccess": "Bedankt! Je betaling is gelukt. Je nieuwe plan staat binnen enkele seconden klaar.",
     "checkoutCancel": "Afrekenen afgebroken. Er is niets in rekening gebracht.",
     "error": "Dat lukte niet. Probeer het opnieuw of neem contact op.",

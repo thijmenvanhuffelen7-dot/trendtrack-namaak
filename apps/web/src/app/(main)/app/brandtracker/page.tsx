@@ -116,7 +116,7 @@ export default async function BrandtrackerPage({
           </h2>
           <ul className="space-y-3">
             {tracked.map((b) => (
-              <li key={b.id} className="rounded-lg border border-border bg-card p-4 text-sm">
+              <li key={b.id} className="rounded-2xl border border-border bg-card p-4 text-sm">
                 <Link href={`/app/shops/${b.shops.domain}`} className="flex items-center gap-2.5">
                   <ShopAvatar name={b.shops.name ?? b.shops.domain} size="sm" />
                   <span className="min-w-0">

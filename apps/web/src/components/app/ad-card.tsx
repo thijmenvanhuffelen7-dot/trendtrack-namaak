@@ -20,7 +20,7 @@ export async function AdCard({ ad, href }: { ad: AdRow; href: string }) {
   const days = adRunDays(ad);
   const spend = formatMoneyRange(ad.est_spend_low, ad.est_spend_high, locale);
   return (
-    <article className="flex flex-col rounded-lg border border-border bg-card transition-colors hover:border-foreground/25">
+    <article className="flex w-full flex-col rounded-2xl border border-border bg-card shadow-[0_1px_2px_rgb(15_23_20/0.04)] transition-[border-color,box-shadow,transform] hover:-translate-y-0.5 hover:border-foreground/20 hover:shadow-[0_12px_28px_-16px_rgb(15_23_20/0.25)]">
       <Link href={href} className="flex flex-1 flex-col p-4" scroll={false}>
         <div className="flex items-start justify-between gap-2">
           <div className="min-w-0">

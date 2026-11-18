@@ -40,7 +40,7 @@ export default async function AdvertisersPage({
       <PageHeader title={t("title")} description={t("description")} />
       <form
         method="get"
-        className="mb-5 flex flex-wrap items-end gap-3 rounded-lg border border-border bg-card p-4"
+        className="mb-5 flex flex-wrap items-end gap-3 rounded-2xl border border-border bg-card p-4"
       >
         <Field label={t("name")} htmlFor="adv-q" className="w-64">
           <Input id="adv-q" name="q" type="search" defaultValue={filters.q ?? ""} />
@@ -63,7 +63,7 @@ export default async function AdvertisersPage({
       {result.rows.length === 0 ? (
         <EmptyState title={t("emptyTitle")}>{t("emptyBody")}</EmptyState>
       ) : (
-        <div className="overflow-x-auto rounded-lg border border-border">
+        <div className="overflow-x-auto rounded-2xl border border-border">
           <table className="w-full min-w-[760px] text-sm">
             <thead className="border-b border-border bg-muted/50 text-muted-foreground">
               <tr>

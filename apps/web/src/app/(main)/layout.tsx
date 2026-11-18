@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { NextIntlClientProvider } from "next-intl";
 import { getLocale } from "next-intl/server";
 import "../globals.css";
+import { cabinet, satoshi } from "../fonts";
 
 export const metadata: Metadata = {
   title: "TrendTrack Benelux",
@@ -12,7 +13,7 @@ export default async function RootLayout({ children }: Readonly<{ children: Reac
   const locale = await getLocale();
   return (
     <html lang={locale}>
-      <body className="antialiased">
+      <body className={`antialiased ${satoshi.variable} ${cabinet.variable}`}>
         <NextIntlClientProvider>{children}</NextIntlClientProvider>
       </body>
     </html>

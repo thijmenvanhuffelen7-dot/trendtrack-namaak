@@ -79,7 +79,7 @@ export default async function ShopsPage({
 
       <form
         method="get"
-        className="mb-5 grid grid-cols-2 gap-3 rounded-lg border border-border bg-card p-4 md:grid-cols-4 xl:grid-cols-6"
+        className="mb-5 grid grid-cols-2 gap-3 rounded-2xl border border-border bg-card p-4 md:grid-cols-4 xl:grid-cols-6"
       >
         {filters.q && <input type="hidden" name="q" value={filters.q} />}
         {filters.sort !== "growth" && <input type="hidden" name="sort" value={filters.sort} />}
@@ -185,7 +185,7 @@ export default async function ShopsPage({
       {result.rows.length === 0 ? (
         <EmptyState title={t("emptyTitle")}>{t("emptyBody")}</EmptyState>
       ) : (
-        <div className="overflow-x-auto rounded-lg border border-border">
+        <div className="overflow-x-auto rounded-2xl border border-border">
           <table className="w-full min-w-[820px] text-sm">
             <thead className="border-b border-border bg-muted/50 text-muted-foreground">
               <tr>

@@ -107,7 +107,7 @@ export default async function ShopPage({
       {shop.status !== "active" && (
         <p
           role="status"
-          className="mb-4 rounded-md border border-border bg-muted px-3 py-2 text-sm"
+          className="mb-4 rounded-xl border border-border bg-muted px-3 py-2 text-sm"
         >
           {shop.status === "blocked" ? t("statusBlocked") : t("statusDead")}
         </p>
@@ -115,7 +115,7 @@ export default async function ShopPage({
       {shop.platform !== "shopify" && shop.status === "active" && (
         <p
           role="status"
-          className="mb-4 rounded-md border border-border bg-muted px-3 py-2 text-sm"
+          className="mb-4 rounded-xl border border-border bg-muted px-3 py-2 text-sm"
         >
           {t("notShopify")}
         </p>
@@ -254,7 +254,7 @@ async function Products({ shop, locale }: { shop: ShopDetail; locale: string }) 
     },
     extra?: string,
   ) => (
-    <li key={p.id} className="rounded-lg border border-border bg-card p-3 text-sm">
+    <li key={p.id} className="rounded-2xl border border-border bg-card p-3 text-sm">
       {extra && <p className="mb-1 text-xs text-muted-foreground">{extra}</p>}
       <a
         href={p.handle ? `https://${shop.domain}/products/${p.handle}` : `https://${shop.domain}`}

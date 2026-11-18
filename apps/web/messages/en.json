@@ -377,7 +377,7 @@
       "noApi": "No API or MCP",
       "seats": "{count, plural, one {# user} other {# users}}"
     },
-    "notConfigured": "Payments are not set up yet (STRIPE_SECRET_KEY missing). You can view plans but not subscribe yet.",
+    "notConfigured": "Payments are not available yet. You can already view the plans; subscribing will be possible soon.",
     "checkoutSuccess": "Thank you! Your payment succeeded. Your new plan is ready within a few seconds.",
     "checkoutCancel": "Checkout cancelled. Nothing was charged.",
     "error": "That did not work. Please try again or contact us.",

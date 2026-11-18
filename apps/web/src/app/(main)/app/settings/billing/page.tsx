@@ -122,7 +122,7 @@ export default async function BillingPage({
             {t("plans")}
           </h2>
           <nav
-            className="inline-flex rounded-md border border-border p-0.5"
+            className="inline-flex rounded-xl border border-border p-0.5"
             aria-label={t("plans")}
           >
             {INTERVALS.map((i) => (
@@ -217,7 +217,7 @@ function Notice({ children, tone }: { children: React.ReactNode; tone?: "positiv
     <p
       role="status"
       className={cn(
-        "mb-5 rounded-md border border-border px-3 py-2 text-sm",
+        "mb-5 rounded-xl border border-border px-3 py-2 text-sm",
         tone === "positive" && "border-positive/40 text-positive",
         tone === "danger" && "border-danger/40 text-danger",
         !tone && "bg-muted",

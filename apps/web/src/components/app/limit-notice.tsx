@@ -11,7 +11,7 @@ export async function LimitNotice({ result }: { result: UsageResult }) {
   const title =
     result.reason === "not_in_plan" ? t(`notInPlan.${result.action}`) : t(`title.${result.action}`);
   return (
-    <div role="alert" className="rounded-lg border border-border bg-card px-6 py-10 text-center">
+    <div role="alert" className="rounded-2xl border border-border bg-card px-6 py-10 text-center">
       <Lock className="mx-auto size-6 text-muted-foreground" aria-hidden />
       <p className="mt-3 font-medium">{title}</p>
       {result.reason === "limit" && result.limit !== null && (

@@ -446,7 +446,6 @@ als signaalkleuren). Alleen de stijl is overgenomen: geen logo, teksten of afbee
   affiliate-voorbeelden rekenen nu 30% over het bedrag zonder btw.
 - Getest: 54 e2e-tests groen tegen de productie-build; Lighthouse desktop 100 en mobiel 95–97 op
   prestaties, SEO 100, best practices 100. Geen horizontaal scrollen op 390 px.
-- Het dashboard (`/app`) en de loginpagina hebben nog de oude, lichte stijl.
 
 ## Ontwerp publieke site v3 (2026-11-15)
 
@@ -457,5 +456,15 @@ oplicht tijdens het scrollen, FAQ met donkere vraagbalk, Pro-prijskaart op groen
 reviews, sterrenscore en "trusted by"-logo's (die zijn er niet; we verzinnen ze niet). De hero toont de echte
 uitkomst van de zoekopdracht als zwevende kaartjes op een dashboardscherm. Loginpagina mee omgezet.
 57 e2e-tests groen; Lighthouse 93–100 (de loginpagina staat bewust op noindex).
+
+## Dashboard in de site-stijl (2026-11-18)
+
+Het dashboard (`/app`) gebruikt nu dezelfde beeldtaal als de publieke site: gebroken-witte basis, een
+diepgroen afgerond zijpaneel met het logo, Satoshi als letter, afgeronde kaarten (radius 16–24 px), pil-
+badges, teal als merkkleur in grafieken en groei. Losse randen en kaarten op alle pagina's gelijkgetrokken.
+Opgelost: ongelijke breedtes in het ads-raster, een afgekapt sorteerveld, het logo-verloop dat op mobiel
+wegviel (gedeelde SVG-id), en de abonnementsmelding die de naam van een env-variabele toonde. De
+dashboardschermen op de publieke site (`public/screens/*.webp`) opnieuw gemaakt in de nieuwe stijl, op 2x.
+177 unit-tests en 57 e2e-tests groen tegen de productie-build.
 
 ## Alle 14 prompts gebouwd. Wat de eigenaar nog moet doen: zie docs/deploy.md → "Na de eerste deploy".

@@ -62,7 +62,7 @@ export default async function AdsPage({
 
       <form
         method="get"
-        className="mb-5 grid grid-cols-2 gap-3 rounded-lg border border-border bg-card p-4 md:grid-cols-4 xl:grid-cols-7"
+        className="mb-5 grid grid-cols-2 gap-3 rounded-2xl border border-border bg-card p-4 md:grid-cols-4 xl:grid-cols-7"
       >
         {filters.domain && <input type="hidden" name="domain" value={filters.domain} />}
         {filters.advertiser_id && (
@@ -138,14 +138,14 @@ export default async function AdsPage({
             ))}
           </Select>
         </Field>
-        <Field label={t("sort")} htmlFor="a-sort">
+        <Field label={t("sort")} htmlFor="a-sort" className="xl:col-span-2">
           <Select id="a-sort" name="sort" defaultValue={filters.sort}>
             <option value="newest">{t("sortNewest")}</option>
             <option value="longest">{t("sortLongest")}</option>
             <option value="reach">{t("sortReach")}</option>
           </Select>
         </Field>
-        <div className="col-span-2 flex items-end gap-2 md:col-span-4 xl:col-span-5">
+        <div className="col-span-2 flex items-end gap-2 md:col-span-4 xl:col-span-4">
           <Button type="submit">{tc("filter")}</Button>
           <Link href="/app/ads" className={buttonVariants({ variant: "ghost" })}>
             {tc("reset")}

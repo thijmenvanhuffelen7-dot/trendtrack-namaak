@@ -56,7 +56,7 @@ export default async function FoldersPage({
             <li key={f.id}>
               <Link
                 href={`/app/folders/${f.id}`}
-                className="flex items-center gap-3 rounded-lg border border-border bg-card p-4 transition-colors hover:border-foreground/25"
+                className="flex items-center gap-3 rounded-2xl border border-border bg-card p-4 transition-colors hover:border-foreground/25"
               >
                 <Folder className="size-5 shrink-0 text-muted-foreground" aria-hidden />
                 <span className="min-w-0 flex-1">

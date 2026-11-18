@@ -92,12 +92,12 @@ export default async function EmailPage({ params }: { params: Promise<{ id: stri
             sandbox="allow-popups allow-popups-to-escape-sandbox"
             referrerPolicy="no-referrer"
             srcDoc={html}
-            className="h-[75vh] w-full rounded-lg border border-border bg-white"
+            className="h-[75vh] w-full rounded-2xl border border-border bg-white"
           />
           <p className="mt-2 text-xs text-muted-foreground">{t("sanitized")}</p>
         </>
       ) : (
-        <div className="rounded-lg border border-border bg-card p-5">
+        <div className="rounded-2xl border border-border bg-card p-5">
           <p className="text-xs text-muted-foreground">{t("noHtml")}</p>
           <p className="mt-3 max-w-2xl text-sm whitespace-pre-line">{email.text_preview ?? "–"}</p>
         </div>

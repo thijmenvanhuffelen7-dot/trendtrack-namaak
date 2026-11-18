@@ -36,7 +36,7 @@ export default async function SharedFolderPage({ params }: { params: Promise<{ t
           <FolderContents contents={contents} linkInApp={false} />
         )}
       </div>
-      <div className="mt-10 flex flex-wrap items-center gap-3 rounded-lg border border-border bg-muted p-4 text-sm">
+      <div className="mt-10 flex flex-wrap items-center gap-3 rounded-2xl border border-border bg-muted p-4 text-sm">
         <span>{t("sharedCta")}</span>
         <Link href="/login" className={buttonVariants({ size: "sm" })}>
           TrendTrack

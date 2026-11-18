@@ -8,14 +8,14 @@ export function Badge({
 }: React.ComponentProps<"span"> & { tone?: "neutral" | "positive" | "warning" | "outline" }) {
   const tones = {
     neutral: "bg-muted text-foreground",
-    positive: "bg-positive/10 text-positive",
-    warning: "bg-warning/10 text-warning",
+    positive: "bg-brand-soft text-brand-ink",
+    warning: "bg-warning/12 text-warning",
     outline: "border border-border text-muted-foreground",
   };
   return (
     <span
       className={cn(
-        "inline-flex items-center gap-1 rounded-md px-1.5 py-0.5 text-xs font-medium whitespace-nowrap",
+        "inline-flex items-center gap-1 rounded-full px-2 py-0.5 text-xs font-medium whitespace-nowrap",
         tones[tone],
         className,
       )}
@@ -25,11 +25,19 @@ export function Badge({
 }
 
 export function Card({ className, ...props }: React.ComponentProps<"div">) {
-  return <div className={cn("rounded-lg border border-border bg-card", className)} {...props} />;
+  return (
+    <div
+      className={cn(
+        "rounded-2xl border border-border bg-card shadow-[0_1px_2px_rgb(15_23_20/0.04)]",
+        className,
+      )}
+      {...props}
+    />
+  );
 }
 
 export function Skeleton({ className }: { className?: string }) {
-  return <div aria-hidden className={cn("animate-pulse rounded-md bg-muted", className)} />;
+  return <div aria-hidden className={cn("animate-pulse rounded-xl bg-muted", className)} />;
 }
 
 /** Lege staat: wat is hier, waarom is het leeg en wat kun je doen. */
@@ -43,8 +51,8 @@ export function EmptyState({
   action?: React.ReactNode;
 }) {
   return (
-    <div className="rounded-lg border border-dashed border-border px-6 py-10 text-center">
-      <p className="font-medium">{title}</p>
+    <div className="rounded-2xl border border-dashed border-foreground/15 bg-card/60 px-6 py-12 text-center">
+      <p className="text-[15px] font-semibold">{title}</p>
       {children && (
         <p className="mx-auto mt-1 max-w-md text-sm text-muted-foreground">{children}</p>
       )}
@@ -65,9 +73,9 @@ export function PageHeader({
   return (
     <header className="mb-6 flex flex-wrap items-start justify-between gap-3">
       <div>
-        <h1 className="text-2xl font-semibold tracking-tight">{title}</h1>
+        <h1 className="text-[28px] leading-tight font-bold tracking-[-0.03em]">{title}</h1>
         {description && (
-          <p className="mt-1 max-w-2xl text-sm text-muted-foreground">{description}</p>
+          <p className="mt-1.5 max-w-2xl text-[15px] text-muted-foreground">{description}</p>
         )}
       </div>
       {actions && <div className="flex flex-wrap items-center gap-2">{actions}</div>}
@@ -77,12 +85,12 @@ export function PageHeader({
 
 /** Eerste letter als logo: we laden geen afbeeldingen van externe sites. */
 export function ShopAvatar({ name, size = "md" }: { name: string; size?: "sm" | "md" | "lg" }) {
-  const sizes = { sm: "size-7 text-xs", md: "size-9 text-sm", lg: "size-12 text-lg" };
+  const sizes = { sm: "size-7 rounded-lg text-xs", md: "size-9 text-sm", lg: "size-12 text-lg" };
   return (
     <span
       aria-hidden
       className={cn(
-        "inline-flex shrink-0 items-center justify-center rounded-md bg-muted font-semibold uppercase",
+        "inline-flex shrink-0 items-center justify-center rounded-xl bg-brand-soft font-bold text-brand-ink uppercase",
         sizes[size],
       )}
     >

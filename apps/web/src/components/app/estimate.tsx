@@ -38,7 +38,7 @@ export async function EstimateCard({
 
   return (
     <section
-      className="rounded-lg border border-border bg-card p-5"
+      className="rounded-2xl border border-border bg-card p-5"
       aria-labelledby="estimate-title"
     >
       <div className="flex flex-wrap items-center gap-2">
