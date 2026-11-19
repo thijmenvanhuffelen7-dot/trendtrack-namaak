@@ -48,7 +48,12 @@ jobs:
           cache: pnpm
       - run: pnpm install --frozen-lockfile
       - run: pnpm exec playwright install --with-deps chromium
-      - run: pnpm exec supabase start -x studio,imgproxy,vector,logflare,supavisor,edge-runtime,realtime
+      - name: Supabase starten
+        # Een runner had poort 54322 al bezet; maak de poorten vrij en probeer zo nodig opnieuw.
+        run: |
+          start() { pnpm exec supabase start -x studio,imgproxy,vector,logflare,supavisor,edge-runtime,realtime; }
+          sudo fuser -k 54321/tcp 54322/tcp 54323/tcp 54324/tcp 2>/dev/null || true
+          start || { pnpm exec supabase stop --no-backup || true; sleep 5; sudo fuser -k 54321/tcp 54322/tcp 2>/dev/null || true; start; }
       - run: pnpm db:reset
       - run: sh scripts/ci-env.sh .env.local
       # Productie-build: vangt ook imports die alleen in de build falen (bv. node: in een client-bundle).
